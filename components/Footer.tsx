@@ -5,10 +5,7 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <span>
-        Maintained by{" "}
-        <a target="_blank" href={SITE.sst} rel="noopener noreferrer">
-          SST
-        </a>
+        Maintained by the OpenNext community
       </span>
       <div>
         <a target="_blank" href={SITE.github} rel="noopener noreferrer">
@@ -16,9 +13,6 @@ export default function Footer() {
         </a>
         <a target="_blank" href={SITE.discord} rel="noopener noreferrer">
           Discord
-        </a>
-        <a target="_blank" href={SITE.twitter} rel="noopener noreferrer">
-          Twitter
         </a>
       </div>
     </footer>

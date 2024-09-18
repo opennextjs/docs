@@ -1,3 +1,4 @@
+import { SITE } from "./config";
 import { useConfig } from "nextra-theme-docs";
 
 import Footer from "./components/Footer";
@@ -9,12 +10,12 @@ export default {
   sidebar: {
     defaultMenuCollapseLevel: 1,
   },
-  docsRepositoryBase: "https://github.com/sst/open-next/tree/main/docs",
+  docsRepositoryBase: `${SITE.github}/docs/tree/main`,
   project: {
-    link: "https://github.com/sst/open-next",
+    link: SITE.github,
   },
   chat: {
-    link: "https://sst.dev/discord",
+    link: SITE.discord,
   },
   footer: {
     text: <Footer />,
@@ -24,7 +25,7 @@ export default {
     next: false,
   },
   feedback: {
-    useLink: () => "https://github.com/sst/open-next/issues/new",
+    useLink: () => SITE.github,
   },
   head: null,
   useNextSeoProps() {
@@ -38,7 +39,7 @@ export default {
       ],
       titleTemplate: "%s - OpenNext",
       description:
-        frontMatter.description || "Open source Next.js serverless adapter",
+        frontMatter.description || "Open-source Next.js adapters",
       openGraph: {
         titleTemplate: "%s - OpenNext",
         images: [
@@ -49,7 +50,7 @@ export default {
       },
       twitter: {
         cardType: "summary_large_image",
-        site: "https://open-next.js.org",
+        site: SITE.url,
       },
     };
   },
