@@ -4,7 +4,7 @@ This is great but it still has go through `NextServer` which by default will loa
 
 Since OpenNext 3.1, we have added a new feature that we call Cache Interception that allows you to intercept the cache system directly inside OpenNext routing layer and serve the page directly from the cache without going through `NextServer`. If the cache interception fail, the request will be forwarded to the `NextServer` as usual.
 
-Enabling this alongside external middleware means that the external middleware will need to have all the proper permissions and env variable to interact with S3, DynamoDB and SQS (Or whatever you override it with). You can see [here](/inner_workings/components/server/node#special-overrides) for more details.
+Enabling this alongside external middleware means that the external middleware will need to have all the proper permissions and env variable to interact with S3, DynamoDB and SQS (Or whatever you override it with). You can see [here](/aws/inner_workings/components/server/node#special-overrides) for more details.
 
 This has the following benefits:
 - Faster cold start (No need to load the js associated with the page if the page is cached)

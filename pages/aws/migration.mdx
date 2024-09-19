@@ -4,7 +4,7 @@ If your Next.js app is already deployed to another platform or using another ope
 
 If you used all the default configurations, you should be able to deploy your app without any changes.
 
-OpenNext V3 replaced all the build args with a [custom config file](/config#configuration-file).
+OpenNext V3 replaced all the build args with a [custom config file](/aws/config#configuration-file).
 
 Here are the old build args and their new equivalent:
 
@@ -13,7 +13,7 @@ Here are the old build args and their new equivalent:
 - `--build-output-path`: `buildOutputPath` inside the config file.
 - `--package-json-path`: `packageJsonPath` inside the config file.
 - `--minify`: `minify` options inside each function property. This is enabled on a per function basis now.
-- `--streaming`: This is dependent on the wrapper you're using on a per function basis. To enable streaming in aws lambda, you can set `wrapper: 'aws-lambda-streaming'` in the override property of the function. Please note that AWS lambda streaming still suffer from buffering issue from the runtime itself. See [here](/inner_workings/components/overview#aws-lambda-streaming) for more info.
+- `--streaming`: This is dependent on the wrapper you're using on a per function basis. To enable streaming in aws lambda, you can set `wrapper: 'aws-lambda-streaming'` in the override property of the function. Please note that AWS lambda streaming still suffer from buffering issue from the runtime itself. See [here](/aws/inner_workings/components/overview#aws-lambda-streaming) for more info.
 - `--dangerously-disable-dynamodb-cache`: `dangerous.disableTagCache` inside the config file.
 - `--dangerously-disable-incremental-cache`: `dangerous.disableIncrementalCache` inside the config file.
 
@@ -21,7 +21,7 @@ Here are the old build args and their new equivalent:
 
 Everything should already be set up for you. But there are a few things you should know:
 
-- Streaming by default is disabled in open-next (for now). It is very **experimental** right now see [here](/inner_workings/streaming) for more info.
+- Streaming by default is disabled in open-next (for now). It is very **experimental** right now see [here](/aws/inner_workings/streaming) for more info.
 - Middleware is not run for static file and for image requests with open-next.
 
 #### AWS Amplify
