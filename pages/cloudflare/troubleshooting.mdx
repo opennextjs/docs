@@ -3,6 +3,14 @@ import { Callout } from 'nextra/components';
 
 ## Troubleshooting
 
+### Trying to deploy to Cloudflare Pages, instead of Cloudflare Workers?
+
+`@opennextjs/cloudflare` is specifically built for deploying Next.js apps to [Cloudflare Workers](https://developers.cloudflare.com/workers/)
+
+Cloudflare Workers now support the majority of functionality from Cloudflare Pages, and have features that are not yet supported by Cloudflare Pages. Refer to the [Compatibility Matrix](https://developers.cloudflare.com/workers/static-assets/compatibility-matrix/) in the Cloudflare Workers docs.
+
+If you need to deploy to Cloudflare Pages, you can use `@cloudflare/next-on-pages`, and follow the [Cloudflare Pages guides for deploying Next.js apps](https://developers.cloudflare.com/pages/framework-guides/nextjs/).
+
 ### "Your Worker exceeded the size limit of 1 MiB"
 
 The Cloudflare Account you are deploying to is on the Workers Free plan, which [limits the size of each Worker to 1 MiB](https://developers.cloudflare.com/workers/platform/limits/#worker-size). When you subscribe to the Workers Paid plan, each Worker can be up to 10 MiB.
