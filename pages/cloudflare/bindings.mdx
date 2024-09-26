@@ -17,7 +17,7 @@ Install [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloud
 
 #### How to access bindings in your Next.js app
 
-You can access [bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/) from any route of your Next.js app via `getRequestContext`:
+You can access [bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/) from any route of your Next.js app via `getCloudlfareContext`:
 
 ```js
 // TODO: possible to bring this in from next-on-pages?
@@ -26,7 +26,7 @@ import { getRequestContext } from "@cloudflare/next-on-pages";
 export async function GET(request) {
 	let responseText = "Hello World";
 
-	const myKv = getRequestContext().env.MY_KV_NAMESPACE;
+	const myKv = (await getCloudflareContext()).env.MY_KV_NAMESPACE;
 	await myKv.put("foo", "bar");
 	const foo = await myKv.get("foo");
 
@@ -40,7 +40,7 @@ Add bindings to your Worker by [adding them to your `wrangler.toml` configuratio
 
 ## TypeScript type declarations for bindings
 
-To ensure that the `env` object from `getRequestContext().env` above has accurate TypeScript types, install [`@cloudflare/workers-types`](https://www.npmjs.com/package/@cloudflare/workers-types) and create a [TypeScript declaration file](https://www.typescriptlang.org/docs/handbook/2/type-declarations.html).
+To ensure that the `env` object from `(await getCloudflareContext()).env` above has accurate TypeScript types, install [`@cloudflare/workers-types`](https://www.npmjs.com/package/@cloudflare/workers-types) and create a [TypeScript declaration file](https://www.typescriptlang.org/docs/handbook/2/type-declarations.html).
 
 Install Workers Types:
 
@@ -69,16 +69,14 @@ interface CloudflareEnv {
 
 ## Other Cloudflare APIs (`cf`, `ctx`)
 
-You can access context about the incoming request from the [`cf` object](https://developers.cloudflare.com/workers/runtime-apis/request/#incomingrequestcfproperties), as well as [lifecycle methods from the `ctx` object](https://developers.cloudflare.com/workers/runtime-apis/handlers/fetch/#lifecycle-methods) from the return value of [`getRequestContext()`](https://github.com/cloudflare/next-on-pages/blob/main/packages/next-on-pages/src/api/getRequestContext.ts):
+You can access context about the incoming request from the [`cf` object](https://developers.cloudflare.com/workers/runtime-apis/request/#the-cf-property-requestinitcfproperties), as well as lifecycle methods from the [`ctx` object](https://developers.cloudflare.com/workers/runtime-apis/context) from the return value of [`getCloudflareContext()`](https://github.com/opennextjs/opennextjs-cloudflare/blob/main/packages/cloudflare/src/api/get-cloudflare-context.ts):
 
 ```js
-// TODO: possible to bring this in from next-on-pages?
-import { getRequestContext } from "@cloudflare/next-on-pages";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-export const runtime = "edge";
 
 export async function GET(request) {
-	const { env, cf, ctx } = getRequestContext();
+	const { env, cf, ctx } = await getCloudflareContext();
 
 	// ...
 }
