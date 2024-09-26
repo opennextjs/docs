@@ -21,7 +21,17 @@ First, install [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextj
 npm install --save-dev @opennextjs/cloudflare
 ```
 
-##### 2. Add a `wrangler.toml` file
+##### 2. Install Wrangler, and add a `wrangler.toml` file
+
+Install the Wrangler CLI as a devDependency:
+
+```npm
+npm install -D wrangler@latest
+```
+
+<Callout>
+You must use Wrangler version `3.78.10` or later to deploy Next.js apps using `@opennextjs/cloudflare`.
+</Callout>
 
 Then, add a [`wrangler.toml`](https://developers.cloudflare.com/workers/wrangler/configuration/) file to the root directory of your Next.js app:
 
