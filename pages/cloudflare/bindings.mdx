@@ -14,7 +14,7 @@ Install [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloud
 You can access [bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/) from any route of your Next.js app via `getCloudlfareContext`:
 
 ```js
-import { getCloudflareContext } from "@cloudflare/next-on-pages";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export async function GET(request) {
 	let responseText = "Hello World";
