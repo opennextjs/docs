@@ -1,6 +1,5 @@
 {
   "index": "Overview",
   "aws": "AWS",
-  "cloudflare": "Cloudflare",
-  "netlify": "Netlify"
+  "cloudflare": "Cloudflare"
 }
