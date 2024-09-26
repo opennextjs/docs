@@ -18,7 +18,7 @@ You can also use [@cloudflare/next-on-pages](https://www.npmjs.com/package/@clou
 To create a new Next.js app, pre-configured to run on Cloudflare using @opennextjs/cloudflare, run:
 
 ```
-<command>
+npm create cloudflare@latest --no-auto-update --experimental --framework next
 ```
 
 ##### Existing Next.js apps
@@ -30,6 +30,10 @@ Follow the guide [here](/cloudflare/get-started) to use [@opennextjs/cloudflare]
 Next.js has [two "runtimes"](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes) — "Edge" and "Node.js". When you use `@opennextjs/cloudflare`, your app can use the Node.js runtime, which is more fully featured, and allows you to use the [Node.js APIs](/workers/runtime-apis/nodejs/) that are provided by the Cloudflare Workers runtime.
 
 This is an important difference from `@cloudflare/next-on-pages`, which only supports the "Edge" runtime. The Edge Runtime code in Next.js [intentionally constrains which APIs from Node.js can be used](https://github.com/vercel/next.js/blob/canary/packages/next/src/build/webpack/plugins/middleware-plugin.ts#L820), and the "Edge" runtime does not support all Next.js features.
+
+### Supported Next.js versions
+
+`@opennextjs/cloudflare` supports all minor and patch version of Next.js 13 and 14.
 
 ### Supported Next.js features
 
