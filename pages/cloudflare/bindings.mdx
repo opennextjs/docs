@@ -5,12 +5,6 @@ import { Callout } from 'nextra/components';
 
 [Bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/) allow your Worker to interact with resources on the Cloudflare Developer Platform. When you declare a binding on your Worker, you grant it a specific capability, such as being able to read and write files to an [R2](https://developers.cloudflare.com/r2/) bucket.
 
-<Callout>
-If your app uses both bindings and @opennextjs/cloudflare, you currently cannot access bindings when running `next dev`. Instead, you must build your app using @opennextjs/cloudflare and then run it locally in the Workers runtime as described [here](/cloudflare/get-started). This means you cannot use hot-module reloading (HMR) for a faster development workflow. @opennextjs/cloudflare is pre 1.0, in active development, and we plan to address this soon.
-
-Alternatively, you can use [@cloudflare/next-on-pages](https://www.npmjs.com/package/@cloudflare/next-on-pages) to deploy Next.js apps to Cloudflare Pages. You can review the differences in supported Next.js features between @opennextjs/cloudflare and @cloudflare/next-on-pages [here](LINK).
-</Callout>
-
 #### How to configure your Next.js app so it can access bindings
 
 Install [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare), and then add a `wrangler.toml` file in the root directory of your Next.js app, as described in [Get Started](/cloudflare/get-started), y
@@ -20,8 +14,7 @@ Install [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloud
 You can access [bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/) from any route of your Next.js app via `getCloudlfareContext`:
 
 ```js
-// TODO: possible to bring this in from next-on-pages?
-import { getRequestContext } from "@cloudflare/next-on-pages";
+import { getCloudflareContext } from "@cloudflare/next-on-pages";
 
 export async function GET(request) {
 	let responseText = "Hello World";
@@ -40,32 +33,21 @@ Add bindings to your Worker by [adding them to your `wrangler.toml` configuratio
 
 ## TypeScript type declarations for bindings
 
-To ensure that the `env` object from `(await getCloudflareContext()).env` above has accurate TypeScript types, install [`@cloudflare/workers-types`](https://www.npmjs.com/package/@cloudflare/workers-types) and create a [TypeScript declaration file](https://www.typescriptlang.org/docs/handbook/2/type-declarations.html).
+To ensure that the `env` object from `(await getCloudflareContext()).env` above has accurate TypeScript types, run the following Wrangler command to [generate types that match your Worker's configuration](https://developers.cloudflare.com/workers/languages/typescript/#generate-types-that-match-your-workers-configuration-experimental):
 
-Install Workers Types:
-
-```sh
-npm install --save-dev @cloudflare/workers-types
+```
+npx wrangler types --experimental-include-runtime
 ```
 
-Add Workers Types to your `tsconfig.json` file, replacing the date below with your project's [compatibility date](https://developers.cloudflare.com/workers/configuration/compatibility-dates/):
+This will generate a `d.ts` file and (by default) save it to `.wrangler/types/runtime.d.ts`. You will be prompted in the command's output to add that file to your `tsconfig.json`'s `compilerOptions.types` array.
 
-```diff title="tsconfig.json"
-    "types": [
-+        "@cloudflare/workers-types/2024-07-29"
-    ]
+If you would like to commit the file to git, you can provide a custom path. Here, for instance, the `runtime.d.ts` file will be saved to the root of your project:
+
+```bash
+npx wrangler types --experimental-include-runtime="./runtime.d.ts"
 ```
 
-Create an `env.d.ts` file in the root directory of your Next.js app, and explicitly declare the type of each binding:
-
-```ts title="env.d.ts"
-interface CloudflareEnv {
-	MY_KV_1: KVNamespace;
-	MY_KV_2: KVNamespace;
-	MY_R2: R2Bucket;
-	MY_DO: DurableObjectNamespace;
-}
-```
+To ensure that your types are always up-to-date, make sure to run `wrangler types --experimental-include-runtime` after any changes to your config file.
 
 ## Other Cloudflare APIs (`cf`, `ctx`)
 
