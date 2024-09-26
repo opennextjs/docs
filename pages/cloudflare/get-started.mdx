@@ -44,7 +44,7 @@ As shown above, you must enable the [`nodejs_compat` compatibility flag](https:/
 Add the following to the scripts field of your `package.json` file:
 
 ```json
-"build:worker": "cloudflare", TODO
+"build:worker": "cloudflare",
 "dev:worker": "wrangler dev --port 8771",
 "preview:worker": "npm run build:worker && npm run dev:worker",
 "deploy:worker": "npm run build:worker && wrangler deploy"
