@@ -1,0 +1,40 @@
+import { SITE } from '../../config';
+import { Callout } from 'nextra/components';
+
+## Troubleshooting
+
+### Trying to deploy to Cloudflare Pages, instead of Cloudflare Workers?
+
+`@opennextjs/cloudflare` is specifically built for deploying Next.js apps to [Cloudflare Workers](https://developers.cloudflare.com/workers/)
+
+Cloudflare Workers now support the majority of functionality from Cloudflare Pages, and have features that are not yet supported by Cloudflare Pages. Refer to the [Compatibility Matrix](https://developers.cloudflare.com/workers/static-assets/compatibility-matrix/) in the Cloudflare Workers docs.
+
+If you need to deploy to Cloudflare Pages, you can use `@cloudflare/next-on-pages`, and follow the [Cloudflare Pages guides for deploying Next.js apps](https://developers.cloudflare.com/pages/framework-guides/nextjs/).
+
+### "Your Worker exceeded the size limit of 1 MiB"
+
+The Cloudflare Account you are deploying to is on the Workers Free plan, which [limits the size of each Worker to 1 MiB](https://developers.cloudflare.com/workers/platform/limits/#worker-size). When you subscribe to the Workers Paid plan, each Worker can be up to 10 MiB.
+
+### My app fails to build when I import a specific NPM package 
+
+First, make sure that the `nodejs_compat` compatibility flag is enabled, and your compatibility date is set to on or after "2024-09-23", in your `wrangler.toml` file. [Refer to the Workers docs](https://developers.cloudflare.com/workers/runtime-apis/nodejs/) for more details on Node.js support in Cloudflare Workers.
+
+Some NPM packages define multiple exports. For example:
+
+```
+"exports": {
+    "other": "./src/other.js",
+    "node": "./src/node.js",
+    "browser": "./src/browser.js",
+    "default": "./src/default.js"
+},
+```
+
+When you use `@opennextjs/cloudflare`, [Wrangler](https://developers.cloudflare.com/workers/wrangler/) bundles your code before running it locally, or deploying it to Cloudflare. Wrangler has to choose which export to use, when you import a module. By default, Wrangler, which uses [esbuild](https://esbuild.github.io/), handles this in a way that is not compatible with some NPM packages. 
+
+You may want to modify how Wrangler resolves multiple exports, such that when you import packages, the `node` export, if present, is used. You can do do by defining the following variables in a `.env` file within the root directory of your Next.js app:
+
+```
+WRANGLER_BUILD_CONDITIONS=""
+WRANGLER_BUILD_PLATFORM="node"
+```

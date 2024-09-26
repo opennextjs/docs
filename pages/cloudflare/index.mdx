@@ -1,2 +1,64 @@
-### TODO
+import { SITE } from '../../config';
+import { Callout } from 'nextra/components';
 
+## Cloudflare
+
+The [`@opennextjs/cloudflare`](https://www.npmjs.com/package/@opennextjs/cloudflare) adapter lets you deploy Next.js apps to [Cloudflare Workers](https://developers.cloudflare.com/workers) and [Cloudflare Pages](https://developers.cloudflare.com/pages), using the [Node.js "runtime" from Next.js](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes).
+
+<Callout>
+[`@opennextjs/cloudflare`](https://www.npmjs.com/package/@opennextjs/cloudflare) is pre 1.0, and still in active development. You should try it, [report bugs](https://github.com/opennextjs/opennextjs-cloudflare/issues), [share feedback](https://github.com/opennextjs/opennextjs-cloudflare/discussions), and contribute code to help make running Next.js apps on Cloudflare easier. We don't quite yet recommend using it for mission-critical production apps.
+
+You can also use [`@cloudflare/next-on-pages`](https://www.npmjs.com/package/@cloudflare/next-on-pages) to deploy Next.js apps to Cloudflare Pages. You can review the differences in supported Next.js features between @opennextjs/cloudflare and @cloudflare/next-on-pages [here](LINK).
+</Callout>
+
+### Get Started
+
+##### New apps
+
+To create a new Next.js app, pre-configured to run on Cloudflare using @opennextjs/cloudflare, run:
+
+```
+npm create cloudflare@latest --no-auto-update --experimental --framework next
+```
+
+##### Existing Next.js apps
+
+Follow the guide [here](/cloudflare/get-started) to use [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare) with an existing Next.js app.
+
+### Supported Next.js runtimes
+
+Next.js has [two "runtimes"](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes) — "Edge" and "Node.js". When you use `@opennextjs/cloudflare`, your app can use the Node.js runtime, which is more fully featured, and allows you to use the [Node.js APIs](/workers/runtime-apis/nodejs/) that are provided by the Cloudflare Workers runtime.
+
+This is an important difference from `@cloudflare/next-on-pages`, which only supports the "Edge" runtime. The Edge Runtime code in Next.js [intentionally constrains which APIs from Node.js can be used](https://github.com/vercel/next.js/blob/canary/packages/next/src/build/webpack/plugins/middleware-plugin.ts#L820), and the "Edge" runtime does not support all Next.js features.
+
+### Supported Next.js versions
+
+`@opennextjs/cloudflare` is pre 1.0, and still in active development. We intend to support all minor and patch version of Next.js 13 and 14, as well as Next.js 15 when it is released. (currently a release candidate)
+
+To help improve compatibility, we encourage you to [report bugs](https://github.com/opennextjs/opennextjs-cloudflare/issues) and contribute code!
+
+### Supported Next.js features
+
+- [x] [App Router](https://nextjs.org/docs/app) & [Pages Router](https://nextjs.org/docs/pages)
+- [x] [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes)
+- [x] [Dynamic routes](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes)
+- [x] [Static Site Generation (SSG)](https://nextjs.org/docs/pages/building-your-application/rendering/static-site-generation)
+- [x] [Server-Side Rendering (SSR)](https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering)
+- [x] [Incremental Static Regeneration<sup>1</sup> (ISR)](https://nextjs.org/docs/pages/building-your-application/data-fetching/incremental-static-regeneration)
+
+<sup>1</sup> "Manual" revalidation is not supported (i.e. [`revalidateTag()`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) or [`revalidatePath()`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath))
+
+### Not Yet Supported Next.js features
+
+- [ ] [Partial Prerendering (PPR)](https://nextjs.org/docs/app/building-your-application/rendering/partial-prerendering)
+- [ ] [Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
+- [ ] [Image optimization](https://nextjs.org/docs/pages/building-your-application/optimizing/images) (you can integrate Cloudflare Images with Next.js by following [this guide](https://developers.cloudflare.com/images/transform-images/integrate-with-frameworks/))
+- [ ] [Experimental streaming support](https://nextjs.org/blog/next-15-rc#executing-code-after-a-response-with-nextafter-experimental)
+
+### How @opennextjs/cloudflare Works
+
+The OpenNext Cloudflare adapter works by taking the Next.js build output and transforming it, so that it can run in Cloudflare Workers.
+
+When you add [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare) as a dependency to your Next.js app, and then run `npx cloudflare` the adapter first builds your app by running `next build`, and then transforms the build output to a format that you can run locally using [Wrangler](https://developers.cloudflare.com/workers/wrangler/), and deploy to Cloudflare.
+
+You can view the code for @opennextjs/cloudflare [here](https://github.com/opennextjs/opennextjs-cloudflare/blob/main/packages/cloudflare/src) to understand what it does under the hood.
