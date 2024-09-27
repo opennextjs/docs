@@ -90,18 +90,66 @@ id = "<YOUR_NAMESPACE_ID>"
 
 As shown above, the name of the binding that you configure for the KV namespace must be set to `NEXT_CACHE_WORKERS_KV`.
 
-##### 5. Develop locally
+### 5. Remove `@cloudflare/next-on-pages` (if necessary)
+
+If your Next.js app currently uses `@cloudflare/next-on-pages`, you'll want to remove it, and make a few changes.
+
+#### Remove `export const runtime = "edge";`
+
+Before deploying your app, remove the `export const runtime = "edge";` line from your `next.config.js` file. This line is not needed when using `@opennextjs/cloudflare`.
+
+#### Add `.worker-next` to `.gitignore`
+
+You should add `.worker-next` to your `.gitignore` file to prevent the build output from being committed to your repository.
+
+#### Uninstall `@cloudflare/next-on-pages`
+
+You should uninstall `@cloudflare/next-on-pages` and remove any references to it.
+
+In `package.json`:
+
+```diff
+"scripts": {
+-    "pages:build": "npx @cloudflare/next-on-pages",
+-    "preview": "npm run pages:build && wrangler pages dev",
+-    "deploy": "npm run pages:build && wrangler pages deploy"
+
+"devDependencies": {
+-    "@cloudflare/next-on-pages": "*",
+```
+(remember to also remove [eslint-plugin-next-on-pages](https://www.npmjs.com/package/eslint-plugin-next-on-pages) from your `.eslintrc.js` file)
+
+You no longer need to call `setupDevPlatform()` in your `next.config.mjs` file:
+
+```diff title="next.config.mjs"
+- import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev';
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+- if (process.env.NODE_ENV === 'development') {
+-   await setupDevPlatform();
+- }
+
+And you'll want to replace any uses of `getRequestContext` from `@cloudflare/next-on-pages` with `getCloudflareContext` from `@opennextjs/cloudflare`:
+
+```diff
+- import { getRequestContext } from "@cloudflare/next-on-pages";
++ import { getCloudflareContext } from "@opennextjs/cloudflare";
+```
+
+##### 6. Develop locally
 
 You can continue to run `next dev` when developing locally.
 
 In step 3, we also added the `npm run preview:worker`, which allows you to quickly preview your app running locally in the Workers runtime, rather than in Node.js. This allows you to test changes in the same runtime as your app will run in when deployed to Cloudflare.
 
-##### 6. Deploy to Cloudflare Workers
+##### 7. Deploy to Cloudflare Workers
 
 Either deploy via the command line:
 
 ```sh
-npm run deploy
+npm run deploy:worker
 ```
 
 Or [connect a Github or Gitlab repository](https://developers.cloudflare.com/workers/ci-cd/), and Cloudflare will automatically build and deploy each pull request you merge to your production branch.
