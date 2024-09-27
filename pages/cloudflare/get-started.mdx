@@ -90,6 +90,10 @@ id = "<YOUR_NAMESPACE_ID>"
 
 As shown above, the name of the binding that you configure for the KV namespace must be set to `NEXT_CACHE_WORKERS_KV`.
 
+### 5. Remove `@cloudflare/next-on-pages` (if necessary)
+
+If your Next.js app currently uses `@cloudflare/next-on-pages`, you'll want to remove it, and make a few changes.
+
 #### Remove `export const runtime = "edge";`
 
 Before deploying your app, remove the `export const runtime = "edge";` line from your `next.config.js` file. This line is not needed when using `@opennextjs/cloudflare`.
@@ -98,7 +102,28 @@ Before deploying your app, remove the `export const runtime = "edge";` line from
 
 You should add `.worker-next` to your `.gitignore` file to prevent the build output from being committed to your repository.
 
-#### Uninstall next-on-pages
+#### Remove references to `@cloudflare/next-on-pages`:
+
+You no longer need to call `setupDevPlatform()` in your `next.config.mjs` file:
+
+```diff title="next.config.mjs"
+- import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev';
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+- if (process.env.NODE_ENV === 'development') {
+-   await setupDevPlatform();
+- }
+
+And you'll want to replace any uses of `getRequestContext` from `@cloudflare/next-on-pages` with `getCloudflareContext` from `@opennextjs/cloudflare`:
+
+```diff
+- import { getRequestContext } from "@cloudflare/next-on-pages";
++ import { getCloudflareContext } from "@opennextjs/cloudflare";
+```
+
+#### Uninstall `@cloudflare/next-on-pages`
 
 You should uninstall `@cloudflare/next-on-pages` and remove any references to it.
 
@@ -111,9 +136,7 @@ You should uninstall `@cloudflare/next-on-pages` and remove any references to it
 "devDependencies": {
 -    "@cloudflare/next-on-pages": "*",
 ```
-(remember to also remove the eslint-plugin-next-on-pages from your `.eslintrc.js` file)
-
-Be sure to search through any other files in your project for references to `@cloudflare/next-on-pages` and remove them.
+(remember to also remove [eslint-plugin-next-on-pages](https://www.npmjs.com/package/eslint-plugin-next-on-pages) from your `.eslintrc.js` file)
 
 ##### 5. Develop locally
 
