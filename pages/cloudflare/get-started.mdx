@@ -100,6 +100,24 @@ As shown above, the name of the binding that you configure for the KV namespace 
 
 Before deploying your app, remove the `export const runtime = "edge";` line from your `next.config.js` file. This line is not needed when using `@opennextjs/cloudflare`.
 
+#### Add `.worker-next` to `.gitignore`
+
+You should add `.worker-next` to your `.gitignore` file to prevent the build output from being committed to your repository.
+
+#### Uninstall next-on-pages
+
+You should uninstall `@cloudflare/next-on-pages`, as it might give you an error when deploying to Cloudflare.
+
+```diff
+"scripts": {
+-    "pages:build": "npx @cloudflare/next-on-pages",
+-    "preview": "npm run pages:build && wrangler pages dev",
+-    "deploy": "npm run pages:build && wrangler pages deploy"
+
+"devDependencies": {
+-    "@cloudflare/next-on-pages": "*",
+```
+
 ##### 5. Develop locally
 
 You can continue to run `next dev` when developing locally.
