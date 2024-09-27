@@ -1,5 +1,5 @@
-import { SITE } from '../../config';
-import { Callout } from 'nextra/components';
+import { SITE } from "../../config";
+import { Callout } from "nextra/components";
 
 ### Get Started
 
@@ -31,7 +31,8 @@ npm install -D wrangler@latest
 ```
 
 <Callout>
-You must use Wrangler version `3.78.10` or later to deploy Next.js apps using `@opennextjs/cloudflare`.
+  You must use Wrangler version `3.78.10` or later to deploy Next.js apps using
+  `@opennextjs/cloudflare`.
 </Callout>
 
 Then, add a [`wrangler.toml`](https://developers.cloudflare.com/workers/wrangler/configuration/) file to the root directory of your Next.js app:
@@ -45,7 +46,12 @@ assets = { directory = ".worker-next/assets", binding = "ASSETS" }
 ```
 
 <Callout>
-As shown above, you must enable the [`nodejs_compat` compatibility flag](https://developers.cloudflare.com/workers/runtime-apis/nodejs/) *and* set your [compatibility date](https://developers.cloudflare.com/workers/configuration/compatibility-dates/) to `2024-09-23` or later, in order for your Next.js app to work with @opennextjs/cloudflare.
+  As shown above, you must enable the [`nodejs_compat` compatibility
+  flag](https://developers.cloudflare.com/workers/runtime-apis/nodejs/) *and*
+  set your [compatibility
+  date](https://developers.cloudflare.com/workers/configuration/compatibility-dates/)
+  to `2024-09-23` or later, in order for your Next.js app to work with
+  @opennextjs/cloudflare.
 </Callout>
 
 `wrangler.toml` is where you configure your Worker and define what resources it can access via [bindings](/workers/runtime-apis/bindings/).
@@ -101,7 +107,7 @@ In step 3, we also added the `npm run preview:worker`, which allows you to quick
 Either deploy via the command line:
 
 ```sh
-npm run deploy
+npm run deploy:worker
 ```
 
 Or [connect a Github or Gitlab repository](https://developers.cloudflare.com/workers/ci-cd/), and Cloudflare will automatically build and deploy each pull request you merge to your production branch.
