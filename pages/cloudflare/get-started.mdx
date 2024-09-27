@@ -41,12 +41,12 @@ Then, add a [`wrangler.toml`](https://developers.cloudflare.com/workers/wrangler
 main = ".worker-next/index.mjs"
 name = "my-app"
 compatibility_date = "2024-09-23"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat_v2"]
 assets = { directory = ".worker-next/assets", binding = "ASSETS" }
 ```
 
 <Callout>
-  As shown above, you must enable the [`nodejs_compat` compatibility
+  As shown above, you must enable the [`nodejs_compat_v2` compatibility
   flag](https://developers.cloudflare.com/workers/runtime-apis/nodejs/) *and*
   set your [compatibility
   date](https://developers.cloudflare.com/workers/configuration/compatibility-dates/)
@@ -95,6 +95,10 @@ id = "<YOUR_NAMESPACE_ID>"
 #### Set the name of the binding to `NEXT_CACHE_WORKERS_KV`
 
 As shown above, the name of the binding that you configure for the KV namespace must be set to `NEXT_CACHE_WORKERS_KV`.
+
+#### Remove `export const runtime = "edge";`
+
+Before deploying your app, remove the `export const runtime = "edge";` line from your `next.config.js` file. This line is not needed when using `@opennextjs/cloudflare`.
 
 ##### 5. Develop locally
 
