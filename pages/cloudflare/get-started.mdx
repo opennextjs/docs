@@ -102,7 +102,22 @@ Before deploying your app, remove the `export const runtime = "edge";` line from
 
 You should add `.worker-next` to your `.gitignore` file to prevent the build output from being committed to your repository.
 
-#### Remove references to `@cloudflare/next-on-pages`:
+#### Uninstall `@cloudflare/next-on-pages`
+
+You should uninstall `@cloudflare/next-on-pages` and remove any references to it.
+
+In `package.json`:
+
+```diff
+"scripts": {
+-    "pages:build": "npx @cloudflare/next-on-pages",
+-    "preview": "npm run pages:build && wrangler pages dev",
+-    "deploy": "npm run pages:build && wrangler pages deploy"
+
+"devDependencies": {
+-    "@cloudflare/next-on-pages": "*",
+```
+(remember to also remove [eslint-plugin-next-on-pages](https://www.npmjs.com/package/eslint-plugin-next-on-pages) from your `.eslintrc.js` file)
 
 You no longer need to call `setupDevPlatform()` in your `next.config.mjs` file:
 
@@ -123,28 +138,13 @@ And you'll want to replace any uses of `getRequestContext` from `@cloudflare/nex
 + import { getCloudflareContext } from "@opennextjs/cloudflare";
 ```
 
-#### Uninstall `@cloudflare/next-on-pages`
-
-You should uninstall `@cloudflare/next-on-pages` and remove any references to it.
-
-```diff
-"scripts": {
--    "pages:build": "npx @cloudflare/next-on-pages",
--    "preview": "npm run pages:build && wrangler pages dev",
--    "deploy": "npm run pages:build && wrangler pages deploy"
-
-"devDependencies": {
--    "@cloudflare/next-on-pages": "*",
-```
-(remember to also remove [eslint-plugin-next-on-pages](https://www.npmjs.com/package/eslint-plugin-next-on-pages) from your `.eslintrc.js` file)
-
-##### 5. Develop locally
+##### 6. Develop locally
 
 You can continue to run `next dev` when developing locally.
 
 In step 3, we also added the `npm run preview:worker`, which allows you to quickly preview your app running locally in the Workers runtime, rather than in Node.js. This allows you to test changes in the same runtime as your app will run in when deployed to Cloudflare.
 
-##### 6. Deploy to Cloudflare Workers
+##### 7. Deploy to Cloudflare Workers
 
 Either deploy via the command line:
 
