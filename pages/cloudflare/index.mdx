@@ -39,14 +39,17 @@ To help improve compatibility, we encourage you to [report bugs](https://github.
 
 ### Supported Next.js features
 
-- [x] [App Router](https://nextjs.org/docs/app) & [Pages Router](https://nextjs.org/docs/pages)
+- [x] [App Router](https://nextjs.org/docs/app)
 - [x] [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes)
 - [x] [Dynamic routes](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes)
 - [x] [Static Site Generation (SSG)](https://nextjs.org/docs/pages/building-your-application/rendering/static-site-generation)
 - [x] [Server-Side Rendering (SSR)](https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering)
 - [x] [Incremental Static Regeneration<sup>1</sup> (ISR)](https://nextjs.org/docs/pages/building-your-application/data-fetching/incremental-static-regeneration)
 
-<sup>1</sup> "Manual" revalidation is not supported (i.e. [`revalidateTag()`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) or [`revalidatePath()`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath))
+<sup>1</sup> The [Pages Router](https://nextjs.org/docs/pages) is not currently supported as the App Router has been prioritized given the fact that it is the officially recommended one.
+ Support for the Pages Router might be added in the future if there is demand for it.
+
+<sup>2</sup> "Manual" revalidation is not supported (i.e. [`revalidateTag()`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) or [`revalidatePath()`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath))
 
 ### Not Yet Supported Next.js features
 
