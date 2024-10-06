@@ -9,6 +9,7 @@ The [`@opennextjs/cloudflare`](https://www.npmjs.com/package/@opennextjs/cloudfl
 [`@opennextjs/cloudflare`](https://www.npmjs.com/package/@opennextjs/cloudflare) is pre 1.0, and still in active development. You should try it, [report bugs](https://github.com/opennextjs/opennextjs-cloudflare/issues), [share feedback](https://github.com/opennextjs/opennextjs-cloudflare/discussions), and contribute code to help make running Next.js apps on Cloudflare easier. We don't quite yet recommend using it for mission-critical production apps.
 
 You can also use [`@cloudflare/next-on-pages`](https://www.npmjs.com/package/@cloudflare/next-on-pages) to deploy Next.js apps to Cloudflare Pages. You can review the differences in supported Next.js features below and by reviewing [the docs for `@cloudflare/next-on-pages`](https://developers.cloudflare.com/pages/framework-guides/nextjs/ssr/supported-features/), and understand the differences between Workers and Pages [here](https://developers.cloudflare.com/workers/static-assets/compatibility-matrix/).
+
 </Callout>
 
 ### Get Started
@@ -44,15 +45,13 @@ To help improve compatibility, we encourage you to [report bugs](https://github.
 - [x] [Dynamic routes](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes)
 - [x] [Static Site Generation (SSG)](https://nextjs.org/docs/app/building-your-application/rendering/server-components#static-rendering-default)
 - [x] [Server-Side Rendering (SSR)](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
-- [x] [Incremental Static Regeneration<sup>1</sup> (ISR)](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration)
-
-<sup>1</sup> "Manual" revalidation is not supported (i.e. [`revalidateTag()`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) or [`revalidatePath()`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath))
 
 ### Not Yet Supported Next.js features
 
 The following Next.js features are not yet supported — but we welcome both contributions and feedback! Tell us what you'd like to see, or what you'd like to add support for:
 
 - [ ] [Pages Router](https://nextjs.org/docs/pages) (you should use the App Router instead, which was introduced in Next.js 13)
+- [ ] [Incremental Static Regeneration (ISR)](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration)
 - [ ] [Partial Prerendering (PPR)](https://nextjs.org/docs/app/building-your-application/rendering/partial-prerendering)
 - [ ] [Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
 - [ ] [Image optimization](https://nextjs.org/docs/app/building-your-application/optimizing/images) (you can integrate Cloudflare Images with Next.js by following [this guide](https://developers.cloudflare.com/images/transform-images/integrate-with-frameworks/))
