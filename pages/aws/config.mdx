@@ -24,3 +24,13 @@ If you want to take a look at some simple configuration examples, you can check 
 For more advanced use cases, you can check [how to implement custom overrides](/aws/config/custom_overrides).
 
 If you want to look at a full example, you can check [the full example](/aws/config/full_example).
+
+
+### Opt out of default poweredByHeader
+
+By default Next.js will add the [`x-powered-by`]((https://nextjs.org/docs/app/api-reference/next-config-js/poweredByHeader)) header. OpenNext will also add a header `x-opennext`. To opt-out of this, open `next.config.js` and disable the poweredByHeader property in the configuration:
+```ts
+module.exports = {
+  poweredByHeader: false,
+}
+```
