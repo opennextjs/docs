@@ -71,7 +71,7 @@ To prevent silent failures of form detection or submission, we now trigger an in
 
 This failure is triggered when both of the following conditions are met:
 
-- The runtime has found usage of `netlify` or `data-netlify` form attributes in your React code (which have no effect).
+- The adapter has found usage of `netlify` or `data-netlify` form attributes in your React code (which have no effect).
 - No static HTML file was found in your `public` directory having form attributes (thus marking that you’ve implemented the approach laid out above).
 
 ### Skip the check
