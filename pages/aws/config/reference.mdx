@@ -32,7 +32,7 @@ import { Tabs } from 'nextra/components'
       ### `override`
 
       This is where you will be able to override some part of the server. For all of them you can provide what we call a `LazyLoadedOverride` which is a function that will return the override. For some example look at some [Custom overrides](custom_overrides).
-      All server have some default override that you can override
+      All servers have some default override that you can override
 
       TODO: Add all the types for the custom LazyLoadedOverride here. In the meantime, just look at the [source file](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/types/open-next.ts)
 
@@ -83,7 +83,7 @@ import { Tabs } from 'nextra/components'
 
       ### `placement`
 
-      Options to determine where the server will be deployed. On a single region or on multiple regions at the edge.
+      Option to determine where the server will be deployed. On a single region or on multiple regions at the edge.
       
       This options does not have any effect on the build output, but is just an indication for IAC tools to know where to deploy the server.
 
@@ -97,7 +97,7 @@ import { Tabs } from 'nextra/components'
 
       ### `override`
 
-      For default and splitted server, in addition to the options for `override` in the common options, you can also use the following options:
+      For both default and splitted server, in addition to `override` in the common options, you can also use the following options:
 
       #### `incrementalCache`
 
@@ -207,13 +207,13 @@ If you want to specify a different command, you can do so here.
 
 The path to the root of the Next.js app's source code. This path is relative from the current process.cwd(). *
 
-By default, it is set to `.`.
+By default, it is set to `.`
 
 ### `buildOutputPath`
 
 The path to the target folder of build output from the `buildCommand` option (the path which will contain the `.next` and `.open-next` folders). This path is relative from the current process.cwd()
 
-By default, it is set to `.`.
+By default, it is set to `.`
 
 ### `packageJsonPath`
 
@@ -252,11 +252,22 @@ This will enable cache interception. It will allow you to intercept the cache sy
 
 If the cache interception fail, the request will be forwarded to the `NextServer` as usual.
 
-#### `headersAndCookiesPriority` - Experimental
+#### `headersAndCookiesPriority`
 
 Function to determine which headers or cookies takes precedence.
 By default, the middleware headers and cookies will override the handler headers and cookies.
 
 This is executed for every request and after next config headers and middleware has executed.
+Here is a very simple example of how you can use it:
+
+```ts
+// In this case, if the request starts with /api, the middleware headers and cookies will take precedence otherwise the handler headers and cookies will take precedence
+headersAndCookiesPriority: (event) => {
+  if (event.rawPath.startsWith('/api')) {
+    return 'middleware';
+  }
+  return 'handler';
+},
+```
 </Tabs.Tab>
 </Tabs>
