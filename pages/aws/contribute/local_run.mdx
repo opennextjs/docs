@@ -3,16 +3,16 @@ When making some changes to OpenNext, it can be a bit cumbersome to need to depl
 To run `OpenNext` locally:
 ```bash
 # This is to build (the config-path is needed if you use a different name than the default one)
-node /path/to/open-next/packages/open-next/dist/index.js build --config-path open-next.local.config.ts
+node /path/to/opennextjs-aws/packages/open-next/dist/index.js build --config-path open-next.local.config.ts
 # Then to run the server
 node .open-next/server-functions/default/index.mjs
 ```
 
 ```typescript
-// open-next.local.config.ts - 
-// A good practice would be to use a different name so that it doesn't conflict 
+// open-next.local.config.ts -
+// A good practice would be to use a different name so that it doesn't conflict
 // with your existing open-next.config.ts i.e. open-next.local.config.ts
-import type {OpenNextConfig} from 'open-next/types/open-next'
+import type {OpenNextConfig} from '@opennextjs/aws/types/open-next'
 
 const config = {
   default: {
@@ -60,13 +60,13 @@ export default config
 // dev/wrapper.ts
 // You'll need to install express
 import express from 'express'
-// The proxy is used to proxy the image optimization server 
+// The proxy is used to proxy the image optimization server
 // you don't have to use it, but image request will return 500 error
 import proxy from 'express-http-proxy'
 import { fork } from 'child_process'
 
-import type { StreamCreator } from "open-next/http/openNextResponse";
-import type { WrapperHandler } from "open-next/types/open-next";
+import type { StreamCreator } from "@opennextjs/aws/http/openNextResponse";
+import type { WrapperHandler } from "@opennextjs/aws/types/overrides";
 
 const wrapper: WrapperHandler = async (handler, converter) => {
   const app = express();
@@ -120,7 +120,7 @@ export default {
 
 ```typescript
 // dev/incrementalCache.ts
-import type {IncrementalCache} from 'open-next/cache/incremental/types'
+import type { IncrementalCache } from '@opennextjs/aws/types/overrides'
 
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -157,7 +157,7 @@ export default cache
 
 ```typescript
 // dev/queue.ts
-import type {Queue} from 'open-next/queue/types'
+import type { Queue } from '@opennextjs/aws/types/overrides'
 
 declare global {
   // This is declared in the global scope so that we can use it in the queue
@@ -168,7 +168,7 @@ declare global {
 const queue: Queue = {
   name: 'dev-queue',
   send: async (message) => {
-    const prerenderManifest  = (await import('open-next/adapters/config')).PrerenderManifest as any
+    const prerenderManifest  = (await import('@opennextjs/aws/adapters/config')).PrerenderManifest as any
     const revalidateId : string = prerenderManifest.preview.previewModeId
     await globalThis.internalFetch(`http://localhost:3000${message.MessageBody.url}`, {
       method: "HEAD",
