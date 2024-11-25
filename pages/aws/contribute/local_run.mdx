@@ -7,7 +7,7 @@ node /path/to/open-next/packages/open-next/dist/index.js build --config-path ope
 # Then to run the server
 node .open-next/server-functions/default/index.mjs
 ```
-
+### open-next.local.config.ts
 ```typescript
 // open-next.local.config.ts - 
 // A good practice would be to use a different name so that it doesn't conflict 
@@ -55,6 +55,8 @@ const config = {
 
 export default config
 ```
+
+### dev/wrapper.ts
 
 ```typescript
 // dev/wrapper.ts
@@ -118,6 +120,7 @@ export default {
 };
 ```
 
+### dev/incrementalCache.ts
 ```typescript
 // dev/incrementalCache.ts
 import type {IncrementalCache} from 'open-next/cache/incremental/types'
@@ -154,6 +157,8 @@ const cache: IncrementalCache = {
 
 export default cache
 ```
+
+### dev/queue.ts
 
 ```typescript
 // dev/queue.ts

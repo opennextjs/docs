@@ -116,6 +116,12 @@ import { Tabs } from 'nextra/components'
       Add possibility to override the default queue. Used for ISR revalidation requests.
 
       Possible values are: `sqs`, `sqs-lite`, `dummy` or a `LazyLoadedOverride` that will return the queue.
+
+      #### `proxyExternalRequest`
+
+      Add possibility to override the default proxy for external request (i.e. next config external rewrites or middleware rewrites). Used in the external middleware or one of the server function.
+
+      Possible values are: `node`, `fetch`, `dummy` or a `LazyLoadedOverride` that will return the proxy. Default is `node`
     </Tabs.Tab>
     <Tabs.Tab>
       Every splitted server will have the same options as the default server. In addition to that, you can use the following options:

@@ -1,0 +1,9 @@
+This override is meant to convert request and response provided from your wrapper to the internal types that are used by OpenNext.
+
+If you want to better understand how to implement your own Converter, the easiest way would be to take a look at one of the existing included Converter [here](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/converters)
+
+Couple of things to note :
+- If you use a `StreamCreator` in your wrapper, you probably don't need to do anything in the `convertTo` function.
+- If used for the default, the image optimization, or one of the splitted server the internal types will be `InternalEvent` and `InternalResult` respectively.
+- If used for the external middleware, the internal types will be `InternalEvent` and `InternalResult | MiddlewareOutputEvent` respectively.
+- For the other server, look up their respective types in the codebase.
