@@ -65,8 +65,8 @@ import express from 'express'
 import proxy from 'express-http-proxy'
 import { fork } from 'child_process'
 
-import type { StreamCreator } from "@opennextjs/aws/http/openNextResponse";
-import type { WrapperHandler } from "@opennextjs/aws/types/overrides";
+import type { StreamCreator } from "@opennextjs/aws/http/openNextResponse.js";
+import type { WrapperHandler } from "@opennextjs/aws/types/overrides.js";
 
 const wrapper: WrapperHandler = async (handler, converter) => {
   const app = express();
