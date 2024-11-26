@@ -20,7 +20,7 @@ You'll still have to use a fallback value during dev as this is not used by the 
 ```ts
 // customConverter.ts
 import converter from '@opennextjs/aws/overrides/converters/aws-apigw-v2.js'
-import type { Converter } from '@opennextjs/aws/types/overrides'
+import type { Converter } from '@opennextjs/aws/types/overrides.js'
 import { Config } from 'sst/node/Config'
 const mySecretKey = Config.YOUR_SECRET_KEY
 
