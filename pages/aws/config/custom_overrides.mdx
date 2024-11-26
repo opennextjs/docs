@@ -3,7 +3,7 @@ import { Callout } from 'nextra/components'
 In some cases the simple example is not enough, and you want to add more customization to your server. This is where the lazy loaded overrides come in. You can override any part of the server by providing a function that returns a promise that resolves to the override object. This is useful when you want to add custom logic to your server, like adding a custom queue, or adding a custom converter.
 
 <Callout>
-Be careful if you use the edge runtime (either in a function or by using the external middleware), we do 2 compilations of the `open-next.config.ts`, one for node and one for the edge runtime. If you're using some custom overrides, you likely want to add 
+Be careful if you use the edge runtime (either in a function or by using the external middleware), we do 2 compilations of the `open-next.config.ts`, one for node and one for the edge runtime. If you're using some custom overrides, you likely want to add
 ```ts
 edgeExternals: ['./customWrapper', './anyOtherOverrideUsed']
 ```
@@ -13,14 +13,14 @@ to your `open-next.config.ts` to avoid the edge runtime to try to compile overri
 
 ## Custom converter
 
-Sometimes you might want to modify the object received by OpenNext. For example `Config.YOUR_SECRET_KEY` from sst cannot be used in the middleware, so you might want to add it to the headers. This is where the custom converter comes in. You can add a custom converter to modify the object before it is passed to OpenNext. 
+Sometimes you might want to modify the object received by OpenNext. For example `Config.YOUR_SECRET_KEY` from sst cannot be used in the middleware, so you might want to add it to the headers. This is where the custom converter comes in. You can add a custom converter to modify the object before it is passed to OpenNext.
 
 You'll still have to use a fallback value during dev as this is not used by the dev server.
 
 ```ts
 // customConverter.ts
-import converter from 'open-next/converters/aws-apigw-v2.js'
-import type { Converter } from 'open-next/types/open-next'
+import converter from '@opennextjs/aws/overrides/converters/aws-apigw-v2.js'
+import type { Converter } from '@opennextjs/aws/types/overrides.js'
 import { Config } from 'sst/node/Config'
 const mySecretKey = Config.YOUR_SECRET_KEY
 
@@ -28,7 +28,7 @@ export default {
   convertFrom: async (event) => {
     const result = await converter.convertFrom(event)
     return {
-      ...result, 
+      ...result,
       headers: {
         ...result.headers,
         'inserted-in-converter': '1',
@@ -52,7 +52,7 @@ export default {
 
 ```ts
 // open-next.config.ts
-import type { OpenNextConfig } from 'open-next/types/open-next'
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js'
 
 const config = {
   default: {
@@ -70,7 +70,7 @@ Here we provide a few examples for some custom wrapper.
 
 ```ts
 // customWrapper.ts
-import defaultWrapper from 'open-next/wrappers/aws-lambda.js'
+import defaultWrapper from '@opennextjs/aws/overrides/wrappers/aws-lambda.js'
 
 //Here you can define some globals
 declare global {
@@ -88,7 +88,7 @@ export default defaultWrapper
 
 ```ts
 // open-next.config.ts
-import type { OpenNextConfig } from 'open-next/types/open-next'
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js'
 const config = {
   default: {
     override: {
@@ -106,8 +106,8 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 // Here you need to mock the global if not present
-// One way to avoid issues with different implementation would be to create an api endpoint 
-// that uses the exact same logic as the global you defined earlier, 
+// One way to avoid issues with different implementation would be to create an api endpoint
+// that uses the exact same logic as the global you defined earlier,
 // and that is only available during development i.e. /api/dev/myApi
 if(!globalThis.myApi) {
   globalThis.myApi = async () => {
@@ -117,7 +117,7 @@ if(!globalThis.myApi) {
 
 export function middleware(request: NextRequest) {
   // You can also send an error in the api endpoint itself
-  // Or you could add all the dev endpoint in their own lambda 
+  // Or you could add all the dev endpoint in their own lambda
   // that you do not deploy in production
   if(request.nextUrl.pathname.startsWith('/api/dev') && process.env.NODE_ENV === 'production') {
     return NextResponse('This route is only available in development',{
@@ -129,7 +129,7 @@ export function middleware(request: NextRequest) {
 
   // ... your code here
 }
- 
+
 ```
 
 
@@ -137,8 +137,8 @@ export function middleware(request: NextRequest) {
 
 ```ts
 // customWrapper.ts
-import streamingWrapper from 'open-next/wrappers/aws-lambda.js'
-import {WrapperHandler} from 'open-next/types/open-next'
+import streamingWrapper from '@opennextjs/aws/overrides/wrappers/aws-lambda.js'
+import type { WrapperHandler } from '@opennextjs/aws/types/overrides.js'
 import middy from '@middy/core'
 import httpSecurityHeaders from '@middy/http-security-headers'
 
@@ -158,7 +158,7 @@ export default {
 
 ```ts
 // open-next.config.ts
-import type { OpenNextConfig } from 'open-next/types/open-next'
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js'
 const config = {
   default: {
     override: {
@@ -182,11 +182,11 @@ import type {
   APIGatewayProxyEventV2,
   APIGatewayProxyResultV2,
 } from "aws-lambda";
-import type { StreamCreator } from "open-next/http/openNextResponse";
+import type { StreamCreator } from "@opennextjs/aws/http/openNextResponse.js";
 import { Writable } from "node:stream";
 
-import { WarmerEvent, WarmerResponse } from "open-next/adapters/warmer-function";
-import type { WrapperHandler } from "open-next/types/open-next";
+import { WarmerEvent, WarmerResponse } from "@opennextjs/aws/adapters/warmer-function.js";
+import type { WrapperHandler } from "@opennextjs/aws/types/overrides.js";
 
 type AwsLambdaEvent =
   | APIGatewayProxyEventV2
@@ -268,7 +268,7 @@ export default {
 
 ```ts
 // open-next.config.ts
-import type { OpenNextConfig } from 'open-next/types/open-next'
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js'
 const config = {
   default: {
     override: {

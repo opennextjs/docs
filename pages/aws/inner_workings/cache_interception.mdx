@@ -16,7 +16,7 @@ To enable cache interception, you need to add `enableCacheInterception` option i
 
 ```ts
 // open-next.config.ts
-import type { OpenNextConfig } from 'open-next/types/open-next';
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js';
 const config = {
   default: {
   },
@@ -24,7 +24,7 @@ const config = {
     enableCacheInterception: true,
   },
 } satisfies OpenNextConfig;
- 
+
 export default config;
 
 ```
