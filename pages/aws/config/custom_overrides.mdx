@@ -185,8 +185,8 @@ import type {
 import type { StreamCreator } from "@opennextjs/aws/http/openNextResponse.js";
 import { Writable } from "node:stream";
 
-import { WarmerEvent, WarmerResponse } from "@opennextjs/aws/adapters/warmer-function";
-import type { WrapperHandler } from "@opennextjs/aws/types/overrides";
+import { WarmerEvent, WarmerResponse } from "@opennextjs/aws/adapters/warmer-function.js";
+import type { WrapperHandler } from "@opennextjs/aws/types/overrides.js";
 
 type AwsLambdaEvent =
   | APIGatewayProxyEventV2
