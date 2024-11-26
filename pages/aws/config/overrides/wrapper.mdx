@@ -1,6 +1,6 @@
 This is the main entrypoint of the server. It is used for every server and allow you to run either in serverless mode or as a long running server.
 
-If you want to better understand how to implement your own Wrapper, the easiest way would be to take a look at one of the existing included Wrapper [here](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/wrappers).
+If you want to better understand how to implement your own Wrapper, the easiest way would be to take a look at one of the existing [included Wrapper](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/wrappers).
 
 Couple of things to note :
 - If you want to use streaming (for the `node` runtime of next), you'll need to create a `StreamCreator` and pass it to the `handler`. You can find some example in the [node](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/wrappers/node.ts) or [aws-lambda-streaming](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/wrappers/aws-lambda-streaming.ts) wrapper.
