@@ -168,7 +168,7 @@ declare global {
 const queue: Queue = {
   name: 'dev-queue',
   send: async (message) => {
-    const prerenderManifest  = (await import('@opennextjs/aws/adapters/config')).PrerenderManifest as any
+    const prerenderManifest  = (await import('@opennextjs/aws/adapters/config.js')).PrerenderManifest as any
     const revalidateId : string = prerenderManifest.preview.previewModeId
     await globalThis.internalFetch(`http://localhost:3000${message.MessageBody.url}`, {
       method: "HEAD",
