@@ -138,7 +138,7 @@ export function middleware(request: NextRequest) {
 ```ts
 // customWrapper.ts
 import streamingWrapper from '@opennextjs/aws/overrides/wrappers/aws-lambda.js'
-import type { WrapperHandler } from '@opennextjs/aws/types/overrides'
+import type { WrapperHandler } from '@opennextjs/aws/types/overrides.js'
 import middy from '@middy/core'
 import httpSecurityHeaders from '@middy/http-security-headers'
 
