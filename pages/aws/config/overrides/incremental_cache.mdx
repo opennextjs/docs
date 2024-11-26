@@ -1,0 +1,8 @@
+This override is used by the [`cache` adapter](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/adapters/cache.ts) that is provided by OpenNext to the NextServer. It is also used by OpenNext if `enableCacheInterception` is set to `true` in the configuration.
+
+It is used for retrieving and updating the ISR/SSG cache as well as the fetch cache used by Next.js. It does not handle anything related to cache tags (i.e. `revalidateTag` and `revalidatePath`)
+
+If you want to better understand how to implement your own IncrementalCache, the easiest way would be to take a look at the existing [included IncrementalCache](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/incrementalCache).
+
+One thing to note is that it is not used at build time, only at runtime. This means that you'll have to upload the cache yourself if you want to use the prebuilt routes/pages (And this is mandatory for ISR/SSG routes with `fallback:false`).
+All the cache files are present in the `.open-next/cache` folder. The one under `BUILD_ID` are for the ISR/SSG cache and the one under `__fetch/BUILD_ID` are for the fetch cache.

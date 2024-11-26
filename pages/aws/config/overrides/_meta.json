@@ -1,0 +1,11 @@
+{
+  "wrapper": "Wrapper",
+  "converter": "Converter",
+  "incremental_cache": "Incremental Cache",
+  "tag_cache": "Tag Cache",
+  "queue": "Revalidation Queue",
+  "image_loader": "Image Loader",
+  "proxy_external_request": "External Request Proxy",
+  "origin_resolver": "Origin Resolver",
+  "invoke_function": "Invoke Function for the warmer"
+}

@@ -1,0 +1,5 @@
+This override is used by OpenNext and more specifically by the image server to be able to load images from a custom source. Images are not bundled with the image server and are loaded from the source specified in the override.
+
+This is used for internal image only (i.e. src without host). External source are already handled by the image server.
+
+If you want to better understand how to implement your own ImageLoader, the easiest way would be to take a look at the existing [included ImageLoader](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/imageLoader).

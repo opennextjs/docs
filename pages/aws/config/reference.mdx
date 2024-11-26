@@ -38,14 +38,14 @@ import { Tabs } from 'nextra/components'
 
       ---
 
-      #### `wrapper`
+      #### [`wrapper`](overrides/wrapper)
 
       This is the entrypoint of the server. 
       Be aware that it might not be enough to change this to make it work on said platform. This is only the entrypoint, you might need to change other parts of the server to make it work on the platform.
 
       Possible values are: `aws-lambda`, `aws-lambda-streaming`, `node`, `cloudflare`, `dummy` or a `LazyLoadedOverride` that will return the wrapper.
 
-      #### `converter`
+      #### [`converter`](overrides/converter)
 
       This is the converter that will be used to convert the input and output for the server.
 
@@ -99,23 +99,29 @@ import { Tabs } from 'nextra/components'
 
       For both default and splitted server, in addition to `override` in the common options, you can also use the following options:
 
-      #### `incrementalCache`
+      #### [`incrementalCache`](overrides/incremental_cache)
 
       Add possibility to override the default s3 cache. Used for fetch cache and html/rsc/json cache.
 
       Possible values are: `s3`, `s3-lite`, `dummy` or a `LazyLoadedOverride` that will return the incremental cache.
 
-      #### `tagCache`
+      #### [`tagCache`](overrides/tag_cache)
 
       Add possibility to override the default tag cache. Used for revalidateTags and revalidatePath.
 
       Possible values are: `dynamodb`, `dynamodb-lite`, `dummy` or a `LazyLoadedOverride` that will return the tag cache.
 
-      #### `queue`
+      #### [`queue`](overrides/queue)
 
       Add possibility to override the default queue. Used for ISR revalidation requests.
 
       Possible values are: `sqs`, `sqs-lite`, `dummy` or a `LazyLoadedOverride` that will return the queue.
+
+      #### [`proxyExternalRequest`](overrides/proxy_external_request)
+
+      Add possibility to override the default proxy for external request (i.e. next config external rewrites or middleware rewrites). Used in the external middleware or one of the server function.
+
+      Possible values are: `node`, `fetch`, `dummy` or a `LazyLoadedOverride` that will return the proxy. Default is `node`
     </Tabs.Tab>
     <Tabs.Tab>
       Every splitted server will have the same options as the default server. In addition to that, you can use the following options:
@@ -155,7 +161,7 @@ import { Tabs } from 'nextra/components'
 
       It uses the same options as the default server. `incrementalCache`, `tagCache` and `queue` are only used when `enableCacheInterception` is set to true.
 
-      ### `originResolver`
+      ### [`originResolver`](overrides/origin_resolver)
 
       Origin resolver is used to resolve the origin for internal rewrite. By default, it uses the pattern-env origin resolver.
       
@@ -164,7 +170,7 @@ import { Tabs } from 'nextra/components'
     <Tabs.Tab>
       Image optimization server is a special server that will handle the `_next/image` optimization. Besides the common options, you can use the following options:
 
-      ### `loader`
+      ### [`loader`](overrides/image_loader)
       The image loader is used to load the image from the source.
 
       Possible values are: `s3`, `host`, `dummy` or a `LazyLoadedOverride` that will return the loader.
@@ -175,7 +181,7 @@ import { Tabs } from 'nextra/components'
     <Tabs.Tab>
       Warmer is a special server that will be used to warm the lambda function. Besides the common options, you can use the following options:
 
-      ### `invokeFunction`
+      ### [`invokeFunction`](overrides/invoke_function)
 
       By default, works for lambda only.
       If you override this, you'll need to handle the warmer event in the wrapper

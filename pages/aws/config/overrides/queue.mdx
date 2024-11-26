@@ -1,0 +1,8 @@
+This override is used by OpenNext to trigger the revalidation of stale routes.
+Before sending the response to the client, OpenNext will check if the route is stale and if it is, it will call the queue override to revalidate the route.
+
+If you want to better understand how to implement your own Queue, the easiest way would be to take a look at the existing [included Queue](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/queue).
+
+Couple of things to note :
+- The default implementation use an SQS queue. This has the main advantage of being able to control the concurrency of the revalidations as well as avoiding trigerring the revalidation multiple times for the same route.
+- You don't have to use a queue at all. You could trigger the revalidation directly in the Queue override itself. You can see a very simple implementation of this [in the `queue` override](/aws/contribute/local_run#devqueuets).

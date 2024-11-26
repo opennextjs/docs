@@ -3,5 +3,6 @@
   "custom_overrides": "Custom Overrides",
   "reference": "Reference",
   "full_example": "Full Example",
-  "nx": "Nx Monorepo"
+  "nx": "Nx Monorepo",
+  "overrides": "Overrides"
 }
