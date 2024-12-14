@@ -64,11 +64,15 @@ This can also happen in app router when a client navigates via NextJS `<Link>` c
 The issue might be that your having a folder or file in your `public` directory with an overlapping between the name and your route. In this case, you should rename that to something else.
 
 
-#### Sentry does not work for api/server side + `cannot find module './chunks/3381.js'` error
+#### `cannot find module './chunks/xxxx.js'` error
 
-Sentry didn't work with the config recommended by Sentry docs which has `instrumentation.ts` with dynamic imports. This setup is causing `cannot find module './chunks/3381.js'` at runtime.
+Dynamic imports in `instrumentation.ts` will cause this error at runtime. Remove dynamic imports to resolve.
 
-Here's a working implementation which resolves the error:
+#### Sentry server side setup
+
+The config recommended by Sentry docs uses dynamic imports in `instrumentation.ts`, which causes the above error.
+
+Here's a working Sentry config which resolves the error:
 
 `instrumentation.ts`
 ```typescript
