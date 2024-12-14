@@ -62,3 +62,35 @@ If you are refreshing a dynamic/static route or going to that route directly fro
 This can also happen in app router when a client navigates via NextJS `<Link>` component.
 
 The issue might be that your having a folder or file in your `public` directory with an overlapping between the name and your route. In this case, you should rename that to something else.
+
+
+#### Sentry does not work for api/server side + `cannot find module './chunks/3381.js'` error
+
+Sentry didn't work with the config recommended by Sentry docs which has `instrumentation.ts` with dynamic imports. This setup is causing `cannot find module './chunks/3381.js'` at runtime.
+
+Here's a working implementation which resolves the error:
+
+`instrumentation.ts`
+```typescript
+import * as Sentry from '@sentry/nextjs';
+import { initSentry } from '../sentry.server.config';
+
+export const onRequestError = Sentry.captureRequestError;
+
+export async function register() {
+  initSentry(process.env.NEXT_RUNTIME as 'nodejs' | 'edge');
+}
+```
+
+`sentry.server.config.ts`
+```typescript
+import * as Sentry from '@sentry/nextjs';
+
+export const initSentry = (runtime: 'nodejs' | 'edge') => {
+  Sentry.init({
+    dsn: 'https://...',
+
+    //...rest of your config
+  });
+};
+```
