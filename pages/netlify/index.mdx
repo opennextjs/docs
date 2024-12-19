@@ -69,6 +69,8 @@ Currently, Netlify's Next.js adapter has the following limitations:
 
 - **Rewrites in your Next.js configuration can’t point to static files in the `public` directory.** If you create `beforeFiles` rewrites in your `next.config.js`, they can’t point to static files in your site’s `public` directory. You can use middleware rewrites as an alternative.
 
+- **Headers and Redirects are evaluated after middleware.** If you need to maintain the execution order specified in the Next.js [docs](https://nextjs.org/docs/app/building-your-application/routing/middleware#matching-paths) you will need to configure your [headers](https://docs.netlify.com/routing/headers/) and [redirects](https://docs.netlify.com/routing/redirects/) outside of Next.js using our platform primitives.
+
 - **Netlify Forms compatibility:** Using Netlify Forms with the current adapter [requires a workaround](/netlify/forms).
 
 ### pnpm support
