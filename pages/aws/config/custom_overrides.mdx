@@ -182,10 +182,10 @@ import type {
   APIGatewayProxyEventV2,
   APIGatewayProxyResultV2,
 } from "aws-lambda";
-import type { StreamCreator } from "@opennextjs/aws/http/openNextResponse.js";
 import { Writable } from "node:stream";
 
 import { WarmerEvent, WarmerResponse } from "@opennextjs/aws/adapters/warmer-function.js";
+import type { StreamCreator } from "@opennextjs/aws/types/open-next.js";
 import type { WrapperHandler } from "@opennextjs/aws/types/overrides.js";
 
 type AwsLambdaEvent =
@@ -247,9 +247,6 @@ const handler: WrapperHandler =
             callback();
           },
         });
-      },
-      onFinish: () => {
-        // Do nothing
       },
     };
 
