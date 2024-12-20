@@ -1,17 +1,13 @@
-import { SITE } from '../../config';
+import { SITE } from '../../../config';
 import { Callout } from 'nextra/components';
 
 ## Caching
 
-`@opennextjs/cloudflare` supports [caching](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#caching-data).
+`@opennextjs/cloudflare` supports [caching](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#caching-data) and [revalidating](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data) data returned by subrequests you make in your app by calling [`fetch()`](https://developers.cloudflare.com/workers/runtime-apis/fetch/).
 
 By default, all `fetch()` subrequests made in your Next.js app are cached. Refer to the [Next.js documentation](https://nextjs.org/docs/app/building-your-application/caching#opting-out-1) for information about how to disable caching for an individual subrequest, or for an entire route.
 
 [The cache persists across deployments](https://nextjs.org/docs/app/building-your-application/caching#data-cache). You are responsible for revalidating/purging this cache.
-
-Note that [Revalidating](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data) is not yet supported.
-
-Next.js primes the cache at build time. The build time values are serverd by the [Workers Assets](https://developers.cloudflare.com/workers/static-assets/).
 
 <Callout>
 Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be reflected globally, when using the default TTL of 60 seconds.
@@ -31,7 +27,7 @@ npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
 
 #### 2. Add the KV namespace to your Worker
 
-The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`.
+The binding name used in your app's worker will be `NEXT_CACHE_WORKERS_KV` by default. This is configurable and can be changed by setting the `__OPENNEXT_KV_BINDING_NAME` build-time environment variable.
 
 ```
 [[kv_namespaces]]

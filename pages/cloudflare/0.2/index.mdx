@@ -1,4 +1,4 @@
-import { SITE } from '../../config';
+import { SITE } from '../../../config';
 import { Callout } from 'nextra/components';
 
 ## Cloudflare
@@ -24,7 +24,7 @@ npm create cloudflare@latest -- my-next-app --framework=next --experimental
 
 ##### Existing Next.js apps
 
-Follow the guide [here](/cloudflare/get-started) to use [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare) with an existing Next.js app.
+Follow the guide [here](/cloudflare/0.2/get-started) to use [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare) with an existing Next.js app.
 
 ### Supported Next.js runtimes
 
@@ -34,33 +34,33 @@ This is an important difference from `@cloudflare/next-on-pages`, which only sup
 
 ### Supported Next.js versions
 
-`@opennextjs/cloudflare` is pre 1.0, and still in active development. We intend to support all minor and patch version of Next.js 13, 14, and 15.
+`@opennextjs/cloudflare` is pre 1.0, and still in active development. We intend to support all minor and patch version of Next.js 13 and 14, as well as Next.js 15 when it is released. (currently a release candidate)
 
 To help improve compatibility, we encourage you to [report bugs](https://github.com/opennextjs/opennextjs-cloudflare/issues) and contribute code!
 
 ### Supported Next.js features
-
-Some Next.js features are not yet supported are not fully tested.
-We will update the list as we progress towards releasing 1.0.
 
 - [x] [App Router](https://nextjs.org/docs/app)
 - [x] [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)
 - [x] [Dynamic routes](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes)
 - [x] [Static Site Generation (SSG)](https://nextjs.org/docs/app/building-your-application/rendering/server-components#static-rendering-default)
 - [x] [Server-Side Rendering (SSR)](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
-- [x] [Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
-- [x] [Image optimization](https://nextjs.org/docs/app/building-your-application/optimizing/images) (you can integrate Cloudflare Images with Next.js by following [this guide](https://developers.cloudflare.com/images/transform-images/integrate-with-frameworks/))
+
+### Not Yet Supported Next.js features
+
+The following Next.js features are not yet supported — but we welcome both contributions and feedback! Tell us what you'd like to see, or what you'd like to add support for:
+
 - [ ] [Pages Router](https://nextjs.org/docs/pages) (you should use the App Router instead, which was introduced in Next.js 13)
 - [ ] [Incremental Static Regeneration (ISR)](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration)
 - [ ] [Partial Prerendering (PPR)](https://nextjs.org/docs/app/building-your-application/rendering/partial-prerendering)
+- [ ] [Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
+- [ ] [Image optimization](https://nextjs.org/docs/app/building-your-application/optimizing/images) (you can integrate Cloudflare Images with Next.js by following [this guide](https://developers.cloudflare.com/images/transform-images/integrate-with-frameworks/))
 - [ ] [Experimental streaming support](https://nextjs.org/blog/next-15-rc#executing-code-after-a-response-with-nextafter-experimental)
-
-We welcome both contributions and feedback!
 
 ### How @opennextjs/cloudflare Works
 
 The OpenNext Cloudflare adapter works by taking the Next.js build output and transforming it, so that it can run in Cloudflare Workers.
 
-When you add [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare) as a dependency to your Next.js app, and then run `npx opennextjs-cloudflare` the adapter first builds your app by running `next build`, and then transforms the build output to a format that you can run locally using [Wrangler](https://developers.cloudflare.com/workers/wrangler/), and deploy to Cloudflare.
+When you add [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare) as a dependency to your Next.js app, and then run `npx cloudflare` the adapter first builds your app by running `next build`, and then transforms the build output to a format that you can run locally using [Wrangler](https://developers.cloudflare.com/workers/wrangler/), and deploy to Cloudflare.
 
 You can view the code for @opennextjs/cloudflare [here](https://github.com/opennextjs/opennextjs-cloudflare/blob/main/packages/cloudflare/src) to understand what it does under the hood.
