@@ -87,8 +87,17 @@ export default config;
 
 You can either install the `@opennextjs/aws` NPM package to get the types or `open-next.config.ts` to the [`exclude`](https://www.typescriptlang.org/tsconfig/#exclude) configuration key of your `tsconfig.json`.
 
+##### 4. Add a `.dev.vars` file
 
-##### 4. Update `package.json`
+Then, add a [`.dev.vars`](https://developers.cloudflare.com/workers/testing/local-development/#local-only-environment-variables) file to the root directory of your Next.js app:
+
+```text
+NEXTJS_ENV=development
+```
+
+The `NEXTJS_ENV` variable defines the environment to use when loading Next.js `.env` files. It defaults to "production" when not defined.
+
+##### 5. Update `package.json`
 
 Add the following to the scripts field of your `package.json` file:
 
@@ -104,11 +113,11 @@ Add the following to the scripts field of your `package.json` file:
 - `npm run preview:worker`: Runs `build:worker` and then `dev:worker`, allowing you to quickly preview your app running locally in the Workers runtime, via a single command.
 - `npm run deploy`: Builds your app, and then deploys it to Cloudflare
 
-### 5. Add caching with Workers KV
+### 6. Add caching with Workers KV
 
 See the [Caching docs](/cloudflare/caching) for information on enabling Next.js caching in your OpenNext project.
 
-### 6. Remove `@cloudflare/next-on-pages` (if necessary)
+### 7. Remove `@cloudflare/next-on-pages` (if necessary)
 
 If your Next.js app currently uses `@cloudflare/next-on-pages`, you'll want to remove it, and make a few changes.
 
@@ -159,7 +168,7 @@ And you'll want to replace any uses of `getRequestContext` from `@cloudflare/nex
 + import { getCloudflareContext } from "@opennextjs/cloudflare";
 ```
 
-##### 7. Develop locally
+##### 8. Develop locally
 
 You can continue to run `next dev` when developing locally.
 
@@ -167,7 +176,7 @@ During local development, you can access local versions of Cloudflare bindings a
 
 In step 3, we also added the `npm run preview:worker`, which allows you to quickly preview your app running locally in the Workers runtime, rather than in Node.js. This allows you to test changes in the same runtime as your app will run in when deployed to Cloudflare.
 
-##### 8. Deploy to Cloudflare Workers
+##### 9. Deploy to Cloudflare Workers
 
 Either deploy via the command line:
 
