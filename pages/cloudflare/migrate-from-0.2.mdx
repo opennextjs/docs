@@ -20,7 +20,8 @@ compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
 # The binding name must be "ASSETS" when the cache is enabled
-assets = { directory = ".worker-next/assets", binding = "ASSETS" }
+# CHANGED: output folder location
+assets = { directory = ".open-next/assets", binding = "ASSETS" }
 ```
 
 ##### 2. Add a `open-next.config.ts` file
@@ -36,7 +37,7 @@ const config: OpenNextConfig = {
     override: {
       wrapper: "cloudflare-node",
       converter: "edge",
-      // Set `incrementalCache` to "dummy" yo disable KV cache
+      // Set `incrementalCache` to "dummy" to disable KV cache
       incrementalCache: async () => cache,
       tagCache: "dummy",
       queue: "dummy",
