@@ -1,4 +1,4 @@
-import { SITE } from '../../config';
+import { SITE } from '../../../config';
 import { Callout } from 'nextra/components';
 
 ## Examples
@@ -6,22 +6,15 @@ import { Callout } from 'nextra/components';
 To create a new Next.js app, pre-configured to run on Cloudflare using @opennextjs/cloudflare, run:
 
 ```
-npm create cloudflare@latest -- --template https://github.com/flarelabs-net/workers-next
+npm create cloudflare@latest -- my-next-app --framework=next --experimental
 ```
-
-<Callout>
-The experimental template for the Next framework is still based on 0.2.
-Use the template from `flarelabs-net/workers-next` as indicated above to use 0.3.
-</Callout>
 
 ### Basic starter projects
 
-Basic example apps are included in the repository for `@opennextjs/cloudflare` package:
+Two basic example apps are included in the repository for `@opennextjs/cloudflare` package:
 
 - [*`create-next-app`*](https://github.com/opennextjs/opennextjs-cloudflare/tree/main/examples/create-next-app) — a Next.js project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 - [*`api`*](https://github.com/opennextjs/opennextjs-cloudflare/tree/main/examples/api) — a minimal Next.js project with a single API route
-- [*`middleware`*](https://github.com/opennextjs/opennextjs-cloudflare/tree/main/examples/middleware) — a minimal Next.js project using middleware
-- [*`vercel-blog-starter`*](https://github.com/opennextjs/opennextjs-cloudflare/tree/main/examples/vercel-blog-starter) — a blog project using SSG
 
 You can use these to understand how to configure your Next.js app to use `@opennextjs/cloudflare`, or refer to [Get Started](/cloudflare/get-started).
 

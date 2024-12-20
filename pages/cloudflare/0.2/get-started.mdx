@@ -1,4 +1,4 @@
-import { SITE } from '../../config';
+import { SITE } from '../../../config';
 import { Callout } from 'nextra/components';
 
 ### Get Started
@@ -8,13 +8,8 @@ import { Callout } from 'nextra/components';
 To create a new Next.js app, pre-configured to run on Cloudflare using @opennextjs/cloudflare, run:
 
 ```
-npm create cloudflare@latest -- --template https://github.com/flarelabs-net/workers-next
+npm create cloudflare@latest -- my-next-app --framework=next --experimental
 ```
-
-<Callout>
-The experimental template for the Next framework is still based on 0.2.
-Use the template from `flarelabs-net/workers-next` as indicated above to use 0.3.
-</Callout>
 
 #### Existing Next.js apps
 
@@ -35,19 +30,16 @@ npm install -D wrangler@latest
 ```
 
 <Callout>
-You must use Wrangler version `3.99.0` or later to deploy Next.js apps using `@opennextjs/cloudflare`.
+You must use Wrangler version `3.78.10` or later to deploy Next.js apps using `@opennextjs/cloudflare`.
 </Callout>
 
 Then, add a [`wrangler.toml`](https://developers.cloudflare.com/workers/wrangler/configuration/) file to the root directory of your Next.js app:
 
 ```toml
-main = ".open-next/worker.js"
+main = ".worker-next/index.mjs"
 name = "my-app"
-
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
-
-# The binding name must be "ASSETS" when the cache is enabled
 assets = { directory = ".worker-next/assets", binding = "ASSETS" }
 ```
 
@@ -57,57 +49,12 @@ As shown above, you must enable the [`nodejs_compat` compatibility flag](https:/
 
 `wrangler.toml` is where you configure your Worker and define what resources it can access via [bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings).
 
-##### 3. Add a `open-next.config.ts` file
-
-Then, add a [`open-next.config.ts`](https://opennext.js.org/aws/config) file to the root directory of your Next.js app:
-
-```ts
-import type { OpenNextConfig } from "@opennextjs/aws/types/open-next";
-import cache from "@opennextjs/cloudflare/kvCache";
-
-const config: OpenNextConfig = {
-  default: {
-    override: {
-      wrapper: "cloudflare-node",
-      converter: "edge",
-      // Set `incrementalCache` to "dummy" to disable KV cache
-      incrementalCache: async () => cache,
-      tagCache: "dummy",
-      queue: "dummy",
-    },
-  },
-
-  middleware: {
-    external: true,
-    override: {
-      wrapper: "cloudflare-edge",
-      converter: "edge",
-      proxyExternalRequest: "fetch",
-    },
-  },
-};
-
-export default config;
-```
-
-You can either install the `@opennextjs/aws` NPM package to get the types or `open-next.config.ts` to the [`exclude`](https://www.typescriptlang.org/tsconfig/#exclude) configuration key of your `tsconfig.json`.
-
-##### 4. Add a `.dev.vars` file
-
-Then, add a [`.dev.vars`](https://developers.cloudflare.com/workers/testing/local-development/#local-only-environment-variables) file to the root directory of your Next.js app:
-
-```text
-NEXTJS_ENV=development
-```
-
-The `NEXTJS_ENV` variable defines the environment to use when loading Next.js `.env` files. It defaults to "production" when not defined.
-
-##### 5. Update `package.json`
+##### 3. Update `package.json`
 
 Add the following to the scripts field of your `package.json` file:
 
 ```json
-"build:worker": "opennextjs-cloudflare",
+"build:worker": "cloudflare",
 "dev:worker": "wrangler dev --port 8771",
 "preview:worker": "npm run build:worker && npm run dev:worker",
 "deploy:worker": "npm run build:worker && wrangler deploy"
@@ -118,22 +65,21 @@ Add the following to the scripts field of your `package.json` file:
 - `npm run preview:worker`: Runs `build:worker` and then `dev:worker`, allowing you to quickly preview your app running locally in the Workers runtime, via a single command.
 - `npm run deploy`: Builds your app, and then deploys it to Cloudflare
 
-### 6. Add caching with Workers KV
+### 4. Add caching with Workers KV
 
-See the [Caching docs](/cloudflare/caching) for information on enabling Next.js caching in your OpenNext project.
+See the [Caching docs](/cloudflare/0.2/caching) for information on enabling Next.js caching in your OpenNext project.
 
-### 7. Remove `@cloudflare/next-on-pages` (if necessary)
+### 5. Remove `@cloudflare/next-on-pages` (if necessary)
 
 If your Next.js app currently uses `@cloudflare/next-on-pages`, you'll want to remove it, and make a few changes.
 
 #### Remove `export const runtime = "edge";`
 
-Before deploying your app, remove the `export const runtime = "edge";` line from your `next.config.js` file.
-The edge runtime is not supported yet with `@opennextjs/cloudflare`.
+Before deploying your app, remove the `export const runtime = "edge";` line from your `next.config.js` file. This line is not needed when using `@opennextjs/cloudflare`.
 
-#### Add `.open-next` to `.gitignore`
+#### Add `.worker-next` to `.gitignore`
 
-You should add `.open-next` to your `.gitignore` file to prevent the build output from being committed to your repository.
+You should add `.worker-next` to your `.gitignore` file to prevent the build output from being committed to your repository.
 
 #### Uninstall `@cloudflare/next-on-pages`
 
@@ -173,7 +119,7 @@ And you'll want to replace any uses of `getRequestContext` from `@cloudflare/nex
 + import { getCloudflareContext } from "@opennextjs/cloudflare";
 ```
 
-##### 8. Develop locally
+##### 6. Develop locally
 
 You can continue to run `next dev` when developing locally.
 
@@ -181,7 +127,7 @@ During local development, you can access local versions of Cloudflare bindings a
 
 In step 3, we also added the `npm run preview:worker`, which allows you to quickly preview your app running locally in the Workers runtime, rather than in Node.js. This allows you to test changes in the same runtime as your app will run in when deployed to Cloudflare.
 
-##### 9. Deploy to Cloudflare Workers
+##### 7. Deploy to Cloudflare Workers
 
 Either deploy via the command line:
 
