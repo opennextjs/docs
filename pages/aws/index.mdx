@@ -1,5 +1,6 @@
 import { SITE } from '../../config';
 import { Callout } from 'nextra/components';
+import WindowsSupport from '../../shared/WindowsSupport.mdx';
 
 <Callout>
 This docs is for the V3 of OpenNext. If you are looking for the V2 docs, you can find them [here](/aws/v2).
@@ -45,16 +46,7 @@ OpenNext aims to support all Next.js 14 features. Some features are work in prog
 ---
 
 <Callout type='info'>
-
-OpenNext can be used on Windows systems but Windows full support is not guaranteed because:
- - historically the Next.js tooling itself has had Windows support issues
-   (and OpenNext is built on these tools)
- - the OpenNext team has limited capacity and fully supporting Windows (given the point above)
-   has been determined to be a lower priority, thus the effort and testing on Windows is limited
-
-Given the above, you can develop your application under Windows at your own risk. If you don't have an alternative we
-recommend running OpenNext using [WSL2](https://learn.microsoft.com/en-us/windows/wsl/) or in a Linux Virtual Machine.
-
+    <WindowsSupport />
 </Callout>
 
 ---
