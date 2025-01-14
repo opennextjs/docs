@@ -33,8 +33,15 @@ npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
 
 The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`.
 
-```
-[[kv_namespaces]]
-binding = "NEXT_CACHE_WORKERS_KV"
-id = "<YOUR_NAMESPACE_ID>"
+```jsonc
+// wrangler.json
+{
+  // ...
+  "kv_namespaces": [
+    {
+      "binding": "NEXT_CACHE_WORKERS_KV",
+      "id": "<BINDING_ID>"
+    }
+  ]
+}
 ```
