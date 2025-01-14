@@ -7,7 +7,7 @@ import { Callout } from 'nextra/components';
 
 #### How to configure your Next.js app so it can access bindings
 
-Install [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare), and then add a `wrangler.toml` file in the root directory of your Next.js app, as described in [Get Started](/cloudflare/get-started).
+Install [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare), and then add a [wrangler configuration file](https://developers.cloudflare.com/workers/wrangler/configuration/) in the root directory of your Next.js app, as described in [Get Started](/cloudflare/get-started#3-create-a-wranglerjson-file).
 
 #### How to access bindings in your Next.js app
 
@@ -29,7 +29,7 @@ export async function GET(request) {
 
 #### How to add bindings to your Worker
 
-Add bindings to your Worker by [adding them to your `wrangler.toml` configuration file](https://developers.cloudflare.com/workers/wrangler/configuration/).
+Add bindings to your Worker by adding them to your [wrangler configuration file](https://developers.cloudflare.com/workers/wrangler/configuration/).
 
 ## TypeScript type declarations for bindings
 

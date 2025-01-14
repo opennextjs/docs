@@ -33,16 +33,16 @@ npm install --save-dev wrangler@latest
 You must use Wrangler version `3.99.0` or later to deploy Next.js apps using `@opennextjs/cloudflare`.
 </Callout>
 
-##### 3. Create a `wrangler.json` file
+##### 3. Create a wrangler configuration file
 
 <Callout type='info'>
 This step is optional since `@opennextjs/cloudflare` creates this file for you during the build process (if not already present).
 </Callout>
 
-A [`wrangler.json`](https://developers.cloudflare.com/workers/wrangler/configuration/) file is needed for your
+A [wrangler configuration file](https://developers.cloudflare.com/workers/wrangler/configuration/) is needed for your
 application to be previewed and deployed, it is also where you configure your Worker and define what resources it can access via [bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings).
 
-You can create one yourself with the following content:
+You can create one yourself in the root directory of your Next.js app with the name `wrangler.json` and the following content:
 ```jsonc
 {
   "main": ".open-next/worker.js",

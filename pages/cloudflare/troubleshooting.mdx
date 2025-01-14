@@ -17,7 +17,8 @@ The Cloudflare Account you are deploying to is on the Workers Free plan, which [
 
 ### My app fails to build when I import a specific NPM package
 
-First, make sure that the `nodejs_compat` compatibility flag is enabled, and your compatibility date is set to on or after "2024-09-23", in your `wrangler.toml` file. [Refer to the Workers docs](https://developers.cloudflare.com/workers/runtime-apis/nodejs/) for more details on Node.js support in Cloudflare Workers.
+First, make sure that the `nodejs_compat` compatibility flag is enabled, and your compatibility date is set to on or after "2024-09-23", in your [wrangler configuration file](https://developers.cloudflare.com/workers/wrangler/configuration/).
+Refer to the [Node.js Workers docs](https://developers.cloudflare.com/workers/runtime-apis/nodejs/) for more details on Node.js support in Cloudflare Workers.
 
 Some NPM packages define multiple exports. For example:
 
