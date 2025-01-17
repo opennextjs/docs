@@ -20,7 +20,7 @@ Cloudfront invalidation can be very expensive. Manual CloudFront path invalidati
 
 > No additional charge for the first 1,000 paths requested for invalidation each month. Thereafter, $0.005 per path requested for invalidation.
 
-This implementation will request 2 path invalidation requests for every route that needs to be invalidated (one for the route itself and one for the data route).
+This implementation will send an invalidation request for every route that needs to be invalidated (the request invalidates 2 paths, one for the route itself and one for the data route).
 
 Tag cache invalidation could end up triggering thousands of invalidation requests.
 
