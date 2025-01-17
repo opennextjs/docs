@@ -7,3 +7,62 @@ Couple of things to note :
 - If you don't use streaming (like in the default `aws-lambda` wrapper), you may still need to provide a fake `StreamCreator` to the `handler` to avoid a weird issue with Node itself (see [here](https://github.com/opennextjs/opennextjs-aws/blob/f685ddea8f8a5c82591dc02713aff7138f2d9896/packages/open-next/src/overrides/wrappers/aws-lambda.ts#L49-L65) for an example and a more thorough explanation).
 - If you use the `edge` runtime of Next (either for the external middleware or for an `edge` route or page), you don't need the `StreamCreator` at all.
 - If you are in a serverless environment and it supports `waitUntil`, you should define it here(see [here](https://github.com/opennextjs/opennextjs-aws/blob/f685ddea8f8a5c82591dc02713aff7138f2d9896/packages/open-next/src/overrides/wrappers/cloudflare.ts#L29)). This might not be necessary depending on where you run it (for example the `aws-lambda-streaming` or the `node` wrapper doesn't need it.)
+
+
+## Included Wrappers
+
+### aws-lambda
+
+The `aws-lambda` Wrapper is the default wrapper for AWS Lambda. It is used by default if you don't provide any Wrapper in your configuration.
+
+#### Features
+- [ ] Streaming
+- [ ] Proper support for `waitUntil`
+
+### aws-lambda-streaming
+
+The `aws-lambda-streaming` Wrapper is a wrapper that allows you to use streaming in AWS Lambda. Streaming must be enabled for this lambda.
+
+#### Features
+- [x] Streaming
+- [x] Proper support for `waitUntil`
+
+### cloudflare-edge
+
+The `cloudflare-edge` Wrapper is the wrapper for Cloudflare Workers. It should be used for the external middleware and for the `edge` runtime of Next.
+
+#### Features
+- [x] Streaming
+- [x] Proper support for `waitUntil`
+
+### cloudflare-node
+
+The `cloudflare-node` Wrapper is the wrapper for Cloudflare Workers. It should be used only with the `node` runtime of Next and if you use `@opennextjs/cloudflare`.
+
+#### Features
+- [x] Streaming
+- [x] Proper support for `waitUntil`
+
+### node
+
+The `node` Wrapper is the wrapper for classic Node.js Server. This one is a long running server.
+
+#### Features
+- [x] Streaming
+- [x] Proper support for `waitUntil`
+
+### express-dev
+
+The `express-dev` Wrapper is the wrapper for a classic Express server. It is a long running process and should be used for development purposes only.
+
+#### Features
+- [x] Streaming
+- [x] Proper support for `waitUntil`
+
+### dummy
+
+The `dummy` Wrapper is a dummy implementation that will just forward the event and `StreamCreator` to the handler.
+
+#### Features
+- [ ] Streaming
+- [ ] Proper support for `waitUntil`
