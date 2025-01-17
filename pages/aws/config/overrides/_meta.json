@@ -7,5 +7,6 @@
   "image_loader": "Image Loader",
   "proxy_external_request": "External Request Proxy",
   "origin_resolver": "Origin Resolver",
-  "invoke_function": "Invoke Function for the warmer"
+  "invoke_function": "Invoke Function for the warmer",
+  "automatic_cdn_invalidation": "Automatic CDN Invalidation"
 }
