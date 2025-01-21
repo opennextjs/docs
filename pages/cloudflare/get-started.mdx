@@ -45,6 +45,7 @@ application to be previewed and deployed, it is also where you configure your Wo
 You can create one yourself in the root directory of your Next.js app with the name `wrangler.json` and the following content:
 ```jsonc
 {
+  "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
   "name": "my-app",
   "compatibility_date": "2024-12-30",
