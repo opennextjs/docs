@@ -23,3 +23,33 @@ You can use these to understand how to configure your Next.js app to use `@openn
 ### Next.js Commerce Demo
 
 The [Next.js Commerce demo app](https://github.com/vercel/commerce/tree/v1) works with `@opennextjs/cloudflare`. You can view a deployed version of it [here](https://vercel-commerce-on-workers.web-experiments.workers.dev/).
+
+### Fully-featured SaaS starter kit
+
+The [Cloudflare Workers SaaS template](https://github.com/LubomirGeorgiev/cloudflare-workers-nextjs-saas-template) is a fully-featured SaaS app that works with `@opennextjs/cloudflare` and utilizes lots of other Cloudflare services.
+Here is a list of some of the features it includes:
+
+- Custom authentication with password and Google SSO
+    - Session storage in Cloudflare KV
+    - Drizzle ORM and Cloudflare D1
+    - Forgot password
+    - Change password
+    - Change user settings
+- Shadcn for the UI
+- Light/Dark Theme
+- Loading states and animations
+- Toast alerts and notifications
+- Landing page
+- SEO optimization
+- Protection with Cloudflare Turnstile Captcha
+- Transactional email templates with react-email and integration with Resend and Brevo
+- Rate Limiting with Cloudflare KV to prevent abuse
+- Validation for all user actions with react-zsa and zod
+- Completely type safe
+- Comprehensive eslint config
+- Integrated with Cursor AI
+- .cursorrules
+- A markdown project documentation that Cursor can refer to for more context and better responses
+- Detailed documentation for local development and production deployment
+- Automatic deployment using Github Actions and the Wrangler CLI
+- And more...
