@@ -19,7 +19,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 export async function GET(request) {
 	let responseText = "Hello World";
 
-	const myKv = (await getCloudflareContext()).env.MY_KV_NAMESPACE;
+	const myKv = getCloudflareContext().env.MY_KV_NAMESPACE;
 	await myKv.put("foo", "bar");
 	const foo = await myKv.get("foo");
 
@@ -33,7 +33,7 @@ Add bindings to your Worker by adding them to your [wrangler configuration file]
 
 ## TypeScript type declarations for bindings
 
-To ensure that the `env` object from `(await getCloudflareContext()).env` above has accurate TypeScript types, run the following Wrangler command to [generate types that match your Worker's configuration](https://developers.cloudflare.com/workers/languages/typescript/#generate-types-that-match-your-workers-configuration-experimental):
+To ensure that the `env` object from `getCloudflareContext().env` above has accurate TypeScript types, run the following Wrangler command to [generate types that match your Worker's configuration](https://developers.cloudflare.com/workers/languages/typescript/#generate-types-that-match-your-workers-configuration-experimental):
 
 ```
 npx wrangler types --experimental-include-runtime
@@ -58,7 +58,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 
 export async function GET(request) {
-	const { env, cf, ctx } = await getCloudflareContext();
+	const { env, cf, ctx } = getCloudflareContext();
 
 	// ...
 }
