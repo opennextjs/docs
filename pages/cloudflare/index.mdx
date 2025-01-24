@@ -17,7 +17,7 @@ You can also use [`@cloudflare/next-on-pages`](https://www.npmjs.com/package/@cl
 
 ##### New apps
 
-To create a new Next.js app, pre-configured to run on Cloudflare using @opennextjs/cloudflare, run:
+To create a new Next.js app, pre-configured to run on Cloudflare using `@opennextjs/cloudflare`, run:
 
 ```
 npm create cloudflare@latest -- my-next-app --framework=next --experimental
@@ -63,10 +63,10 @@ We welcome both contributions and feedback!
 
 <WindowsSupport />
 
-### How @opennextjs/cloudflare Works
+### How `@opennextjs/cloudflare` Works
 
 The OpenNext Cloudflare adapter works by taking the Next.js build output and transforming it, so that it can run in Cloudflare Workers.
 
 When you add [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare) as a dependency to your Next.js app, and then run `npx opennextjs-cloudflare` the adapter first builds your app by running the `build` script in your `package.json`, and then transforms the build output to a format that you can run locally using [Wrangler](https://developers.cloudflare.com/workers/wrangler/), and deploy to Cloudflare.
 
-You can view the code for @opennextjs/cloudflare [here](https://github.com/opennextjs/opennextjs-cloudflare/blob/main/packages/cloudflare/src) to understand what it does under the hood.
+You can view the code for `@opennextjs/cloudflare` [here](https://github.com/opennextjs/opennextjs-cloudflare/blob/main/packages/cloudflare/src) to understand what it does under the hood.
