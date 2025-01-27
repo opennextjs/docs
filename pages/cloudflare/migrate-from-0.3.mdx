@@ -28,7 +28,7 @@ export default nextConfig;
 
 ##### Synchronous `getCloudflareContext` synchronous
 
-`getCloudflareContext` has been changed not to synchronously return the Cloudflare context object instead or returning
+`getCloudflareContext` is now synchronous.
 a promise that resolves to it.
 
 This means that if you had code that `await`ed `getCloudflareContext()` calls, such `await`s are no longer necessary and
