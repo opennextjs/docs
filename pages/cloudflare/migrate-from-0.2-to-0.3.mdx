@@ -1,7 +1,7 @@
 import { SITE } from '../../config';
 import { Callout } from 'nextra/components';
 
-### Migrate from 0.2
+### Migrate from 0.2 to 0.3
 
 The `@opennextjs/cloudflare` adapter is now more closely intgrated with `@opennextjs/aws`.
 
@@ -81,8 +81,3 @@ The name of the CLI was changed to `opennextjs-cloudflare`:
 
 You should change `.worker-next` to `.open-next` in your `.gitignore` file to prevent the build output from being committed to your repository.
 You can safely delete the content of the now unused `.worker-next`.
-
-##### 6. Apply 0.3.x updates
-
-Finally to complete the migration you need to import and call the `initOpenNextCloudflareForDev` utility in your Next.js configuration file
-and convert potential `getCloudflareContext()` call, for more details see the [migrate-from-0.3 documentation](./migrate-from-0.3.mdx).
