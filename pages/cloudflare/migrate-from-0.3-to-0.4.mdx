@@ -1,0 +1,38 @@
+import { SITE } from '../../config';
+import { Callout } from 'nextra/components';
+
+### Migrate from 0.3 (to 0.4)
+
+The `@opennextjs/cloudflare@0.4.0` introduced a new `initOpenNextCloudflareForDev` utility and made `getCloudflareContext` synchronous,
+we'll explore those two differences below, and how they effect applications built using `0.3.x` versions of the adapter.
+
+##### `initOpenNextCloudflareForDev`
+
+`initOpenNextCloudflareForDev` is a new utility that needs to be added to the Next.js configuration file in order to integrate the adapter
+with the Next.js dev server. If you don't plan on using the `next dev` command you can skip this section, otherwise update your Next.js
+configuration file to import and call the utility.
+
+Example:
+```js
+// next.config.mjs
+
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
+initOpenNextCloudflareForDev();
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+export default nextConfig;
+```
+
+##### Synchronous `getCloudflareContext` synchronous
+
+`getCloudflareContext` is now synchronous.
+a promise that resolves to it.
+
+This means that if you had code that `await`ed `getCloudflareContext()` calls, such `await`s are no longer necessary and
+can be removed.
+
+If your application is instead combining the result of `getCloudflareContext()` with on Ecmascript Promises APIs such as
+`then`, `catch` and `finally` those need to be removed since the function's result, as mentioned is no longer a promise.

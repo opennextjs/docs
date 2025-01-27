@@ -6,6 +6,8 @@
   "examples": "",
   "community": "Community projects",
   "troubleshooting": "",
-  "migrate-from-0.2": "",
+  "migrate-from-0.3-to-0.4": "Migrate from 0.3",
+  "0.3": "Release 0.3",
+  "migrate-from-0.2-to-0.3": "",
   "0.2": "Release 0.2"
 }
