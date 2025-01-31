@@ -131,7 +131,7 @@ Add the following to the scripts field of your `package.json` file:
 "build:worker": "opennextjs-cloudflare",
 "dev:worker": "wrangler dev --port 8771",
 "preview": "npm run build:worker && npm run dev:worker",
-"deploy": "npm run build:worker && wrangler deploy",
+"deploy:worker": "npm run build:worker && wrangler deploy",
 "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
 ```
 
