@@ -1,0 +1,31 @@
+
+## [NextAuth.js](https://next-auth.js.org/)
+
+NextAuth.js is an open-source authentication solution for Next.js applications.
+
+### Solving a broken build
+
+NextAuth.js relies on [`createCipheriv`](https://nodejs.org/docs/v22.13.1/api/crypto.html#cryptocreatecipherivalgorithm-key-iv-options) from [`node:crypto`](https://nodejs.org/docs/v22.13.1/api/crypto.html).
+
+`createCipheriv` is not currently implemented by the workerd runtime so apps using NextAuth.js with the default configuration break at build time.
+
+However you can configure NextAuth.js to use custom implementations of the `encode` and `decode` functions that do not use the unimplemented Node APIs. Implementations built on top of [`SubtleCrypto`](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto) can run on workerd.
+
+The NextAuth.js configuration file should look like:
+
+```js
+import { encode, decode } from "@/lib/webcrypto";
+
+export const NEXT_AUTH_CONFIG = {
+  // ...
+  jwt: {
+    encode,
+    decode,
+  },
+};
+```
+
+Kudos to Arnav Gupta ([`@arnavgupta00`](https://github.com/arnavgupta00)) for coming up with the solution.
+You can find an example of this on his [example repository](https://github.com/arnavgupta00/deployment-cf-workers-prisma-nextauth).
+
+Related issues: [`workers-sdk#206`](https://github.com/opennextjs/opennextjs-cloudflare/issues/206) and [`workerd#3277`](https://github.com/cloudflare/workerd/issues/3277).
