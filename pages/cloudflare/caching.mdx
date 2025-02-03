@@ -70,3 +70,56 @@ const config: OpenNextConfig = {
 
 export default config;
 ```
+
+#### On-Demand Revalidation
+
+The tag revalidation mechanism uses a [Cloudflare D1](https://developers.cloudflare.com/d1/) adapter as its backing store for information about tags, paths, and revalidation times.
+
+To use on-demand revalidation, you should also follow the ISR setup steps.
+
+##### 1. Create a D1 database
+
+The binding name used in your app's worker is `NEXT_CACHE_D1`.
+
+```jsonc
+// wrangler.json
+{
+  // ...
+  "d1_databases": [
+    {
+      "binding": "NEXT_CACHE_D1",
+      "database_id": "<DATABASE_ID>",
+      "database_name": "<DATABASE_NAME>"
+    }
+  ]
+}
+```
+
+##### 2. Create a table for tag revalidation
+
+The default table name is `tags`. This can be configured by setting the `NEXT_CACHE_D1` environment variable to a string.
+
+Wrangler can be used to create a table with it's [execute](https://developers.cloudflare.com/d1/wrangler-commands/#d1-execute) option. Ensure that you create a table for both your local dev database and your remote database.
+
+```sh
+wrangler d1 execute NEXT_CACHE_D1 --command "CREATE TABLE IF NOT EXISTS tags (tag TEXT NOT NULL, path TEXT NOT NULL, revalidatedAt INTEGER NOT NULL, UNIQUE(tag, path) ON CONFLICT REPLACE)"
+```
+
+##### 3. Configure the cache
+
+In your project's OpenNext config, enable the KV cache and set up a queue. The `direct` queue will send a revalidation request to a page when needed, but it will not dedupe requests.
+
+```ts
+// open-next.config.ts
+import tagCache from "@opennextjs/cloudflare/d1-tag-cache";
+
+const config: OpenNextConfig = {
+  default: {
+    override: {
+      // ...
+      tagCache: () => tagCache,
+    },
+  },
+  // ...
+};
+```
