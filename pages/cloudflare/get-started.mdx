@@ -128,9 +128,9 @@ The `NEXTJS_ENV` variable defines the environment to use when loading Next.js `.
 Add the following to the scripts field of your `package.json` file:
 
 ```json
-"preview": "npx opennextjs-cloudflare && npx wrangler dev",
-"deploy": "npx opennextjs-cloudflare && npx wrangler deploy",
-"cf-typegen": "npx wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+"preview": "opennextjs-cloudflare && wrangler dev",
+"deploy": "opennextjs-cloudflare && wrangler deploy",
+"cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
 ```
 
 - `npm run preview`: Builds your app and serves it locally, allowing you to quickly preview your app running locally in the Workers runtime, via a single command.
