@@ -9,7 +9,7 @@ NextAuth.js relies on [`createCipheriv`](https://nodejs.org/docs/v22.13.1/api/cr
 
 `createCipheriv` is not currently implemented by the workerd runtime so apps using NextAuth.js with the default configuration break at build time.
 
-However you can configure NextAuth.js to use custom implementations of the `encode` and `decode` functions that do not use the unimplemented Node APIs. Implementations built on top of [`SubtleCrypto`](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto) can run on workerd.
+However you can configure NextAuth.js to use custom implementations of the `encode` and `decode` functions that do not use the unimplemented Node APIs. Implementations built on top of [`SubtleCrypto`](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto) can run on workers.
 
 The NextAuth.js configuration file should look like:
 
