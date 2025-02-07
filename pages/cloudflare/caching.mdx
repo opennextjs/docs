@@ -71,6 +71,11 @@ const config: OpenNextConfig = {
 export default config;
 ```
 
+
+<Callout>
+  The `direct` mode for the queue is intended for debugging purposes and is not recommended for use in production. We are actively working on a solution that will be suitable for production.
+</Callout>
+
 #### On-Demand Revalidation
 
 The tag revalidation mechanism uses a [Cloudflare D1](https://developers.cloudflare.com/d1/) adapter as its backing store for information about tags, paths, and revalidation times.
