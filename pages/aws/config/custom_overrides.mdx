@@ -238,7 +238,7 @@ const handler: WrapperHandler =
       },
     };
 
-    const response = await handler(internalEvent, fakeStream);
+    const response = await handler(internalEvent, { streamCreator: fakeStream });
     response.headers["x-wrapper"] = "hi";
 
     return converter.convertTo(response, event);
