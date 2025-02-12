@@ -28,8 +28,7 @@ export async function GET(request) {
 ```
 
 <Callout type='info'>
-	`getCloudflareContext` can only be used in SSG routes in "async mode" (where the function's returned value is wrapped
-	in a promise), to run the function in such a way simply provide an options argument with the `async` flag set to `true`:
+	`getCloudflareContext` can only be used in SSG routes in "async mode" (making it return a promise), to run the function in such a way simply provide an options argument with `async` set to `true`:
 	```js
 	const context = await getCloudflareContext({ async: true });
 	```
