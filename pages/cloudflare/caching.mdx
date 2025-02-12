@@ -21,7 +21,7 @@ Workers KV is eventually consistent, which means that it can take up to 60 secon
 
 #### Incremental Static Regeneration (ISR)
 
-The ISR adapter for Cloudflare uses [Workers KV](https://developers.cloudflare.com/kv/) as the cache for your Next.js app. Workers KV is [fast](https://blog.cloudflare.com/faster-workers-kv) and uses Cloudflare's [Tiered Cache](https://developers.cloudflare.com/cache/how-to/tiered-cache/) to increase cache hit rates. When you write cached data to Workers KV, you write to storage that can be read by any Cloudflare location. This means your app can fetch data, cache it in KV, and then subsequent requests anywhere around the world can read from this cache.
+The ISR adapter for Cloudflare uses [Workers KV](https://developers.cloudflare.com/kv/) as the cache for your Next.js app. Workers KV is [fast](https://blog.cloudflare.com/faster-workers-kv) and uses Cloudflare's [Tiered Cache](https://developers.cloudflare.com/cache/how-to/tiered-cache/) to increase cache hit rates. When you write cached data to Workers KV, you write to storage that can be read by any Cloudflare location. This means your app can fetch data, cache it in KV, and then subsequent requests anywhere around the world can read from this cache. Pricing information can be found in the Cloudflare [docs](https://developers.cloudflare.com/workers/platform/pricing/#workers-kv).
 
 ##### 1. Create a KV namespace
 
