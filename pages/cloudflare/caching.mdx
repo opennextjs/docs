@@ -50,7 +50,7 @@ The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`.
 
 In your project's OpenNext config, enable the KV cache and set up a queue.
 
-The memory queue will send revalidation requests to a page when needed, and offers support for de-duplicating requests on a per-isolate basis.
+The memory queue will send revalidation requests to a page when needed, and offers support for de-duplicating requests on a per-isolate basis. There might still be duplicate requests under high traffic or across regions.
 
 ```ts
 // open-next.config.ts
