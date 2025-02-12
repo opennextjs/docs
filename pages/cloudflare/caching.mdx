@@ -9,8 +9,6 @@ By default, all `fetch()` subrequests made in your Next.js app are cached. Refer
 
 [The cache persists across deployments](https://nextjs.org/docs/app/building-your-application/caching#data-cache). You are responsible for revalidating/purging this cache.
 
-Note that [Revalidating](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data) is not yet supported.
-
 Next.js primes the cache at build time. The build time values are serverd by the [Workers Assets](https://developers.cloudflare.com/workers/static-assets/).
 
 <Callout>
@@ -19,17 +17,19 @@ Workers KV is eventually consistent, which means that it can take up to 60 secon
 
 ### How to enable caching
 
-`@opennextjs/cloudflare` uses [Workers KV](https://developers.cloudflare.com/kv/) as the cache for your Next.js app. Workers KV is [fast](https://blog.cloudflare.com/faster-workers-kv) and uses Cloudflare's [Tiered Cache](https://developers.cloudflare.com/cache/how-to/tiered-cache/) to increase cache hit rates. When you write cached data to Workers KV, you write to storage that can be read by any Cloudflare location. This means your app can fetch data, cache it in KV, and then subsequent requests anywhere around the world can read from this cache.
+`@opennextjs/cloudflare` supports multiple caching mechanisms through a project's OpenNext configuration.
 
-To enable caching, you must:
+#### Incremental Static Regeneration (ISR)
 
-#### 1. Create a KV namespace
+The ISR adapter for Cloudflare uses [Workers KV](https://developers.cloudflare.com/kv/) as the cache for your Next.js app. Workers KV is [fast](https://blog.cloudflare.com/faster-workers-kv) and uses Cloudflare's [Tiered Cache](https://developers.cloudflare.com/cache/how-to/tiered-cache/) to increase cache hit rates. When you write cached data to Workers KV, you write to storage that can be read by any Cloudflare location. This means your app can fetch data, cache it in KV, and then subsequent requests anywhere around the world can read from this cache.
+
+##### 1. Create a KV namespace
 
 ```
 npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
 ```
 
-#### 2. Add the KV namespace to your Worker
+##### 2. Add the KV namespace to your Worker
 
 The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`.
 
@@ -44,4 +44,29 @@ The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`.
     }
   ]
 }
+```
+
+#### 3. Configure the cache
+
+In your project's OpenNext config, enable the KV cache and set up a queue.
+
+The memory queue will send revalidation requests to a page when needed, and offers support for de-duplicating requests on a per-isolate basis.
+
+```ts
+// open-next.config.ts
+import incrementalCache from "@opennextjs/cloudflare/kv-cache";
+import memoryQueue from "@opennextjs/cloudflare/memory-queue";
+
+const config: OpenNextConfig = {
+  default: {
+    override: {
+      // ...
+      incrementalCache: () => incrementalCache,
+      queue: () => memoryQueue,
+    },
+  },
+  // ...
+};
+
+export default config;
 ```
