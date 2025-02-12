@@ -27,6 +27,17 @@ export async function GET(request) {
 }
 ```
 
+<Callout type='info'>
+	`getCloudflareContext` can only be used in SSG routes in "async mode" (making it return a promise), to run the function in such a way simply provide an options argument with `async` set to `true`:
+	```js
+	const context = await getCloudflareContext({ async: true });
+	```
+
+	**WARNING**: During SSG caution is advised since secrets (stored in `.dev.vars` files) and local development
+	values from bindings (like values saved in a local KV) will be used for the pages static generation.
+
+</Callout>
+
 #### How to add bindings to your Worker
 
 Add bindings to your Worker by adding them to your [wrangler configuration file](https://developers.cloudflare.com/workers/wrangler/configuration/).
