@@ -13,7 +13,7 @@ to your `open-next.config.ts` to avoid the edge runtime to try to compile overri
 
 ## Custom converter
 
-Sometimes you might want to modify the object received by OpenNext. For example `Config.YOUR_SECRET_KEY` from sst cannot be used in the middleware, so you might want to add it to the headers. This is where the custom converter comes in. You can add a custom converter to modify the object before it is passed to OpenNext.
+Sometimes you might want to modify the object received by OpenNext. For example `Config.YOUR_SECRET_KEY` from SST cannot be used in the middleware, so you might want to add it to the headers. This is where the custom converter comes in. You can add a custom converter to modify the object before it is passed to OpenNext.
 
 You'll still have to use a fallback value during dev as this is not used by the dev server.
 
@@ -276,19 +276,156 @@ const config = {
 ```
 
 ## Custom Incremental cache
-TODO
 
-## Custom queue
-TODO
+You can take inspiration from our [`fs-dev`](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/incrementalCache/fs-dev.ts) override which uses the file system to store the incremental cache. You need an `open-next.config.ts` with this:
+
+```ts
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.ts';
+const config = {
+  default: {
+    override: {
+      // can be any of our included ones or your own custom override
+      incrementalCache: () => import('./customIncrementalCache').then((mod) => mod.default),
+    },
+  },
+} satisfies OpenNextConfig;
+
+export default config;
+```
+
+[Included](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/incrementalCache) ones are `'s3' | 's3-lite' | 'multi-tier-ddb-s3' | 'fs-dev' | 'dummy'`
+
+## Custom Queue
+
+By default it will use SQS queue to revalidate stale routes. You can read more about this [here](/aws/config/overrides/queue). To create your own custom override you can take inspiration by looking at our [included](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/queue) implementations. You need an `open-next.config.ts` with this:
+
+```ts
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.ts';
+const config = {
+  default: {
+    override: {
+      // can be any of our included ones or your own custom override
+      queue: () => import('./customQueue').then((mod) => mod.default),
+    },
+  },
+} satisfies OpenNextConfig;
+
+export default config;
+```
+
+[Included](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/queue) ones are `'sqs' | 'sqs-lite' | 'direct' | 'dummy'`
 
 ## Custom Tag cache
-TODO
+
+To override the tag cache you can take inspiration by looking at the [`fs-dev`](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/tagCache/fs-dev.ts) override that uses the filesystem. You can read more about this override [here](/aws/config/overrides/tag_cache). You need an `open-next.config.ts` with this:
+
+```ts
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.ts';
+const config = {
+  default: {
+    override: {
+      // can be any of our included ones or your own custom override
+      tagCache: () => import('./customTagCache').then((mod) => mod.default),
+    },
+  },
+} satisfies OpenNextConfig;
+
+export default config;
+```
+
+[Included](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/tagCache) ones are `'dynamodb' | 'dynamodb-lite' | 'fs-dev' | 'dummy'`
 
 ## Custom Origin Resolver
-TODO
+
+This override is only used internally by OpenNext to resolve the origin of the request if you have an `external` middleware. You can take inspiration from looking at our included [`pattern-env`](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/originResolver/pattern-env.ts) override. You need an `open-next.config.ts` with this:
+
+```ts
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js';
+const config = {
+  default: {},
+  middleware: {
+    // must be true for the originResolver to be used
+    external: true,
+    // can be any of our included ones or your own custom override
+    originResolver: () => import('./customOriginResolver').then((mod) => mod.default),
+  },
+} satisfies OpenNextConfig;
+
+export default config;
+```
+
+[Included](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/originResolver) ones are `'pattern-env' | 'dummy'`
 
 ## Custom Image Loader
-TODO
+
+This override is used in the image optimization server to load an image from a custom source. You can look at our implemention of using the file system [here](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/imageLoader/fs-dev.ts). You need an `open-next.config.ts` with this:
+
+```ts
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js';
+const config = {
+  default: {},
+  imageOptimization: {
+    loader: () => import('./customImageLoader').then((mod) => mod.default),
+  },
+} satisfies OpenNextConfig;
+
+export default config;
+```
+
+[Included](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/imageLoader) ones are `'s3' | 'host' | 'fs-dev' | 'dummy'`
 
 ## Custom Warmer Invoke
-TODO
+
+To have a custom override for the warmer invoke you can take inspiration by looking at our [`aws-lambda`](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/warmer/aws-lambda.ts) override. You need an `open-next.config.ts` with this:
+
+```ts
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js';
+const config = {
+  default: {},
+  warmer: {
+    invokeFunction: () => import('./customWarmer').then((mod) => mod.default),
+  },
+} satisfies OpenNextConfig;
+
+export default config;
+```
+
+[Included](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/warmer) ones are `'aws-lambda' | 'dummy'`
+
+## Custom CDN Invalidation
+
+To have a custom override for the CDN Invalidation you can take inspiration by looking at our [`cloudfront`](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/cdnInvalidation/cloudfront.ts) override. You need an `open-next.config.ts` with this:
+
+```ts
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js';
+const config = {
+  default: {
+    override: {
+      cdnInvalidation: () => import('./customCdnInvalidation').then((mod) => mod.default),
+    }
+  },
+} satisfies OpenNextConfig;
+
+export default config;
+```
+
+[Included](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/cdnInvalidation) ones are `'cloudfront' | 'dummy'`
+
+## Custom External Request Proxy
+
+This is used by OpenNext to proxy rewritten requests to external services. You can read more about it [here](http://localhost:3000/aws/config/overrides/proxy_external_request). To have a custom override for the External Request Proxy you can take inspiration by looking at our [`fetch`](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/proxyExternalRequest/fetch.ts) override. You need an `open-next.config.ts` with this:
+
+```ts
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js';
+const config = {
+  default: {
+    override: {
+      proxyExternalRequest: () => import('./customProxyExternalRequest').then((mod) => mod.default),
+    }
+  },
+} satisfies OpenNextConfig;
+
+export default config;
+```
+
+[Included](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/proxyExternalRequest) ones are `'fetch' | 'node' | 'dummy'`
