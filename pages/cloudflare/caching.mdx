@@ -128,3 +128,15 @@ const config: OpenNextConfig = {
   // ...
 };
 ```
+
+##### 4. Initialise the cache during deployments
+
+In order for the cache to be properly initialised with the build-time revalidation data, you need to setup a command that runs as part of your deploy step.
+
+OpenNext will generate an SQL file during the build that can be used to setup your D1 database.
+
+```sh
+wrangler d1 execute NEXT_CACHE_D1 --file .open-next/cache-assets-manifest.sql
+```
+
+This should be run as part of each deployment to ensure that the cache is being populated with each build's initial revalidation data.
