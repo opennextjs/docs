@@ -136,7 +136,7 @@ In order for the cache to be properly initialised with the build-time revalidati
 OpenNext will generate an SQL file during the build that can be used to setup your D1 database.
 
 ```sh
-wrangler d1 execute NEXT_CACHE_D1 --file .open-next/cache-assets-manifest.sql
+wrangler d1 execute NEXT_CACHE_D1 --file .open-next/cloudflare/cache-assets-manifest.sql
 ```
 
 This should be run as part of each deployment to ensure that the cache is being populated with each build's initial revalidation data.
