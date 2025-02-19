@@ -100,14 +100,19 @@ The binding name used in your app's worker is `NEXT_CACHE_D1`.
 }
 ```
 
-##### 2. Create a table for tag revalidation
+##### 2. Create tables for tag revalidations
 
-The default table name is `tags`. This can be configured by setting the `NEXT_CACHE_D1` environment variable to a string.
+The D1 tag cache requires two tables; one that keeps a record of the tag/path mappings, and another that tracks revalidation times.
+
+For the tag mappings, the default table name is `tags`, and can be configured by setting the `NEXT_CACHE_D1_TAGS_TABLE` environment variable to a string.
+
+For the revalidation times, the default table name is `revalidations` and can be configured by setting the `NEXT_CACHE_D1_REVALIDATIONS_TABLE` environment variable to a string.
 
 Wrangler can be used to create a table with it's [execute](https://developers.cloudflare.com/d1/wrangler-commands/#d1-execute) option. Ensure that you create a table for both your local dev database and your remote database.
 
 ```sh
-wrangler d1 execute NEXT_CACHE_D1 --command "CREATE TABLE IF NOT EXISTS tags (tag TEXT NOT NULL, path TEXT NOT NULL, revalidatedAt INTEGER NOT NULL, UNIQUE(tag, path) ON CONFLICT REPLACE)"
+wrangler d1 execute NEXT_CACHE_D1 --command "CREATE TABLE IF NOT EXISTS tags (tag TEXT NOT NULL, path TEXT NOT NULL, UNIQUE(tag, path) ON CONFLICT REPLACE)"
+wrangler d1 execute NEXT_CACHE_D1 --command "CREATE TABLE IF NOT EXISTS revalidations (tag TEXT NOT NULL, revalidatedAt INTEGER NOT NULL, UNIQUE(tag) ON CONFLICT REPLACE)"
 ```
 
 ##### 3. Configure the cache
