@@ -82,6 +82,10 @@ The tag revalidation mechanism uses a [Cloudflare D1](https://developers.cloudfl
 
 To use on-demand revalidation, you should also follow the ISR setup steps.
 
+<Callout>
+  If your app **only** uses the pages router, it does not need to have a tag cache and should skip this step.
+</Callout>
+
 ##### 1. Create a D1 database
 
 The binding name used in your app's worker is `NEXT_CACHE_D1`.
