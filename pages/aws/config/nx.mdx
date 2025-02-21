@@ -1,7 +1,7 @@
 # Configuring OpenNext for use in an Nx Monorepo.
-Here's a detailed exampled of how to add open-next + SST to an existing Nx workspace, with an existing NextJS application sitting at `apps/next-site`
+Here's a detailed exampled of how to add OpenNext + SST to an existing Nx workspace, with an existing NextJS application sitting at `apps/next-site`
 
-1. install `open-next`: `pnpm add —save-dev open-next`
+1. install `open-next`: `pnpm add —save-dev @opennextjs/aws`
 
 2. Update your `apps/next-site/next.config.js` add `output: ‘standalone’`, and you want to add `experimental.outputFileTracingRoot`, it should look a little like this:
 ```javascript
@@ -35,9 +35,9 @@ const plugins = [
 module.exports = composePlugins(...plugins)(nextConfig);
 ```
 
-3. Create `open-next.config.js` inside your apps root directory, it should look a little something like this:
+3. Create `open-next.config.ts` inside your apps root directory, it should look a little something like this:
 ```javascript
-import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js';
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next';
 
 const config = {
   default: {},
@@ -122,7 +122,7 @@ now, when you run `nx open-next-build next-site`, nx will automatically build th
 
 Now, we have a built app, ready to deploy, so how do we get it onto SST/AWS ? Good question!
 
-We are using `sst ion` in this example. i will assume you have already have the cli installed, (if not, check here on how!)[https://ion.sst.dev/],
+We are using `sst ion` in this example. i will assume you have already have the cli installed, [if not, check here on how](https://sst.dev),
 but we will not use the SST cli to init this project, because it wants to add a package.json to your next app, and it will look like it's working, but you will end up with a big far server error (all because the package.json overrides whatever nx _thinks_ there should be, and it will miss a bunch of dependencies). we will instead manually set this up:
 
 - let's add the sst package with `pnpm add sst@ion`, and the required packages for SST to work with AWS `pnpm add --save-dev aws-cdk-lib constructs @types/aws-lambda`
