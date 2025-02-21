@@ -2,7 +2,7 @@ import {Callout} from 'nextra/components'
 
 Available since `@opennextjs/aws` 3.4.0
 
-This override is used by OpenNext when routes have been On-Demand revalidated and the CDN needs to be updated. It is not called for ISR revalidation.
+Not enabled by default. This override is used by OpenNext when routes have been On-Demand revalidated and the CDN needs to be updated. It is not called for ISR revalidation.
 It will be called for `revalidatePath`, `revalidateTag` and `res.revalidate()`.
 
 If you want to better understand how to implement your own Automatic CDN Invalidation, the easiest way would be to take a look at the existing [included Automatic CDN Invalidation](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/cdnInvalidation)
