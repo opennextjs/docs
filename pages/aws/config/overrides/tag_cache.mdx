@@ -1,7 +1,7 @@
 This override is used by the [`cache` adapter](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/adapters/cache.ts) that is provided by OpenNext to the NextServer. It is also used by OpenNext if `enableCacheInterception` is set to `true` in the configuration and by the `initializationFunction` for prepopulating the cache.
 
 It is used for the cache tags (i.e. `revalidateTag` and `revalidatePath`). It does not handle anything related to the ISR/SSG cache or the fetch cache used by Next.js.
-It's main role is to detremine if a path is stale based on the tags and also to update the tag cache when `revalidateTag` is called.
+It's main role is to determine if a path is stale based on the tags and also to update the tag cache when `revalidateTag` is called.
 
 The current implementation differs from the way Next.js standalone handle cache tags. In the standalone version, the cache tags are stored in a file, and every time a cache entry is accessed, it has to check for every tags if the entry is stale. This approach is very read heavy and doesn't work well with DB like DynamoDB.
 We choose to go another way. We store tags for every path that exists in the cache. This way, we can easily know if a path is stale by just checking the path instead of every tags used. This approach is more write heavy but it's a tradeoff we are willing to make.
@@ -32,6 +32,10 @@ This implementation is a lighter version of the `dynamodb` TagCache as it uses `
 
 - You need to provide the `CACHE_DYNAMO_TABLE`, `CACHE_BUCKET_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN` environment variables to your server.
 - DynamoDB table should have a primary key `path` of type `String` and a sort key `tag` of type `String`. (It can reuse the same table as the one used by the default `tagCache`)
+
+### dynamodb-nextMode
+
+TBA
 
 ### dummy
 
