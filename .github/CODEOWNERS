@@ -1,0 +1,3 @@
+/pages/aws/* @opennextjs/aws
+/pages/cloudflare/* @opennextjs/cloudflare
+/pages/netlify/* @opennextjs/netlify-frameworks-and-build
