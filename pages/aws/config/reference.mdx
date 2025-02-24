@@ -1,6 +1,8 @@
 Every option that you can use in `open-next.config.ts` will be listed here. This is the configuration file that you can use to customize the build.
 You can look at the [full example](full_example) to see how you can use these options.
 
+<br/>
+
 import { Tabs } from 'nextra/components'
 
 <Tabs items={['Server Options', 'General Build Options']}>
@@ -24,7 +26,7 @@ import { Tabs } from 'nextra/components'
 
       ### `minify`
 
-      This will try to minify the output of the server including node_modules. It is a boolean and by default, it is set to `false`.
+      This will try to minify the output of the server including `node_modules`. It is a boolean and by default, it is set to `false`.
       It could lead to some issues with some packages, so it is recommended to test your app with this option before deploying it.
 
       We will likely not fix issues related to this option, as it is usually library specific.
@@ -32,18 +34,14 @@ import { Tabs } from 'nextra/components'
       ### `override`
 
       This is where you will be able to override some part of the server. For all of them you can provide what we call a `LazyLoadedOverride` which is a function that will return the override. For some example look at some [Custom overrides](custom_overrides).
-      All servers have some default override that you can override
-
-      TODO: Add all the types for the custom LazyLoadedOverride here. In the meantime, just look at the [source file](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/types/open-next.ts)
-
-      ---
+      All servers have some default override that you can override. You can look at the types [here](https://github.com/opennextjs/opennextjs-aws/blob/5b314b13b2907a4510e7f0cca6959f8da4eab310/packages/open-next/src/types/overrides.ts).
 
       #### [`wrapper`](overrides/wrapper)
 
       This is the entrypoint of the server. 
       Be aware that it might not be enough to change this to make it work on said platform. This is only the entrypoint, you might need to change other parts of the server to make it work on the platform.
 
-      Possible values are: `aws-lambda`, `aws-lambda-streaming`, `node`, `cloudflare`, `dummy` or a `LazyLoadedOverride` that will return the wrapper.
+      Possible values are: `aws-lambda`, `aws-lambda-streaming`, `cloudflare-edge`, `cloudflare-node`, `node`, `express-dev`, `dummy` or a `LazyLoadedOverride` that will return the wrapper.
 
       #### [`converter`](overrides/converter)
 
@@ -53,7 +51,7 @@ import { Tabs } from 'nextra/components'
 
       #### `install`
 
-      Install options for the server. This is used to install additional packages to this server
+      Install options for the server. This is used to install additional packages. It is an object with the options below.
 
       For image optimization, it will install sharp by default
 
@@ -68,7 +66,35 @@ import { Tabs } from 'nextra/components'
 
       Possible values are: `x64`, `arm64`
 
-      TODO: Add the other options and explain how to install packages on the default or splitted server functions
+      ##### `nodeVersion`
+
+      This option will be passed to the postinstall script of sharp. It is used by `node-gyp`.
+
+      ##### `libc`
+
+      Override libc of native modules to install.
+
+      Possible values are: `glibc`, `musl`
+
+      ##### `additionalArgs`
+
+      Additional arguments to pass to the install command (npm install). It is a string that will get appended to the `npm install` command.
+
+      Here is an example of how to install sharp on your default server function with ARM64 architecture:
+      ```ts
+      import type { OpenNextConfig } from '@opennextjs/aws/types/open-next';
+      const config = {
+        default: {
+          install: {
+            packages: ['sharp@0.33.5'],
+            arch: 'arm64',
+          },
+        },
+      } satisfies OpenNextConfig;
+
+      export default config;
+      ```
+
 
     </Tabs.Tab>
     <Tabs.Tab>
@@ -103,13 +129,13 @@ import { Tabs } from 'nextra/components'
 
       Add possibility to override the default s3 cache. Used for fetch cache and html/rsc/json cache.
 
-      Possible values are: `s3`, `s3-lite`, `dummy` or a `LazyLoadedOverride` that will return the incremental cache.
+      Possible values are: `s3`, `s3-lite`, `multi-tier-ddb-s3`, `fs-dev`, `dummy` or a `LazyLoadedOverride` that will return the incremental cache.
 
       #### [`tagCache`](overrides/tag_cache)
 
       Add possibility to override the default tag cache. Used for revalidateTags and revalidatePath.
 
-      Possible values are: `dynamodb`, `dynamodb-lite`, `dummy` or a `LazyLoadedOverride` that will return the tag cache.
+      Possible values are: `dynamodb`, `dynamodb-lite`, `fs-dev`, `dummy` or a `LazyLoadedOverride` that will return the tag cache.
 
       #### [`queue`](overrides/queue)
 
@@ -122,6 +148,12 @@ import { Tabs } from 'nextra/components'
       Add possibility to override the default proxy for external request (i.e. next config external rewrites or middleware rewrites). Used in the external middleware or one of the server function.
 
       Possible values are: `node`, `fetch`, `dummy` or a `LazyLoadedOverride` that will return the proxy. Default is `node`
+
+      #### [`cdnInvalidation`](overrides/automatic_cdn_invalidation)
+
+      Add possibility to override the CDN invalidation override. Used for on-demand invalidation with `revalidatePath()`, `revalidateTag()` and `res.revalidate()`. 
+
+      Possible values are: `cloudfront`, `dummy` or a `LazyLoadedOverride` that will return the invalidatePaths. This override is disabled by default.
     </Tabs.Tab>
     <Tabs.Tab>
       Every splitted server will have the same options as the default server. In addition to that, you can use the following options:
@@ -173,7 +205,7 @@ import { Tabs } from 'nextra/components'
       ### [`loader`](overrides/image_loader)
       The image loader is used to load the image from the source.
 
-      Possible values are: `s3`, `host`, `dummy` or a `LazyLoadedOverride` that will return the loader.
+      Possible values are: `s3`, `s3-lite`, `host`, `fs-dev`, `dummy` or a `LazyLoadedOverride` that will return the loader.
     </Tabs.Tab>
     <Tabs.Tab>
       Revalidate doesn't have any specific options. It only uses the common options.
@@ -195,7 +227,7 @@ import { Tabs } from 'nextra/components'
 
     Add possibility to override the default tag cache used for the initialization function.
 
-    Possible values are: `dynamodb`, `dynamodb-lite`, `dummy` or a `LazyLoadedOverride` that will return the tag cache.
+    Possible values are: `dynamodb`, `dynamodb-lite`, `fs-dev`, `dummy` or a `LazyLoadedOverride` that will return the tag cache.
   </Tabs.Tab>
   </Tabs>
 
@@ -239,13 +271,11 @@ It is also the place where you could find some experimental features.
 
 ---
 
-
 #### `disableTagCache`
 
 This will disable the tag cache. You can disable it safely if you only use page router.
 It is used for `revalidateTag` and `revalidatePath`.
 It's a boolean and by default, it is set to `false`.
-
 
 #### `disableIncrementalCache`
 
@@ -254,7 +284,7 @@ It's a boolean and by default, it is set to `false`.
 
 #### `enableCacheInterception` - Experimental
 
-This will enable cache interception. It will allow you to intercept the cache system directly inside OpenNext routing layer and serve the page directly from the cache without going through `NextServer`. 
+This will enable cache interception. It will allow you to intercept the cache system directly inside OpenNext routing layer and serve the page directly from the cache without going through `NextServer`.
 
 If the cache interception fail, the request will be forwarded to the `NextServer` as usual.
 
