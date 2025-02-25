@@ -7,6 +7,7 @@ Since OpenNext 3.1, we have added a new feature that we call Cache Interception 
 Enabling this alongside external middleware means that the external middleware will need to have all the proper permissions and env variable to interact with S3, DynamoDB and SQS (Or whatever you override it with). You can see [here](/aws/inner_workings/components/server/node#special-overrides) for more details.
 
 This has the following benefits:
+
 - Faster cold start (No need to load the js associated with the page if the page is cached)
 - ISR/SSG route can be served directly from an external middleware
 - If the external middleware is in front of the CDN, the middleware can be used for every route including ISR/SSG
@@ -16,17 +17,15 @@ To enable cache interception, you need to add `enableCacheInterception` option i
 
 ```ts
 // open-next.config.ts
-import type { OpenNextConfig } from '@opennextjs/aws/types/open-next.js';
+import type { OpenNextConfig } from "@opennextjs/aws/types/open-next.js";
 const config = {
-  default: {
-  },
+  default: {},
   dangerous: {
     enableCacheInterception: true,
   },
 } satisfies OpenNextConfig;
 
 export default config;
-
 ```
 
 1. PPR outside of vercel does not work in the way they demonstrated. The reason is that the cache system is handled by `NextServer` and it has to reach the server **every single time**. PPR pages cannot be served from the CDN when using `next start` or the standalone ouput as of now. In some cases PPR without vercel can be slower than SSR (especially if your cache is not using the default filesystem).

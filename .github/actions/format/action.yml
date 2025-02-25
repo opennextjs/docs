@@ -1,0 +1,13 @@
+name: Format codebase
+description: Run prettier to check codebase formatting
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install dependencies
+      run: bun install
+      shell: bash
+
+    - name: Run prettier
+      run: bun run prettier:check
+      shell: bash

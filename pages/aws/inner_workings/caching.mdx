@@ -8,14 +8,13 @@ Also the default Next.js standalone output (or `next start`) does not work in a 
 
 Default Next.js also uses the file system to cache files. You can override it by providing your own cache implementation. This is done **automatically** when using OpenNext.
 
-There is also 2 issues with the default `Cache-Control` headers that Next.js sets. 
-They use this header by default `s-maxage=YOUR_REVALIDATION_TIME, stale-while-revalidate`. There is 2 issue with that: 
+There is also 2 issues with the default `Cache-Control` headers that Next.js sets.
+They use this header by default `s-maxage=YOUR_REVALIDATION_TIME, stale-while-revalidate`. There is 2 issue with that:
+
 - `stale-while-revalidate` is not the proper syntax for the `Cache-Control` header. It should be `stale-while-revalidate=TIME_WHERE_YOU_SERVE_STALE`. They added this [undocumented options](https://github.com/vercel/next.js/blob/952da876f7bb8590d0222b2579117f8a2bd301bb/packages/next/src/server/config-shared.ts#L202) to remedy this in recent version of Next
 - Setting `s-maxage` to the same value for every request to the same page could be a bad idea.
-Next can serve different content based on if you request the full html or are doing client side navigation (RSC or JSON for page router)
-  
+  Next can serve different content based on if you request the full html or are doing client side navigation (RSC or JSON for page router)
   This can cause inconsistencies in the cache with ISR especially when you can have big revalidation time.
-  
   For example, let's assume you use app router, you have a link to your homepage in your main navbar and you set ISR to 1 day. Every other page will have a different RSC cache entry (for client side navigation). This will result in as many cache entry as you have pages in your app which all will have that same 1 day `s-maxage` value but could have been requested at very different time. This could lead to some pages being served with stale content for as long as 2 day.
 
 **All of these issues are automatically fixed for you in OpenNext**
@@ -58,7 +57,7 @@ async function invalidateCloudFrontPaths(paths: string[]) {
           Items: paths,
         },
       },
-    }),
+    })
   );
 }
 ```
@@ -80,7 +79,7 @@ await invalidateCloudFrontPaths(["/page/*"]);
 For on-demand revalidation via the [`next/cache` module](https://nextjs.org/docs/app/building-your-application/data-fetching/revalidating#using-on-demand-revalidation), if you want to retrieve the associated paths for a given tag, you can use this function:
 
 ```ts
-import { DynamoDBClient, QueryCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, QueryCommand } from "@aws-sdk/client-dynamodb";
 
 const client = new DynamoDBClient({ region: process.env.CACHE_BUCKET_REGION });
 
@@ -96,14 +95,9 @@ async function getPaths(tag: string) {
         ExpressionAttributeValues: {
           ":tag": { S: `${process.env.NEXT_BUILD_ID}/${tag}` },
         },
-      }),
+      })
     );
-    return (
-      Items?.map(
-        (item) =>
-          item.path?.S?.replace(`${process.env.NEXT_BUILD_ID}/`, "") ?? "",
-      ) ?? []
-    );
+    return Items?.map((item) => item.path?.S?.replace(`${process.env.NEXT_BUILD_ID}/`, "") ?? "") ?? [];
   } catch (e) {
     console.error("Failed to get by tag", e);
     return [];

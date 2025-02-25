@@ -3,8 +3,8 @@ import { Callout } from "nextra/components";
 Open-next use esbuild to build the project. Given that we aim to support multiple version of Next and multiple runtime, we developped a plugin to override some parts of our code at build time with an esbuild plugin.
 
 <Callout type="warning" emoji="⚠️">
-  As of now, the plugin is internal and not exposed to the user.
-  We might expose it in the future, but for now, it is used only internally.
+  As of now, the plugin is internal and not exposed to the user. We might expose it in the future, but for
+  now, it is used only internally.
 </Callout>
 
 #### How to use
@@ -16,7 +16,6 @@ You need to create a ts file where you will override the code. Inside this file,
 // Everything inside here will be placed at the top of the file
 const test = "test";
 //#endImport
-
 
 //#override import
 // Everything inside here will replace the content of the override with the given id: import

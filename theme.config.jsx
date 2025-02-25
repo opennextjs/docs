@@ -38,8 +38,7 @@ export default {
         },
       ],
       titleTemplate: "%s - OpenNext",
-      description:
-        frontMatter.description || "Open-source Next.js adapters",
+      description: frontMatter.description || "Open-source Next.js adapters",
       openGraph: {
         titleTemplate: "%s - OpenNext",
         images: [

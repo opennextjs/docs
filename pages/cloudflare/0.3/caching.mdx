@@ -1,5 +1,5 @@
-import { SITE } from '../../../config';
-import { Callout } from 'nextra/components';
+import { SITE } from "../../../config";
+import { Callout } from "nextra/components";
 
 ## Caching
 
@@ -14,7 +14,8 @@ Note that [Revalidating](https://nextjs.org/docs/app/building-your-application/d
 Next.js primes the cache at build time. The build time values are serverd by the [Workers Assets](https://developers.cloudflare.com/workers/static-assets/).
 
 <Callout>
-Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be reflected globally, when using the default TTL of 60 seconds.
+  Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be
+  reflected globally, when using the default TTL of 60 seconds.
 </Callout>
 
 ### How to enable caching
@@ -40,8 +41,8 @@ The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`.
   "kv_namespaces": [
     {
       "binding": "NEXT_CACHE_WORKERS_KV",
-      "id": "<BINDING_ID>"
-    }
-  ]
+      "id": "<BINDING_ID>",
+    },
+  ],
 }
 ```

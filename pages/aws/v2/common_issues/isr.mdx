@@ -1,7 +1,8 @@
-import {Callout} from 'nextra/components'
+import { Callout } from "nextra/components";
 
 <Callout type="warning" emoji="⚠️">
-  `next/cache` revalidation needs `next@13.5.1` or higher to work properly. If you are using an older version, please upgrade.
+  `next/cache` revalidation needs `next@13.5.1` or higher to work properly. If you are using an older version,
+  please upgrade.
 </Callout>
 
 #### On-demand revalidation
@@ -42,7 +43,7 @@ async function invalidateCloudFrontPaths(paths: string[]) {
           Items: paths,
         },
       },
-    }),
+    })
   );
 }
 ```
@@ -76,13 +77,11 @@ function getByTag(tag: string) {
         ExpressionAttributeValues: {
           ":tag": { S: `${process.env.NEXT_BUILD_ID}/${tag}` },
         },
-      }),
+      })
     );
     return (
       // We need to remove the buildId from the path
-      Items?.map(
-        ({ path: { S: key } }) => key?.replace(`${process.env.NEXT_BUILD_ID}/`, "") ?? "",
-      ) ?? []
+      Items?.map(({ path: { S: key } }) => key?.replace(`${process.env.NEXT_BUILD_ID}/`, "") ?? "") ?? []
     );
   } catch (e) {
     error("Failed to get by tag", e);
@@ -93,7 +92,7 @@ function getByTag(tag: string) {
 
 #### Patch fetch behaviour for ISR. Only for next@13.5.1+
 
-If you use ISR and fetch in your app, you may encounter a bug that makes your revalidate values inconsistent. 
+If you use ISR and fetch in your app, you may encounter a bug that makes your revalidate values inconsistent.
 The issue is that it revalidates using the lowest revalidate of all fetch calls in your page, regardless of their individual values. To fix this bug, you need to modify the fetch function in your root layout component with the following code snippet
 
 ```ts
