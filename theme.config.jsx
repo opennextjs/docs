@@ -1,5 +1,5 @@
-import { SITE } from "./config";
 import { useConfig } from "nextra-theme-docs";
+import { SITE } from "./config";
 
 import Footer from "./components/Footer";
 import Logo from "./components/Logo.svg";
@@ -38,8 +38,7 @@ export default {
         },
       ],
       titleTemplate: "%s - OpenNext",
-      description:
-        frontMatter.description || "Open-source Next.js adapters",
+      description: frontMatter.description || "Open-source Next.js adapters",
       openGraph: {
         titleTemplate: "%s - OpenNext",
         images: [

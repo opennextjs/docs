@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "biome check",
+    "lint:fix": "biome check --fix"
   },
   "dependencies": {
     "@types/node": "18.11.9",
@@ -18,5 +19,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "4.9.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
   }
 }

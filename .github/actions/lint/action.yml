@@ -1,0 +1,16 @@
+name: Lint codebase
+description: Run biome to lint codebase and ensure code quality
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install dependencies
+      run: bun install
+      shell: bash
+
+    - name: Setup Biome CLI
+      uses: biomejs/setup-biome@v2.2.1
+
+    - name: Run biome
+      run: biome ci --reporter=github
+      shell: bash
