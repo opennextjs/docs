@@ -40,9 +40,9 @@ The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`.
   "kv_namespaces": [
     {
       "binding": "NEXT_CACHE_WORKERS_KV",
-      "id": "<BINDING_ID>"
-    }
-  ]
+      "id": "<BINDING_ID>",
+    },
+  ],
 }
 ```
 
@@ -78,9 +78,9 @@ export default config;
 
 #### On-Demand Revalidation
 
-The tag revalidation mechanism uses a [Cloudflare D1](https://developers.cloudflare.com/d1/) adapter as its backing store for information about tags, paths, and revalidation times.
+The tag revalidation mechanism uses a [Cloudflare D1](https://developers.cloudflare.com/d1/) database as its backing store for information about tags, paths, and revalidation times.
 
-To use on-demand revalidation, you should also follow the ISR setup steps.
+To use on-demand revalidation, you should also follow the [ISR setup steps](#incremental-static-regeneration-isr).
 
 <Callout>
   If your app **only** uses the pages router, it does not need to have a tag cache and should skip this step.
@@ -98,9 +98,9 @@ The binding name used in your app's worker is `NEXT_CACHE_D1`.
     {
       "binding": "NEXT_CACHE_D1",
       "database_id": "<DATABASE_ID>",
-      "database_name": "<DATABASE_NAME>"
-    }
-  ]
+      "database_name": "<DATABASE_NAME>",
+    },
+  ],
 }
 ```
 
@@ -121,16 +121,20 @@ wrangler d1 execute NEXT_CACHE_D1 --command "CREATE TABLE IF NOT EXISTS revalida
 
 ##### 3. Configure the cache
 
-In your project's OpenNext config, enable the KV cache and set up a queue. The `direct` queue will send a revalidation request to a page when needed, but it will not dedupe requests.
+In your project's OpenNext config, enable the KV cache and set up a queue. The queue will send a revalidation request to a page when needed, but it will not dedupe requests.
 
 ```ts
 // open-next.config.ts
 import tagCache from "@opennextjs/cloudflare/d1-tag-cache";
+import incrementalCache from "@opennextjs/cloudflare/kv-cache";
+import memoryQueue from "@opennextjs/cloudflare/memory-queue";
 
 const config: OpenNextConfig = {
   default: {
     override: {
       // ...
+      incrementalCache: () => incrementalCache,
+      queue: () => memoryQueue,
       tagCache: () => tagCache,
     },
   },
