@@ -2,6 +2,7 @@ The revalidation backend is used to read the queue and revalidate the routes. It
 For every received message it will trigger a `HEAD` request with `x-prerender-revalidate` header to the host.
 
 ### Special Event and Result types
+
 ```typescript
 interface RevalidateEvent {
   type: "revalidate";
@@ -10,7 +11,7 @@ interface RevalidateEvent {
     url: string;
   }[];
 }
- interface RevalidateResult {
+interface RevalidateResult {
   type: "revalidate";
- }
+}
 ```

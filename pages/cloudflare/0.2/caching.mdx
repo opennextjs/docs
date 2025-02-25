@@ -1,5 +1,5 @@
-import { SITE } from '../../../config';
-import { Callout } from 'nextra/components';
+import { SITE } from "../../../config";
+import { Callout } from "nextra/components";
 
 ## Caching
 
@@ -10,7 +10,8 @@ By default, all `fetch()` subrequests made in your Next.js app are cached. Refer
 [The cache persists across deployments](https://nextjs.org/docs/app/building-your-application/caching#data-cache). You are responsible for revalidating/purging this cache.
 
 <Callout>
-Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be reflected globally, when using the default TTL of 60 seconds.
+  Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be
+  reflected globally, when using the default TTL of 60 seconds.
 </Callout>
 
 ### How to enable caching

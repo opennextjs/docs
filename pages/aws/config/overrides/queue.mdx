@@ -1,4 +1,4 @@
-import {Callout} from 'nextra/components'
+import { Callout } from "nextra/components";
 
 This override is used by OpenNext to trigger the revalidation of stale routes.
 Before sending the response to the client, OpenNext will check if the route is stale and if it is, it will call the queue override to revalidate the route.
@@ -6,6 +6,7 @@ Before sending the response to the client, OpenNext will check if the route is s
 If you want to better understand how to implement your own Queue, the easiest way would be to take a look at the existing [included Queue](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/queue).
 
 Couple of things to note :
+
 - The default implementation use an SQS queue. This has the main advantage of being able to control the concurrency of the revalidations as well as avoiding trigerring the revalidation multiple times for the same route.
 - You don't have to use a queue at all. You could trigger the revalidation directly in the Queue override itself. You can see a very simple implementation of this [in the `direct` override](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/queue/direct.ts).
 
@@ -33,8 +34,8 @@ This implementation is a lighter version of the `sqs` Queue as it uses `aws4fetc
 
 The Direct Queue will directly trigger the revalidation of the route in the Queue override itself. It is useful for development purposes and when you don't want to use a queue.
 
-<Callout type='warning'>
-Be careful with this implementation as it could lead to multiple revalidations of the same route.
+<Callout type="warning">
+  Be careful with this implementation as it could lead to multiple revalidations of the same route.
 </Callout>
 
 ### dummy

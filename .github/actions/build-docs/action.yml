@@ -2,16 +2,16 @@ name: Build Docs
 description: Build docs pages inside /docs directory
 
 runs:
-    using: 'composite'
-    steps:
-        - name: Install dependencies
-          run: bun install
-          shell: bash
+  using: "composite"
+  steps:
+    - name: Install dependencies
+      run: bun install
+      shell: bash
 
-        - name: Build with Next.js
-          run: bun next build
-          shell: bash
+    - name: Build with Next.js
+      run: bun next build
+      shell: bash
 
-        - name: Export static HTML with Next.js
-          run: bun next export
-          shell: bash
+    - name: Export static HTML with Next.js
+      run: bun next export
+      shell: bash

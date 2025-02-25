@@ -5,7 +5,7 @@ Here is a detailed example of an `open-next.config.ts` file. This file need to b
 For more information about the options here, take a look at the [reference section](/aws/config/reference).
 
 ```ts
-import type { OpenNextConfig } from '@opennextjs/aws/types/open-next';
+import type { OpenNextConfig } from "@opennextjs/aws/types/open-next";
 const config = {
   default: {
     // This is the default server, similar to the server-function in open-next v2
@@ -13,14 +13,14 @@ const config = {
     // for normal lambda as in open-next v2
     override: {
       // This is necessary to enable lambda streaming, defaults to aws-lambda
-      wrapper: 'aws-lambda-streaming',
+      wrapper: "aws-lambda-streaming",
       // Convert the input and output of the server, defaults to aws-apigw-v2
-      converter: 'aws-apigw-v2',
+      converter: "aws-apigw-v2",
       // Used for fetch cache and html/rsc/json cache, defaults to s3
-      incrementalCache: 's3',
+      incrementalCache: "s3",
       // Used for external rewrites, defaults to node
-      proxyExternalRequest: 'node',
-      tagCache: 'dynamodb', // Used for revalidatePath and revalidateTag, defaults to dynamodb
+      proxyExternalRequest: "node",
+      tagCache: "dynamodb", // Used for revalidatePath and revalidateTag, defaults to dynamodb
       // You can override any part that is a `LazyLoadedOverride` this way
       queue: () =>
         Promise.resolve({
@@ -33,8 +33,8 @@ const config = {
     // only for example purposes, you most likely should not use this
     // this can be used on every server to install additional packages
     install: {
-      packages: ['sharp@0.33.5'],
-      arch: 'arm64',
+      packages: ["sharp@0.33.5"],
+      arch: "arm64",
     },
     minify: true, // This will minify the output
   },
@@ -43,18 +43,18 @@ const config = {
   functions: {
     ssr: {
       routes: [
-        'app/api/isr/route',
-        'app/api/sse/route',
-        'app/api/revalidateTag/route', // app dir Api routes
-        'app/route1/page',
-        'app/route2/page', // app dir pages
-        'pages/route3', // page dir pages
+        "app/api/isr/route",
+        "app/api/sse/route",
+        "app/api/revalidateTag/route", // app dir Api routes
+        "app/route1/page",
+        "app/route2/page", // app dir pages
+        "pages/route3", // page dir pages
       ], // For app dir, you need to include route|page, no need to include layout or loading
       // patterns needs to be in a cloudfront compatible format
       // this will be used to generate the output
-      patterns: ['api/*', 'route1', 'route2', 'route3'],
+      patterns: ["api/*", "route1", "route2", "route3"],
       override: {
-        wrapper: 'aws-lambda-streaming',
+        wrapper: "aws-lambda-streaming",
       },
       // This enables the bundled next server which is faster and reduce the size of the server
       // This is also experimental and might not work in all cases
@@ -63,22 +63,22 @@ const config = {
     pageSsr: {
       // For page dir routes should be in the form `pages/${route}` without the extension
       // It should match the filesystem
-      routes: ['pages/pageSsr'],
+      routes: ["pages/pageSsr"],
       // BUILD_ID is a special case, it will be replaced with the actual build id
-      patterns: ['pageSsr', '_next/data/BUILD_ID/pageSsr.json'],
+      patterns: ["pageSsr", "_next/data/BUILD_ID/pageSsr.json"],
       override: {
-        wrapper: 'node',
-        converter: 'node',
-        // This is necessary to generate the dockerfile and 
+        wrapper: "node",
+        converter: "node",
+        // This is necessary to generate the dockerfile and
         // for the implementation to know that it needs to deploy on docker
         // You can also provide a string here which will be used to create the dockerfile
         generateDockerfile: true,
       },
     },
     edge: {
-      runtime: 'edge',
-      routes: ['app/ssr/page'],
-      patterns: ['ssr'],
+      runtime: "edge",
+      routes: ["app/ssr/page"],
+      patterns: ["ssr"],
       override: {},
     },
   },
@@ -99,34 +99,34 @@ const config = {
     // You can customize this to your needs
     // By default it will install with these options:
     install: {
-      packages: ['sharp@0.32.6'],
-      arch: 'arm64',
-      nodeVersion: '18',
-      libc: 'glibc',
+      packages: ["sharp@0.32.6"],
+      arch: "arm64",
+      nodeVersion: "18",
+      libc: "glibc",
     },
   },
   // Initialization function is a special server that will run at build time to initialize the cache.
   // By default, it only initializes the tag cache. Besides the common options, you can use the following options:
   initializationFunction: {
-    tagCache: 'dynamodb-lite', // Can be overridden with a LazyLoadedOverride
+    tagCache: "dynamodb-lite", // Can be overridden with a LazyLoadedOverride
   },
   // Override the default revalidate function
   // By default, works for lambda and on SQS event.
   // Supports only node runtime
   revalidate: {
     override: {
-      wrapper: 'aws-lambda', // Can be overridden with a LazyLoadedOverride
-      converter: 'aws-apigw-v2', // Can be overridden with a LazyLoadedOverride
+      wrapper: "aws-lambda", // Can be overridden with a LazyLoadedOverride
+      converter: "aws-apigw-v2", // Can be overridden with a LazyLoadedOverride
     },
   },
   // Override the default warmer
   // By default, works for lambda only.
   // If you override this, you'll need to handle the warmer event in the wrapper
   warmer: {
-    invokeFunction: 'aws-lambda', // Can be overridden with a LazyLoadedOverride
+    invokeFunction: "aws-lambda", // Can be overridden with a LazyLoadedOverride
     override: {
-      wrapper: 'aws-lambda', // Can be overridden with a LazyLoadedOverride
-      converter: 'aws-apigw-v2', // Can be overridden with a LazyLoadedOverride
+      wrapper: "aws-lambda", // Can be overridden with a LazyLoadedOverride
+      converter: "aws-apigw-v2", // Can be overridden with a LazyLoadedOverride
     },
   },
   // If you want to override the default build command, you can do it here
@@ -149,22 +149,22 @@ const config = {
     // This is executed for every request and after next config headers and middleware has executed.
     // Here is a very simple example of how you can use it:
     headersAndCookiesPriority: (event) => {
-      if (event.rawPath.startsWith('/api')) {
-        return 'middleware';
+      if (event.rawPath.startsWith("/api")) {
+        return "middleware";
       }
-      return 'handler';
+      return "handler";
     },
   },
-  // The path to the target folder of build output from the `buildCommand` option 
+  // The path to the target folder of build output from the `buildCommand` option
   // (the path which will contain the `.next` and `.open-next` folders).
   // This path is relative from the current process.cwd() - Optional defaults to "."
-  buildOutputPath: 'build',
+  buildOutputPath: "build",
   // The path to the root of the Next.js app's source code.
   // This path is relative from the current process.cwd(). - Optional defaults to "."
-  appPath: 'app',
-  // The path to the package.json file of the Next.js app. 
+  appPath: "app",
+  // The path to the package.json file of the Next.js app.
   // This path is relative from the current process.cwd(). - Optional
-  packageJsonPath: 'package.json',
+  packageJsonPath: "package.json",
   // Advanced usage
   // If you use the edge runtime somewhere (either with an external middleware or in the functions), we compile 2 versions of the open-next.config.ts file.
   // One for the node runtime and one for the edge runtime.

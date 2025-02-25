@@ -1,4 +1,4 @@
-import { Callout } from 'nextra/components';
+import { Callout } from "nextra/components";
 
 <Callout>
   This documentation is still a work in progress. Some parts might be missing or incomplete.
@@ -47,10 +47,7 @@ The wrapper is the main entrypoint for the backend. This is the type of the wrap
 type WrapperHandler<
   E extends BaseEventOrResult = InternalEvent,
   R extends BaseEventOrResult = InternalResult,
-> = (
-  handler: OpenNextHandler<E, R>,
-  converter: Converter<E, R>,
-) => Promise<(...args: any[]) => any>;
+> = (handler: OpenNextHandler<E, R>, converter: Converter<E, R>) => Promise<(...args: any[]) => any>;
 
 export type Wrapper<
   E extends BaseEventOrResult = InternalEvent,

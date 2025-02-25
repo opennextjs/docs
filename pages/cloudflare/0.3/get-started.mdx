@@ -1,5 +1,5 @@
-import { SITE } from '../../../config';
-import { Callout } from 'nextra/components';
+import { SITE } from "../../../config";
+import { Callout } from "nextra/components";
 
 ### Get Started
 
@@ -30,19 +30,21 @@ npm install --save-dev wrangler@latest
 ```
 
 <Callout>
-You must use Wrangler version `3.99.0` or later to deploy Next.js apps using `@opennextjs/cloudflare`.
+  You must use Wrangler version `3.99.0` or later to deploy Next.js apps using `@opennextjs/cloudflare`.
 </Callout>
 
 ##### 3. Create a wrangler configuration file
 
-<Callout type='info'>
-This step is optional since `@opennextjs/cloudflare` creates this file for you during the build process (if not already present).
+<Callout type="info">
+  This step is optional since `@opennextjs/cloudflare` creates this file for you during the build process (if
+  not already present).
 </Callout>
 
 A [wrangler configuration file](https://developers.cloudflare.com/workers/wrangler/configuration/) is needed for your
 application to be previewed and deployed, it is also where you configure your Worker and define what resources it can access via [bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings).
 
 You can create one yourself in the root directory of your Next.js app with the name `wrangler.json` and the following content:
+
 ```jsonc
 {
   "$schema": "node_modules/wrangler/config-schema.json",
@@ -66,16 +68,20 @@ You can create one yourself in the root directory of your Next.js app with the n
 ```
 
 <Callout>
-As shown above:
- - You must enable the [`nodejs_compat` compatibility flag](https://developers.cloudflare.com/workers/runtime-apis/nodejs/) *and* set your [compatibility date](https://developers.cloudflare.com/workers/configuration/compatibility-dates/) to `2024-09-23` or later, in order for your Next.js app to work with @opennextjs/cloudflare
- - The `main` and `assets` values should also not be changed unless you modify the build output result in some way
- - You can add a binding named `NEXT_CACHE_WORKERS_KV` to make use of Next.js' caching as described in the [Caching docs](/cloudflare/caching)
+  As shown above: - You must enable the [`nodejs_compat` compatibility
+  flag](https://developers.cloudflare.com/workers/runtime-apis/nodejs/) *and* set your [compatibility
+  date](https://developers.cloudflare.com/workers/configuration/compatibility-dates/) to `2024-09-23` or
+  later, in order for your Next.js app to work with @opennextjs/cloudflare - The `main` and `assets` values
+  should also not be changed unless you modify the build output result in some way - You can add a binding
+  named `NEXT_CACHE_WORKERS_KV` to make use of Next.js' caching as described in the [Caching
+  docs](/cloudflare/caching)
 </Callout>
 
 ##### 4. Add an `open-next.config.ts` file
 
-<Callout type='info'>
-This step is optional since `@opennextjs/cloudflare` creates this file for you during the build process (if not already present).
+<Callout type="info">
+  This step is optional since `@opennextjs/cloudflare` creates this file for you during the build process (if
+  not already present).
 </Callout>
 
 Add a [`open-next.config.ts`](https://opennext.js.org/aws/config) file to the root directory of your Next.js app:
@@ -110,7 +116,8 @@ export default config;
 ```
 
 <Callout>
-To use the `OpenNextConfig` type as illustrated above (which is not necessary), you need to install the `@opennextjs/aws` NPM package as a dev dependency.
+  To use the `OpenNextConfig` type as illustrated above (which is not necessary), you need to install the
+  `@opennextjs/aws` NPM package as a dev dependency.
 </Callout>
 
 ##### 5. Add a `.dev.vars` file
@@ -163,10 +170,11 @@ Uninstalling the [`@cloudflare/next-on-pages`](https://www.npmjs.com/package/@cl
 
 Remove any reference of these packages from your source and configuration files.
 This includes:
- - `setupDevPlatform()` calls in your Next.js config file
- - `getRequestContext` imports from `@cloudflare/next-on-pages` from your source files
-   (those can be replaced with `getCloudflareContext` calls from `@opennextjs/cloudflare`)
- - next-on-pages eslint rules set in your Eslint config file
+
+- `setupDevPlatform()` calls in your Next.js config file
+- `getRequestContext` imports from `@cloudflare/next-on-pages` from your source files
+  (those can be replaced with `getCloudflareContext` calls from `@opennextjs/cloudflare`)
+- next-on-pages eslint rules set in your Eslint config file
 
 ##### 11. Develop locally
 

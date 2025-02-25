@@ -1,4 +1,4 @@
-import { Callout } from 'nextra/components';
+import { Callout } from "nextra/components";
 
 This override is used by the [`cache` adapter](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/adapters/cache.ts) that is provided by OpenNext to the NextServer. It is also used by OpenNext if `enableCacheInterception` is set to `true` in the configuration.
 
@@ -47,20 +47,23 @@ It needs to run on the local filesystem, and expect to be run from the OpenNext 
 Because of how it works, this implementation is only eventually consistent and errors during update could cause inconsistencies between the local cache in some instances and the S3 cache.
 
 It could also end up being slower (and more expensive) than simpler implementations if used in a low traffic serverless environment.
+
 </Callout>
 
-The MultiTierDdbS3 IncrementalCache is a more complex implementation. 
+The MultiTierDdbS3 IncrementalCache is a more complex implementation.
 Cache are stored in a local In Memory LRU cache as well as in S3. DynamoDB is used to keep local cache in sync between multiple instances of the server.
 It uses `aws4fetch` to interact with S3 and DynamoDB.
 
 ##### How does it work
 
 On get :
+
 1. When a cache is requested, it first checks the local cache. If the cache is not found, it will fetch it from S3 and store it in the local cache.
 2. If the local cache exist for this key, it will check metadata in DynamoDB to see if the cache is still valid. If it is not, it will fetch the cache from S3 and store it in the local cache.
 3. If the local cache is valid, it will return it.
 
 On update :
+
 1. When a cache is updated, it will first try to update the cache in S3.
 2. If the update is successful, it will update the metadata in DynamoDB.
 3. Finally, it will update the local cache.

@@ -1,20 +1,22 @@
-When making some changes to OpenNext, it can be a bit cumbersome to need to deploy every time you want to test changes. If your change is not dependent on the wrapper or the converter, then you can create a custom `open-next.config.ts` file (you can use another name so that it doesn't conflict with your existing `open-next.config.ts`). 
-
+When making some changes to OpenNext, it can be a bit cumbersome to need to deploy every time you want to test changes. If your change is not dependent on the wrapper or the converter, then you can create a custom `open-next.config.ts` file (you can use another name so that it doesn't conflict with your existing `open-next.config.ts`).
 
 To run `OpenNext` locally:
+
 ```bash
 # This is to build (the config-path is needed if you use a different name than the default one)
 node /path/to/opennextjs-aws/packages/open-next/dist/index.js build --config-path open-next.local.config.ts
 # Then to run the server
 node .open-next/server-functions/default/index.mjs
 ```
+
 ### open-next.local.config.ts
+
 ```typescript
 // open-next.local.config.ts -
 // A good practice would be to use a different name so that it doesn't conflict
 // with your existing open-next.config.ts i.e. open-next.local.config.ts
 // You could also customize it by using custom overrides if you need to.
-import type {OpenNextConfig} from "@opennextjs/aws/types/open-next.js"
+import type { OpenNextConfig } from "@opennextjs/aws/types/open-next.js";
 
 export default {
   default: {
@@ -23,26 +25,26 @@ export default {
       converter: "node",
       incrementalCache: "fs-dev",
       queue: "direct",
-      tagCache: "fs-dev"
-    }
+      tagCache: "fs-dev",
+    },
   },
 
   imageOptimization: {
     override: {
       wrapper: "dummy",
-      converter: "dummy"
+      converter: "dummy",
     },
     loader: "fs-dev",
     // This part is not needed on arm linux, and image optimization will only work in linux
     install: {
       arch: "x64",
-      packages: ["sharp"]
-    }
+      packages: ["sharp"],
+    },
   },
 
   // You can override the build command here so that you don't have to rebuild next every time you make a change
   //buildCommand: "echo 'No build command'",
-} satisfies OpenNextConfig
+} satisfies OpenNextConfig;
 
-export default config
+export default config;
 ```

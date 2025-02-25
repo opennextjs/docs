@@ -1,9 +1,11 @@
 # Configuring OpenNext for use in an Nx Monorepo.
+
 Here's a detailed exampled of how to add OpenNext + SST to an existing Nx workspace, with an existing NextJS application sitting at `apps/next-site`
 
 1. install `open-next`: `pnpm add —save-dev @opennextjs/aws`
 
 2. Update your `apps/next-site/next.config.js` add `output: ‘standalone’`, and you want to add `experimental.outputFileTracingRoot`, it should look a little like this:
+
 ```javascript
 //@ts-check
 
@@ -36,6 +38,7 @@ module.exports = composePlugins(...plugins)(nextConfig);
 ```
 
 3. Create `open-next.config.ts` inside your apps root directory, it should look a little something like this:
+
 ```javascript
 import type { OpenNextConfig } from '@opennextjs/aws/types/open-next';
 
@@ -57,6 +60,7 @@ it might even work.
 
 However, we don't want to rely on needing to manually running a build every time we want to deploy a change, so instead we can set up a target.
 We do this in your project's `project.json` (in this case, living at `apps/next-site/project`), we want to find the targets object and update it:
+
 ```diff
 {
   "name": "next-site",
@@ -79,7 +83,9 @@ We do this in your project's `project.json` (in this case, living at `apps/next-
 }
 
 ```
+
 Next we need to add the open-next directory to our eslint's `ignorePatterns` array
+
 ```diff
 {
   "extends": [
@@ -134,21 +140,21 @@ but we will not use the SST cli to init this project, because it wants to add a 
 export default $config({
   app(input) {
     return {
-      name: 'next-site', // use whatever your project is called here
-      removal: input?.stage === 'production' ? 'retain' : 'remove',
-      home: 'aws',
+      name: "next-site", // use whatever your project is called here
+      removal: input?.stage === "production" ? "retain" : "remove",
+      home: "aws",
     };
   },
   async run() {
-    new sst.aws.Nextjs('Site', {
-      buildCommand: 'exit 0;' // again, we want to get Nx to handle building
+    new sst.aws.Nextjs("Site", {
+      buildCommand: "exit 0;", // again, we want to get Nx to handle building
     });
   },
 });
-
 ```
 
 - now, you probably see some type errors, as SST is not initialized yet, but we can resolve this by running
+
 ```bash
 $ cd apps/next-site && sst install
 ```
@@ -245,6 +251,7 @@ this will resolve the type issues and initialise SST.
 ```
 
 now we can run (or if you want a custom stage, you can simply do `nx deploy next-site --stage this-is-my-stage` and it will be passed directly to the sst command).
+
 ```bash
 $ nx deploy next-site --configuration dev # using dev configuration (which sets the stage to development)
 # nx deploy next-site -c dev # OR

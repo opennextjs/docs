@@ -1,5 +1,5 @@
-import { SITE } from '../../../config';
-import { Callout } from 'nextra/components';
+import { SITE } from "../../../config";
+import { Callout } from "nextra/components";
 
 ### Bindings
 
@@ -17,13 +17,13 @@ You can access [bindings](https://developers.cloudflare.com/workers/runtime-apis
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export async function GET(request) {
-	let responseText = "Hello World";
+  let responseText = "Hello World";
 
-	const myKv = (await getCloudflareContext()).env.MY_KV_NAMESPACE;
-	await myKv.put("foo", "bar");
-	const foo = await myKv.get("foo");
+  const myKv = (await getCloudflareContext()).env.MY_KV_NAMESPACE;
+  await myKv.put("foo", "bar");
+  const foo = await myKv.get("foo");
 
-	return new Response(foo);
+  return new Response(foo);
 }
 ```
 
@@ -56,10 +56,9 @@ You can access context about the incoming request from the [`cf` object](https:/
 ```js
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-
 export async function GET(request) {
-	const { env, cf, ctx } = await getCloudflareContext();
+  const { env, cf, ctx } = await getCloudflareContext();
 
-	// ...
+  // ...
 }
 ```

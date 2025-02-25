@@ -63,7 +63,6 @@ This can also happen in app router when a client navigates via NextJS `<Link>` c
 
 The issue might be that your having a folder or file in your `public` directory with an overlapping between the name and your route. In this case, you should rename that to something else.
 
-
 #### `cannot find module './chunks/xxxx.js'` error
 
 Dynamic imports in `instrumentation.ts` will cause this error at runtime. Remove dynamic imports to resolve.
@@ -75,24 +74,26 @@ The config recommended by Sentry docs uses dynamic imports in `instrumentation.t
 Here's a working Sentry config which resolves the error:
 
 `instrumentation.ts`
+
 ```typescript
-import * as Sentry from '@sentry/nextjs';
-import { initSentry } from '../sentry.server.config';
+import * as Sentry from "@sentry/nextjs";
+import { initSentry } from "../sentry.server.config";
 
 export const onRequestError = Sentry.captureRequestError;
 
 export async function register() {
-  initSentry(process.env.NEXT_RUNTIME as 'nodejs' | 'edge');
+  initSentry(process.env.NEXT_RUNTIME as "nodejs" | "edge");
 }
 ```
 
 `sentry.server.config.ts`
-```typescript
-import * as Sentry from '@sentry/nextjs';
 
-export const initSentry = (runtime: 'nodejs' | 'edge') => {
+```typescript
+import * as Sentry from "@sentry/nextjs";
+
+export const initSentry = (runtime: "nodejs" | "edge") => {
   Sentry.init({
-    dsn: 'https://...',
+    dsn: "https://...",
 
     //...rest of your config
   });

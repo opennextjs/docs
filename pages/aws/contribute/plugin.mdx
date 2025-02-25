@@ -2,7 +2,7 @@ OpenNext use 3 different esbuild plugins internally to recompile or modify the s
 
 #### OpenNext Replacement Plugin
 
-This plugin is used to replace some code in the source code with some other code. 
+This plugin is used to replace some code in the source code with some other code.
 
 Here is a very simple example of how to use it:
 
@@ -15,24 +15,24 @@ openNextPlugin({
     // This is to delete some code from the target file
     deletes: ["id1"],
   })
- 
+
   //To inject arbritary code by using (import at top of file):
- 
+
   //#import
- 
+
   import data from 'data'
   const datum = data.datum
- 
+
   //#endImport
- 
+
   To replace code:
- 
+
   //#override id1
- 
+
   export function overrideMe() {
      // I will replace the "id1" block in the target file
   }
- 
+
   //#endOverride
 ```
 
@@ -47,13 +47,13 @@ openNextResolvePlugin({
   overrides: {
     wrapper: "node",
     converter: "node",
-  }
-})
+  },
+});
 ```
 
 #### OpenNext Edge Plugin
 
-This plugin is used to properly compile routes or middleware built for the `edge` runtime. 
+This plugin is used to properly compile routes or middleware built for the `edge` runtime.
 
 Here is a very simple example of how to use it:
 
