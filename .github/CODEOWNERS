@@ -1,0 +1,3 @@
+/pages/aws/* @opennextjs/aws
+/pages/cloudflare/* @opennextjs/cloudflare @james-elicx 
+/pages/netlify/* @opennextjs/netlify-frameworks-and-build
