@@ -1,5 +1,5 @@
-import { SITE } from '../../config';
-import { Callout } from 'nextra/components';
+import { SITE } from "../../config";
+import { Callout } from "nextra/components";
 
 ## Caching
 
@@ -12,7 +12,8 @@ By default, all `fetch()` subrequests made in your Next.js app are cached. Refer
 Next.js primes the cache at build time. The build time values are serverd by the [Workers Assets](https://developers.cloudflare.com/workers/static-assets/).
 
 <Callout>
-Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be reflected globally, when using the default TTL of 60 seconds.
+  Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be
+  reflected globally, when using the default TTL of 60 seconds.
 </Callout>
 
 ### How to enable caching
@@ -71,9 +72,9 @@ const config: OpenNextConfig = {
 export default config;
 ```
 
-
 <Callout>
-  The `direct` mode for the queue is intended for debugging purposes and is not recommended for use in production. We are actively working on a solution that will be suitable for production.
+  The `direct` mode for the queue is intended for debugging purposes and is not recommended for use in
+  production. We are actively working on a solution that will be suitable for production.
 </Callout>
 
 #### On-Demand Revalidation

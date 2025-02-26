@@ -44,6 +44,7 @@ There are two types of caches in the `.open-next/cache` folder:
 #### Revalidation Table
 
 Create a DynamoDB table with the following configuration:
+
 - Partition key: `tag` (String)
 - Sort key: `path` (String)
 - An index named `revalidate` with the following configuration:
@@ -123,14 +124,14 @@ This ensures that the Lambda handler remains at `index.mjs`.
 
 Create a CloudFront distribution, and dispatch requests to their corresponding handlers (behaviors). The following behaviors are configured:
 
-| Behavior                                                                                                                      | Requests            | CloudFront Function                                                                         | Origin                      |
-| ----------------------------------------------------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------- | --------------------------- |
-| `/_next/static/*`                                                                                                             | Hashed static files | -                                                                                           | S3 bucket                   |
-| `/favicon.ico`<br />`/my-images/*`<br />[see why](workaround#workaround-public-static-files-served-out-by-server-function-aws-specific) | public assets       | -                                                                                           | S3 bucket                   |
-| `/_next/image`                                                                                                                | Image optimization  | -                                                                                           | image optimization function |
-| `/_next/data/*`                                                                                                               | data requests       | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function             |
-| `/api/*`                                                                                                                      | API                 | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function             |
-| `/*`                                                                                                                          | catch all           | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function             |
+| Behavior                                                                                                                                | Requests            | CloudFront Function                                                                                   | Origin                      |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------- |
+| `/_next/static/*`                                                                                                                       | Hashed static files | -                                                                                                     | S3 bucket                   |
+| `/favicon.ico`<br />`/my-images/*`<br />[see why](workaround#workaround-public-static-files-served-out-by-server-function-aws-specific) | public assets       | -                                                                                                     | S3 bucket                   |
+| `/_next/image`                                                                                                                          | Image optimization  | -                                                                                                     | image optimization function |
+| `/_next/data/*`                                                                                                                         | data requests       | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function             |
+| `/api/*`                                                                                                                                | API                 | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function             |
+| `/*`                                                                                                                                    | catch all           | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function             |
 
 #### Running at edge
 
@@ -138,14 +139,14 @@ The server function can also run at edge locations by configuring it as Lambda@E
 
 To configure the CloudFront distribution:
 
-| Behavior                                                                                                                      | Requests            | CloudFront Function                                                                         | Lambda@Edge     | Origin                      |
-| ----------------------------------------------------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------- | --------------- | --------------------------- |
-| `/_next/static/*`                                                                                                             | Hashed static files | -                                                                                           | -               | S3 bucket                   |
-| `/favicon.ico`<br />`/my-images/*`<br />[see why](workaround#workaround-public-static-files-served-out-by-server-function-aws-specific) | public assets       | -                                                                                           | -               | S3 bucket                   |
-| `/_next/image`                                                                                                                | Image optimization  | -                                                                                           | -               | image optimization function |
-| `/_next/data/*`                                                                                                               | data requests       | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function | -                           |
-| `/api/*`                                                                                                                      | API                 | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function | -                           |
-| `/*`                                                                                                                          | catch all           | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function | -                           |
+| Behavior                                                                                                                                | Requests            | CloudFront Function                                                                                   | Lambda@Edge     | Origin                      |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------- | --------------- | --------------------------- |
+| `/_next/static/*`                                                                                                                       | Hashed static files | -                                                                                                     | -               | S3 bucket                   |
+| `/favicon.ico`<br />`/my-images/*`<br />[see why](workaround#workaround-public-static-files-served-out-by-server-function-aws-specific) | public assets       | -                                                                                                     | -               | S3 bucket                   |
+| `/_next/image`                                                                                                                          | Image optimization  | -                                                                                                     | -               | image optimization function |
+| `/_next/data/*`                                                                                                                         | data requests       | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function | -                           |
+| `/api/*`                                                                                                                                | API                 | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function | -                           |
+| `/*`                                                                                                                                    | catch all           | set `x-forwarded-host`<br />[see why](workaround#workaround-set-x-forwarded-host-header-aws-specific) | server function | -                           |
 
 #### Revalidation function
 

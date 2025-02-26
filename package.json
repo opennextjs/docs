@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prettier:check": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "fix": "bun run prettier:fix"
   },
   "dependencies": {
     "@types/node": "18.11.9",
@@ -18,5 +21,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "4.9.3"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.2"
   }
 }

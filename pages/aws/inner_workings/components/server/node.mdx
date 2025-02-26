@@ -26,7 +26,7 @@ To facilitate this:
 #### Lifetime of an SSG request for a page revalidated using `revalidateTag`
 
 1. You revalidate the page using `revalidateTag` or `revalidatePath`. You should also invalidate the cache in Cloudfront
-2. Cloudfront receives a request for a page. 
+2. Cloudfront receives a request for a page.
 3. Cloudfront forwards the request to the `server-function`.
 4. The `server-function` checks in the incremental cache, then in the tag cache. If the page is stale in the tag cache, it will trigger an immediate revalidation and send the updated response back to Cloudfront.
 5. The user will receive the updated version of the page with the `x-next-cache` header set to `MISS`.
@@ -48,12 +48,14 @@ You can look at the expected types [here](https://github.com/sst/open-next/blob/
 The default S3 Incremental Cache uses the `@aws-sdk/client-s3` to interact with the S3 bucket. It needs to have the proper permissions to read and write to the bucket.
 
 File in S3 should follow the following structure:
+
 - `Key_Prefix/BUILD_ID/path/to/page.cache` - For the cache of a page
 - `Key_Prefix/__fetch/BUILD_ID/fetch-cache-key` - For the fetch cache
 
 The default S3 Incremental Cache can be configured using the following environment variables:
 
 ###### Environment Variables
+
 - CACHE_BUCKET_REGION: The region of the S3 bucket
 - CACHE_BUCKET_NAME: The name of the S3 bucket
 - CACHE_BUCKET_KEY_PREFIX: The prefix of the keys in the S3 bucket - Optional
@@ -72,20 +74,22 @@ You can look at the expected types [here](https://github.com/sst/open-next/blob/
 The default DynamoDB Tag Cache uses the `@aws-sdk/client-dynamodb` to interact with the DynamoDB table. It needs to have the proper permissions to read and write to the table.
 
 Tags in DynamoDB should follow the following structure:
-```typescript 
-type Tag = {
-  path: string, // The path of the page
-  tag: string, // The tag of the page
-  revalidatedAt: number, // The time at which the page has been revalidated
-}
 
+```typescript
+type Tag = {
+  path: string; // The path of the page
+  tag: string; // The tag of the page
+  revalidatedAt: number; // The time at which the page has been revalidated
+};
 ```
+
 We use an index called `revalidate` with `path` as a partition key and `revalidatedAt` as the sort key.
 It needs to be pre-populated with the tags of the pages that are being generated.
 
 The default DynamoDB Tag Cache can be configured using the following environment variables:
 
 ###### Environment Variables
+
 - CACHE_BUCKET_REGION: The region of the DynamoDB table
 - CACHE_DYNAMO_TABLE: The name of the DynamoDB table
 - AWS_SDK_DYNAMODB_MAX_ATTEMPTS: The maximum number of attempts to make to the DynamoDB table - Optional
@@ -99,6 +103,7 @@ By default, OpenNext uses SQS as the default revalidation queue.
 You can override the default queue by setting the `override.queue` property in the `open-next.config.ts` file.
 
 Here is the expected type for the queue override:
+
 ```ts
 interface QueueMessage {
   MessageDeduplicationId: string;
@@ -114,6 +119,7 @@ export interface Queue {
   name: string;
 }
 ```
+
 The send function will be called when a page is marked as `STALE`. You don't have to use a queue here, you can use any other mechanism to send the message to the revalidation worker or even do the revalidation in the same process.
 
 #### Shared Environment Variables
