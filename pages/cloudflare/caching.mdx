@@ -53,23 +53,21 @@ In your project's OpenNext config, enable the KV cache and set up a queue.
 
 The memory queue will send revalidation requests to a page when needed, and offers support for de-duplicating requests on a per-isolate basis. There might still be duplicate requests under high traffic or across regions.
 
+<Callout type="warning">
+  The memory queue provided by `@opennextjs/cloudflare` is not fully suitable for production deployments, you
+  can use it at your own risk!
+</Callout>
+
 ```ts
 // open-next.config.ts
-import incrementalCache from "@opennextjs/cloudflare/kv-cache";
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import kvIncrementalCache from "@opennextjs/cloudflare/kv-cache";
 import memoryQueue from "@opennextjs/cloudflare/memory-queue";
 
-const config: OpenNextConfig = {
-  default: {
-    override: {
-      // ...
-      incrementalCache: () => incrementalCache,
-      queue: () => memoryQueue,
-    },
-  },
-  // ...
-};
-
-export default config;
+export default defineCloudflareConfig({
+  incrementalCache: kvIncrementalCache,
+  queue: memoryQueue,
+});
 ```
 
 <Callout>
@@ -126,21 +124,16 @@ In your project's OpenNext config, enable the KV cache and set up a queue. The q
 
 ```ts
 // open-next.config.ts
-import tagCache from "@opennextjs/cloudflare/d1-tag-cache";
-import incrementalCache from "@opennextjs/cloudflare/kv-cache";
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import kvIncrementalCache from "@opennextjs/cloudflare/kv-cache";
+import d1TagCache from "@opennextjs/cloudflare/d1-tag-cache";
 import memoryQueue from "@opennextjs/cloudflare/memory-queue";
 
-const config: OpenNextConfig = {
-  default: {
-    override: {
-      // ...
-      incrementalCache: () => incrementalCache,
-      queue: () => memoryQueue,
-      tagCache: () => tagCache,
-    },
-  },
-  // ...
-};
+export default defineCloudflareConfig({
+  incrementalCache: kvIncrementalCache,
+  tagCache: d1TagCache,
+  queue: memoryQueue,
+});
 ```
 
 ##### 4. Initialise the cache during deployments
