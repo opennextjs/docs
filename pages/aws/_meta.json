@@ -1,6 +1,7 @@
 {
   "index": "Overview",
   "get_started": "Getting started",
+  "compatibility": "Compatibility",
   "config": "Configuration",
   "comparison": "Comparison",
   "inner_workings": "How does it work?",
