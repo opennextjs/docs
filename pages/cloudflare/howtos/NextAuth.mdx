@@ -36,14 +36,14 @@ Related issues: [`workers-sdk#206`](https://github.com/opennextjs/opennextjs-clo
 
 ### Solving issues in local dev
 
-When trying to access bindings (for instance to use [D1](/d1/) as database) depending on your implementation, you might run into:
+When trying to access Cloudflare bindings depending on your implementation, you might run into:
 
 `ERROR: getCloudflareContext has been called without having called initOpenNextCloudflareForDev from the Next.js config file.`
 
-You can resolve this issue, by following the the following pattern in your `auth.ts` configuration:
+You can resolve this issue, by calling `getCloudflareContext` in your `NextAuth` callback, for example like so:
 
 ```
-export const { handlers, auth, signIn, signOut } = NextAuth( async _ => {
+export const { handlers, auth, signIn, signOut } = NextAuth(async _ => {
 	let { env } = await getCloudflareContext({async: true})
         ..
 }
