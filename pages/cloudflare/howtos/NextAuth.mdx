@@ -1,3 +1,5 @@
+import { Callout } from "nextra/components";
+
 ## [NextAuth.js](https://next-auth.js.org/)
 
 NextAuth.js is an open-source authentication solution for Next.js applications.
@@ -5,9 +7,9 @@ NextAuth.js is an open-source authentication solution for Next.js applications.
 ### Solving a broken build
 
 <Callout>
-This section offers a solution for NextAuth.js v4. Use of v5 is currently blocked by the lack of `createCipheriv` implementation.
+  This section offers a solution for NextAuth.js v4. Use of v5 is currently blocked by the lack of
+  `createCipheriv` implementation.
 </Callout>
-
 
 NextAuth.js relies on [`createCipheriv`](https://nodejs.org/docs/v22.13.1/api/crypto.html#cryptocreatecipherivalgorithm-key-iv-options) from [`node:crypto`](https://nodejs.org/docs/v22.13.1/api/crypto.html).
 
