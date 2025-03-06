@@ -44,7 +44,7 @@ When trying to access Cloudflare bindings depending on your implementation, you 
 
 You can resolve this issue, by calling `getCloudflareContext` in your `NextAuth` callback, for example like so:
 
-```
+```js
 export const { handlers, auth, signIn, signOut } = NextAuth(async _ => {
 	let { env } = await getCloudflareContext({async: true})
         ..
