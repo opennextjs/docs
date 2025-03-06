@@ -4,6 +4,11 @@ NextAuth.js is an open-source authentication solution for Next.js applications.
 
 ### Solving a broken build
 
+<Callout>
+This section offers a solution for NextAuth.js v4. Use of v5 is currently blocked by the lack of `createCipheriv` implementation.
+</Callout>
+
+
 NextAuth.js relies on [`createCipheriv`](https://nodejs.org/docs/v22.13.1/api/crypto.html#cryptocreatecipherivalgorithm-key-iv-options) from [`node:crypto`](https://nodejs.org/docs/v22.13.1/api/crypto.html).
 
 `createCipheriv` is not currently implemented by the workerd runtime so apps using NextAuth.js with the default configuration break at build time.
@@ -28,3 +33,18 @@ Kudos to Arnav Gupta ([`@arnavgupta00`](https://github.com/arnavgupta00)) for co
 You can find an example of this on his [example repository](https://github.com/arnavgupta00/deployment-cf-workers-prisma-nextauth).
 
 Related issues: [`workers-sdk#206`](https://github.com/opennextjs/opennextjs-cloudflare/issues/206) and [`workerd#3277`](https://github.com/cloudflare/workerd/issues/3277).
+
+### Solving issues in local dev
+
+When trying to access bindings (for instance to use [D1](/d1/) as database) depending on your implementation, you might run into:
+
+`ERROR: getCloudflareContext has been called without having called initOpenNextCloudflareForDev from the Next.js config file.`
+
+You can resolve this issue, by following the the following pattern in your `auth.ts` configuration:
+
+```
+export const { handlers, auth, signIn, signOut } = NextAuth( async _ => {
+	let { env } = await getCloudflareContext({async: true})
+        ..
+}
+```
