@@ -30,7 +30,7 @@ The ISR adapter for Cloudflare uses [Workers KV](https://developers.cloudflare.c
 npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
 ```
 
-##### 2. Add the KV namespace to your Worker
+##### 2. Add the KV namespace and Service Binding to your Worker
 
 The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`.
 
@@ -42,6 +42,12 @@ The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`.
     {
       "binding": "NEXT_CACHE_WORKERS_KV",
       "id": "<BINDING_ID>",
+    },
+  ],
+  "services": [
+    {
+      "binding": "NEXT_CACHE_REVALIDATION_WORKER",
+      "service": "<WORKER_NAME>",
     },
   ],
 }
@@ -85,7 +91,7 @@ To use on-demand revalidation, you should also follow the [ISR setup steps](#inc
   If your app **only** uses the pages router, it does not need to have a tag cache and should skip this step.
 </Callout>
 
-##### 1. Create a D1 database
+##### 1. Create a D1 database and Service Binding
 
 The binding name used in your app's worker is `NEXT_CACHE_D1`.
 
@@ -98,6 +104,12 @@ The binding name used in your app's worker is `NEXT_CACHE_D1`.
       "binding": "NEXT_CACHE_D1",
       "database_id": "<DATABASE_ID>",
       "database_name": "<DATABASE_NAME>",
+    },
+  ],
+  "services": [
+    {
+      "binding": "NEXT_CACHE_REVALIDATION_WORKER",
+      "service": "<WORKER_NAME>",
     },
   ],
 }
