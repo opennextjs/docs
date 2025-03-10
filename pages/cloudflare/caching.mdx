@@ -35,7 +35,7 @@ npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
 The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`.
 
 ```jsonc
-// wrangler.json
+// wrangler.jsonc
 {
   // ...
   "kv_namespaces": [
@@ -96,7 +96,7 @@ To use on-demand revalidation, you should also follow the [ISR setup steps](#inc
 The binding name used in your app's worker is `NEXT_CACHE_D1`.
 
 ```jsonc
-// wrangler.json
+// wrangler.jsonc
 {
   // ...
   "d1_databases": [
