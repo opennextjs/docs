@@ -1,4 +1,5 @@
 {
   "NextAuth": "NextAuth",
-  "stripeAPI": "Stripe API"
+  "stripeAPI": "Stripe API",
+  "dev": "Development workflow"
 }
