@@ -19,3 +19,19 @@ Here is a list of features that OpenNext routing system handle:
 #### Next Middleware
 
 The Next middleware in OpenNext is not running in the same way as in Next.js. In Next.js, the middleware is running inside the `NextServer` inside a fake edge runtime. In OpenNext, we modify the middleware and run it fully inside the routing layer. So if you run the routing layer in Node, you can use Node api inside the middleware (it's a bit tricky because it won't work with `next dev` and involves some workaround because Next will remove Node api during bundling. Some example [here](/aws/config/custom_overrides#define-a-global-to-use-node-in-the-middleware)).
+
+On latest Next 15(works with latest OpenNext aswell) you can now add an `experimental` setting in `next.config.ts` to enable `nodejs` as the runtime for the middleware:
+
+```ts
+const nextConfig: NextConfig = {
+  experimental: {
+    nodeMiddleware: true,
+  },
+};
+// and then in your `middleware.ts` you put:
+export const config = {
+  runtime: "nodejs",
+};
+```
+
+Here is the [PR](https://github.com/vercel/next.js/pull/75624) that introduced this feature in Next.

@@ -1,6 +1,6 @@
 ## Caching in Next and OpenNext
 
-Caching could be become tricky very fast when using Next outside of Vercel. There is a lot of things that need to be taken into account.
+Caching could become tricky very fast when using Next outside of Vercel. There is a lot of things that need to be taken into account.
 
 Usually, you'll deploy your Next app with a CDN in front of it. This CDN will cache the responses from your Next app and serve them to the users. This is great for performance, but it can also be a problem when you need to invalidate the cache. We provide some code examples in this doc to help with [cloudfront cache invalidation](#cloudfront-cache-invalidation). **In OpenNext, you only need to do this if you do On Demand Revalidation**.
 
