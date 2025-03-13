@@ -7,7 +7,7 @@ import { Callout } from "nextra/components";
 
 To create a new Next.js app, pre-configured to run on Cloudflare using `@opennextjs/cloudflare`, run:
 
-```
+```sh
 npm create cloudflare@latest -- my-next-app --framework=next --experimental
 ```
 
@@ -25,7 +25,7 @@ npm install --save-dev @opennextjs/cloudflare@latest
 
 Install the [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/) as a devDependency:
 
-```npm
+```sh
 npm install --save-dev wrangler@latest
 ```
 
@@ -157,26 +157,25 @@ This includes:
 You can continue to run `next dev` when developing locally.
 
 Modify your Next.js configuration file to import and call the `initOpenNextCloudflareForDev` utility
-from the `@opennextjs/cloudflare` package. This makes sure that the Next.js dev server can optimally integrate with the open-next
-cloudflare adapter and it is necessary for using bindings during local development.
+from the `@opennextjs/cloudflare` package. This makes sure that the Next.js dev server can optimally integrate with the open-next cloudflare adapter and it is necessary for using bindings during local development.
 
 This is an example of a Next.js configuration file calling the utility:
 
-```js
-// next.config.mjs
+```ts
+// next.config.ts
+import type { NextConfig } from "next";
 
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
-
-initOpenNextCloudflareForDev();
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig: NextConfig = {
+  /* config options here */
+};
 
 export default nextConfig;
+
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+initOpenNextCloudflareForDev();
 ```
 
-After having added the `initOpenNextCloudflareForDev()` call in your Next.js configuration file, you will be able, during local
-development, to access in any of your server code, local versions of Cloudflare bindings as indicated in the [bindings documentation](./bindings).
+After having added the `initOpenNextCloudflareForDev()` call in your Next.js configuration file, you will be able, during local development, to access in any of your server code, local versions of Cloudflare bindings as indicated in the [bindings documentation](./bindings).
 
 In step 3, we also added the `npm run preview`, which allows you to quickly preview your app running locally in the Workers runtime,
 rather than in Node.js. This allows you to test changes in the same runtime as your app will run in when deployed to Cloudflare.
