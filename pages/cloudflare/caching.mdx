@@ -142,28 +142,58 @@ export default defineCloudflareConfig({
 
 In your project's OpenNext config, enable the cache and set up a queue.
 
-The memory queue will send revalidation requests to a page when needed, and offers support for de-duplicating requests on a per-isolate basis. There might still be duplicate requests under high traffic or across regions.
-
-<Callout type="warning">
-  The memory queue provided by `@opennextjs/cloudflare` is not fully suitable for production deployments, you
-  can use it at your own risk!
-</Callout>
+The Durable Object Queue will send revalidation requests to a page when needed, and offers support for de-duplicating requests.
+By default there will be a maximum of 10 instance of the Durables Object Queue and they can each process up to 5 requests in parallel.(For up to 50 ISR revalidations in parallel)
 
 ```ts
 // open-next.config.ts
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
 // ...
-import memoryQueue from "@opennextjs/cloudflare/memory-queue";
+import doQueue from "@opennextjs/cloudflare/durable-queue";
 
 export default defineCloudflareConfig({
   // ...
-  queue: memoryQueue,
+  queue: doQueue,
 });
 ```
 
+You will also need to add some binding to your `wrangler.jsonc` file.
+
+```jsonc
+"durable_objects": {
+    "bindings": [
+      {
+        "name": "NEXT_CACHE_REVALIDATION_DURABLE_OBJECT",
+        "class_name": "DurableObjectQueueHandler"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DurableObjectQueueHandler"]
+    }
+  ],
+```
+
+You can customize the behaviors of the queue with environment variables:
+
+- The max number of durable workers that can be created (`MAX_REVALIDATE_CONCURRENCY`)
+- The max number of revalidations that can be processed by an instance of durable object at the same time (`MAX_REVALIDATION_BY_DURABLE_OBJECT`)
+- The max time in milliseconds that a revalidation can take before being considered as failed (`REVALIDATION_TIMEOUT_MS`)
+- The amount of time after which a revalidation will be attempted again if it failed. If it fails again it will exponentially back off until it reaches the max retry interval (`REVALIDATION_RETRY_INTERVAL_MS`)
+- The maximum number of attempts that can be made to revalidate a path (`MAX_REVALIDATION_ATTEMPTS`)
+- Disable SQLite for this durable object. It should only be used if your incremental cache is not eventually consistent (`REVALIDATION_DO_DISABLE_SQLITE`)
+
 <Callout>
-  The `direct` mode for the queue is intended for debugging purposes and is not recommended for use in
-  production. We are actively working on a solution that will be suitable for production.
+  There is 2 additional modes that you can use for the queue `direct` and the memory queue
+
+- The memory queue will dedupe request but only on a per isolate basis. It is not fully suitable for production deployments, you
+  can use it at your own risk!
+
+- The `direct` mode for the queue is intended for debugging purposes and is not recommended for use in
+  production. It only works in preview mode (i.e. `wrangler dev`)
+
 </Callout>
 
 #### On-Demand Revalidation
