@@ -88,12 +88,12 @@ You will also need to add some binding to your `wrangler.jsonc` file.
 ```
 
 You can customize the behaviors of the queue with environment variables:
+
 - The max number of durable workers that can be created (MAX_REVALIDATE_CONCURRENCY)
 - The max number of revalidations that can be processed by an instance of durable worker at the same time (MAX_REVALIDATION_BY_DURABLE_OBJECT)
 - The max time in milliseconds that a revalidation can take before being considered as failed (REVALIDATION_TIMEOUT_MS)
 - The amount of time after which a revalidation will be attempted again if it failed. If it fails again it will exponentially back off until it reaches the max retry interval (REVALIDATION_RETRY_INTERVAL_MS)
 - The maximum number of attempts that can be made to revalidate a path (MAX_REVALIDATION_ATTEMPTS)
-
 
 <Callout>
   There is 2 additional modes that you can use for the queue `direct` and the memory queue
