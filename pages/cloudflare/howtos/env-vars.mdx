@@ -8,7 +8,7 @@ On the Cloudflare platform, your environment variables can be stored in either [
 
 While there are multiple ways to set environment variables for local development on the Cloudflare platform (adding them to to your [wrangler configuration](https://developers.cloudflare.com/workers/configuration/secrets/) or to a [.dev.vars](https://developers.cloudflare.com/workers/configuration/secrets/) file) that does not play well with the recommended development workflow as they would not be available while using `next dev`.
 
-What you should do instead is to use the Next.js [`.env` files](https://nextjs.org/docs/pages/building-your-application/configuring/environment-variables) instead. By doing so the environment variables will be available on `process.env` both while running `next dev` and when running you app locally on a Worker with `wrangler dev`.
+What you should do instead is to use the Next.js [`.env` files](https://nextjs.org/docs/pages/building-your-application/configuring/environment-variables). By doing so the environment variables will be available on `process.env` both while running `next dev` and when running your app locally on a Worker with `wrangler dev`.
 
 Next.js `.env` files are environment specific. That is a `.env.development` will take precedence over a `.env` file when you use the "development" environment. See the Next.js site for a detailed explanation of the [loading order](https://nextjs.org/docs/pages/building-your-application/configuring/environment-variables).
 
