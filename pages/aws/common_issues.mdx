@@ -115,6 +115,6 @@ If you are not using `yarn` and you see `yarn` related errors it might be solved
 
 #### `SyntaxError: Unexpected end of JSON input at JSON.parse (<anonymous>)` error
 
-This error will occur when the server function is called with a Server Action request which doesn't include a body.
+This error will occur when the server function is called with a Server Action request without a body.
 
-For an AWS Lambda@Edge function, make sure the option `Include Body` is set for the CloudFront request hook
+Make sure that the body is correctly forwarded to the server function. 
