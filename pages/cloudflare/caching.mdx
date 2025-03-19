@@ -32,7 +32,7 @@ npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
 
 ##### 2. Add the KV namespace and Service Binding to your Worker
 
-The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`.
+The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`. The service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
 
 ```jsonc
 // wrangler.jsonc
@@ -93,7 +93,7 @@ To use on-demand revalidation, you should also follow the [ISR setup steps](#inc
 
 ##### 1. Create a D1 database and Service Binding
 
-The binding name used in your app's worker is `NEXT_CACHE_D1`.
+The binding name used in your app's worker is `NEXT_CACHE_D1`. The service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
 
 ```jsonc
 // wrangler.jsonc
