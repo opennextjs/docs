@@ -112,3 +112,9 @@ This error is usually resolved by removing all yarn files in your repo. You shou
 If you use `yarn` there is a workaround [here](https://stackoverflow.com/a/76902985).
 
 If you are not using `yarn` and you see `yarn` related errors it might be solved by running `corepack disable` or updating `nvm` to `0.40.2`.
+
+#### `SyntaxError: Unexpected end of JSON input at JSON.parse (<anonymous>)` error
+
+This error will occur when the server function is called with a Server Action request without a body.
+
+Make sure that the body is correctly forwarded to the server function. 
