@@ -5,10 +5,6 @@ import { Callout } from "nextra/components";
 
 `@opennextjs/cloudflare` supports [caching](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#caching-data).
 
-By default, all `fetch()` subrequests made in your Next.js app are cached. Refer to the [Next.js documentation](https://nextjs.org/docs/app/building-your-application/caching#opting-out-1) for information about how to disable caching for an individual subrequest, or for an entire route.
-
-[The cache persists across deployments](https://nextjs.org/docs/app/building-your-application/caching#data-cache). You are responsible for revalidating/purging this cache.
-
 Next.js primes the cache at build time. The build time values are serverd by the [Workers Assets](https://developers.cloudflare.com/workers/static-assets/).
 
 <Callout>
