@@ -1,5 +1,6 @@
 import { SITE } from "../../config";
 import { Callout } from "nextra/components";
+import { Tabs } from "nextra/components";
 
 ## Caching
 
@@ -79,12 +80,139 @@ export default defineCloudflareConfig({
 
 #### On-Demand Revalidation
 
-The tag revalidation mechanism uses a [Cloudflare D1](https://developers.cloudflare.com/d1/) database as its backing store for information about tags, paths, and revalidation times.
+The tag revalidation mechanism can use either a [Cloudflare D1](https://developers.cloudflare.com/d1/) database or [Durable Objects](https://developers.cloudflare.com/durable-objects/) with SqliteStorage as its backing store for information about tags, paths, and revalidation times.
 
 To use on-demand revalidation, you should also follow the [ISR setup steps](#incremental-static-regeneration-isr).
 
 <Callout>
   If your app **only** uses the pages router, it does not need to have a tag cache and should skip this step.
+  You can also skip this step if you don't want to use `revalidateTag` or `revalidatePath` in your app.
+</Callout>
+
+There is 3 different options to choose from for the tag cache: 'd1NextTagCache', `ShardedTagCache` and `d1TagCache`.
+For a small to medium size project, `d1NextModeTagCache` is recommended, for bigger projects `ShardedTagCache` is recommended.
+
+<Tabs items={["D1NextTagCache", "ShardedTagCache", "D1TagCache"]}>
+<Tabs.Tab>
+##### 1. Create a D1 database and Service Binding
+
+The binding name used in your app's worker is `NEXT_CACHE_D1`. The service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
+
+```jsonc
+// wrangler.jsonc
+{
+  // ...
+  "d1_databases": [
+    {
+      "binding": "NEXT_CACHE_D1",
+      "database_id": "<DATABASE_ID>",
+      "database_name": "<DATABASE_NAME>",
+    },
+  ],
+  "services": [
+    {
+      "binding": "NEXT_CACHE_REVALIDATION_WORKER",
+      "service": "<WORKER_NAME>",
+    },
+  ],
+}
+```
+
+##### 2. Create table for tag revalidations
+
+The D1 tag cache requires 1 table that tracks On-Demand revalidation times.
+
+The default table name is `revalidations` and can be configured by setting the `NEXT_CACHE_D1_REVALIDATIONS_TABLE` environment variable to a string.
+
+Wrangler can be used to create a table with it's [execute](https://developers.cloudflare.com/d1/wrangler-commands/#d1-execute) option. Ensure that you create a table for both your local dev database and your remote database.
+
+```sh
+wrangler d1 execute NEXT_CACHE_D1 --command "CREATE TABLE IF NOT EXISTS revalidations (tag TEXT NOT NULL, revalidatedAt INTEGER NOT NULL, UNIQUE(tag) ON CONFLICT REPLACE)"
+```
+
+##### 3. Configure the cache
+
+In your project's OpenNext config, enable the KV cache and set up a queue (see above). The queue will send a revalidation request to a page when needed, but it will not dedupe requests.
+
+```ts
+// open-next.config.ts
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import kvIncrementalCache from "@opennextjs/cloudflare/kv-cache";
+import d1NextTagCache from "@opennextjs/cloudflare/d1-next-tag-cache";
+import memoryQueue from "@opennextjs/cloudflare/memory-queue";
+
+export default defineCloudflareConfig({
+  incrementalCache: kvIncrementalCache,
+  tagCache: d1NextTagCache,
+  queue: memoryQueue,
+});
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+##### 1. Create a Durable Object and Service Binding
+The service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
+
+```jsonc
+// wrangler.jsonc
+{
+  // ...
+  "durable_objects": [
+    {
+      "name": "NEXT_CACHE_REVALIDATION_DURABLE_OBJECT",
+      "class_name": "DurableObjectQueueHandler",
+    },
+    {
+      "name": "NEXT_CACHE_D1_SHARDED",
+      "class_name": "DOShardedTagCache",
+    },
+  ],
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DurableObjectQueueHandler", "DOShardedTagCache"],
+    },
+  ],
+  "services": [
+    {
+      "binding": "NEXT_CACHE_REVALIDATION_WORKER",
+      "service": "<WORKER_NAME>",
+    },
+  ],
+}
+```
+
+##### 2. Configure the cache
+
+In your project's OpenNext config, enable the KV cache and set up a queue. The queue will send a revalidation request to a page when needed, but it will not dedupe requests.
+
+```ts
+// open-next.config.ts
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import kvIncrementalCache from "@opennextjs/cloudflare/kv-cache";
+import shardedTagCache from "@opennextjs/cloudflare/do-sharded-tag-cache";
+import memoryQueue from "@opennextjs/cloudflare/memory-queue";
+
+export default defineCloudflareConfig({
+  incrementalCache: kvIncrementalCache,
+  tagCache: shardedTagCache({ numberOfShards: 12, regionalCache: true }),
+  queue: memoryQueue,
+});
+```
+
+ShardedTagCache accepts 3 options:
+
+- `numberOfShards` - The number of shards to use for the cache. The more shards you have, the more evenly the cache will be distributed across the shards. The default is 4.
+- `regionalCache` - Whether to use regional cache for the cache. The default is false. This option is useful when you want to reduce the stress on the durable object.
+- `regionalCacheTTL` - The TTL for the regional cache. The default is 5 seconds. Increasing this value will increase the time it takes for the cache to be invalidated across regions.
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+<Callout>
+  The `d1TagCache` is not recommended for production use, as it does not scale well with the number of tags.
 </Callout>
 
 ##### 1. Create a D1 database and Service Binding
@@ -155,3 +283,6 @@ wrangler d1 execute NEXT_CACHE_D1 --file .open-next/cloudflare/cache-assets-mani
 ```
 
 This should be run as part of each deployment to ensure that the cache is being populated with each build's initial revalidation data.
+
+</Tabs.Tab>
+</Tabs>
