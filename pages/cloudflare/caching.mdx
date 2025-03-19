@@ -80,16 +80,16 @@ export default defineCloudflareConfig({
 
 #### On-Demand Revalidation
 
-The tag revalidation mechanism can use either a [Cloudflare D1](https://developers.cloudflare.com/d1/) database or [Durable Objects](https://developers.cloudflare.com/durable-objects/) with SqliteStorage as its backing store for information about tags, paths, and revalidation times.
+The tag revalidation mechanism can use either a [Cloudflare D1](https://developers.cloudflare.com/d1/) database or [Durable Objects](https://developers.cloudflare.com/durable-objects/) with `SqliteStorage` as its backing store for information about tags, paths, and revalidation times.
 
 To use on-demand revalidation, you should also follow the [ISR setup steps](#incremental-static-regeneration-isr).
 
 <Callout>
   If your app **only** uses the pages router, it does not need to have a tag cache and should skip this step.
-  You can also skip this step if you don't want to use `revalidateTag` or `revalidatePath` in your app.
+  You can also skip this step if your app doesn't to use `revalidateTag` nor `revalidatePath`.
 </Callout>
 
-There is 3 different options to choose from for the tag cache: 'd1NextTagCache', `ShardedTagCache` and `d1TagCache`.
+There are 3 different options to choose from for the tag cache: 'd1NextTagCache', `ShardedTagCache` and `d1TagCache`.
 For a small to medium size project, `d1NextModeTagCache` is recommended, for bigger projects `ShardedTagCache` is recommended.
 
 <Tabs items={["D1NextTagCache", "ShardedTagCache", "D1TagCache"]}>
