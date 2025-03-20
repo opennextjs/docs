@@ -146,12 +146,21 @@ export default defineCloudflareConfig({
 
 ##### 4. Initialise the cache during deployments
 
-In order for the cache to be properly initialised with the build-time revalidation data, you need to setup a command that runs as part of your deploy step.
+In order for the cache to be properly initialised with the build-time revalidation data, you need to run a command as part of your deploy step. This should be run as part of each deployment to ensure that the cache is being populated with each build's data.
 
-OpenNext will generate an SQL file during the build that can be used to setup your D1 database.
+To populate remote bindings and deploy your application at the same time, you can use the `deploy` command. Similarly, the `preview` command will populate your local bindings and start a Wrangler dev server.
 
 ```sh
-wrangler d1 execute NEXT_CACHE_D1 --file .open-next/cloudflare/cache-assets-manifest.sql
+# Populate remote and deploy.
+opennextjs-cloudflare deploy
+
+# Populate local and start dev server.
+opennextjs-cloudflare preview
 ```
 
-This should be run as part of each deployment to ensure that the cache is being populated with each build's initial revalidation data.
+It is possible to only populate the cache without any other steps with the `populateCache` command.
+
+```sh
+# The target is passed as an option, either `local` or `remote`.
+opennextjs-cloudflare populateCache local
+```
