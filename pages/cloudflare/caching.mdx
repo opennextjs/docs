@@ -90,7 +90,12 @@ To use on-demand revalidation, you should also follow the [ISR setup steps](#inc
 </Callout>
 
 There are 3 different options to choose from for the tag cache: 'd1NextTagCache', `ShardedTagCache` and `d1TagCache`.
-For a small to medium size project, `d1NextModeTagCache` is recommended, for bigger projects `ShardedTagCache` is recommended.
+Which one to choose should be based on two key factors:
+
+1. **Expected Load**: Consider the volume of traffic or data you anticipate.
+2. **Usage of** `revalidateTag` / `revalidatePath`: Evaluate how frequently these features will be utilized.
+
+If either of these factors is significant, opting for a sharded database is recommended. Additionally, incorporating a regional cache can further enhance performance.
 
 <Tabs items={["D1NextTagCache", "ShardedTagCache", "D1TagCache"]}>
 <Tabs.Tab>
