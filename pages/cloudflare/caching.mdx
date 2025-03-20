@@ -1,5 +1,6 @@
 import { SITE } from "../../config";
 import { Callout } from "nextra/components";
+import { Tabs } from "nextra/components";
 
 ## Caching
 
@@ -18,8 +19,13 @@ Next.js primes the cache at build time. The build time values are serverd by the
 
 #### Incremental Static Regeneration (ISR)
 
-The ISR adapter for Cloudflare uses [Workers KV](https://developers.cloudflare.com/kv/) as the cache for your Next.js app. Workers KV is [fast](https://blog.cloudflare.com/faster-workers-kv) and uses Cloudflare's [Tiered Cache](https://developers.cloudflare.com/cache/how-to/tiered-cache/) to increase cache hit rates. When you write cached data to Workers KV, you write to storage that can be read by any Cloudflare location. This means your app can fetch data, cache it in KV, and then subsequent requests anywhere around the world can read from this cache. Pricing information can be found in the Cloudflare [docs](https://developers.cloudflare.com/workers/platform/pricing/#workers-kv).
+There are two storage options to use for the incremental cache.
 
+- **Workers KV:** A [fast](https://blog.cloudflare.com/faster-workers-kv) and uses Cloudflare's [Tiered Cache](https://developers.cloudflare.com/cache/how-to/tiered-cache/) to increase cache hit rates. When you write cached data to Workers KV, you write to storage that can be read by any Cloudflare location. This means your app can fetch data, cache it in KV, and then subsequent requests anywhere around the world can read from this cache. Pricing information can be found in the Cloudflare [docs](https://developers.cloudflare.com/workers/platform/pricing/#workers-kv).
+- **R2 Object Storage:** A [cost-effective](https://developers.cloudflare.com/r2/pricing/) S3-compatible object storage option for large amounts of unstructured data. Data is stored in a single region, meaning cache interactions may be slower - this can be mitigated with a regional cache.
+
+<Tabs items={["Workers KV", "R2 Object Storage"]}>
+<Tabs.Tab>
 ##### 1. Create a KV namespace
 
 ```
@@ -49,9 +55,93 @@ The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`. The servi
 }
 ```
 
-#### 3. Configure the cache
+##### 3. Configure the cache
 
-In your project's OpenNext config, enable the KV cache and set up a queue.
+In your project's OpenNext config, enable the KV cache.
+
+```ts
+// open-next.config.ts
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import kvIncrementalCache from "@opennextjs/cloudflare/kv-cache";
+// ...
+
+export default defineCloudflareConfig({
+  incrementalCache: kvIncrementalCache,
+  // ...
+});
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+##### 1. Create an R2 Bucket
+
+```
+npx wrangler@latest r2 bucket create <YOUR_BUCKET_NAME>
+```
+
+##### 2. Add the R2 Bucket and Service Binding to your Worker
+
+The binding name used in your app's worker is `NEXT_CACHE_R2_BUCKET`. The service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
+
+The prefix used by the R2 bucket can be configured with the `NEXT_CACHE_R2_PREFIX` environment variable, and defaults to `incremental-cache`.
+
+```jsonc
+// wrangler.jsonc
+{
+  // ...
+  "r2_buckets": [
+    {
+      "binding": "NEXT_CACHE_R2_BUCKET",
+      "bucket_name": "<BUCKET_NAME>",
+      "preview_bucket_name": "<PREVIEW_BUCKET_NAME>",
+    },
+  ],
+  "services": [
+    {
+      "binding": "NEXT_CACHE_REVALIDATION_WORKER",
+      "service": "<WORKER_NAME>",
+    },
+  ],
+}
+```
+
+##### 3. Configure the cache
+
+In your project's OpenNext config, enable the R2 cache.
+
+You can optionally setup a regional cache to use with the R2 incremental cache. This will enable faster retrieval of cache entries and reduce the amount of requests being sent to object storage.
+
+The regional cache has two modes:
+
+- `short-lived`: Responses are re-used for up to a minute.
+- `long-lived`: Fetch responses are re-used until revalidated, and ISR/SSG responses are re-used for up to 30 minutes.
+
+Additionally, lazy updating of the regional cache can be enabled with the `shouldLazilyUpdateOnCacheHit` option. When requesting data from the cache, it sends a background request to the R2 bucket to get the latest entry. This is enabled by default for the `long-lived` mode.
+
+```ts
+// open-next.config.ts
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import r2IncrementalCache from "@opennextjs/cloudflare/r2-incremental-cache";
+import { withRegionalCache } from "@opennextjs/cloudflare/regional-cache";
+// ...
+
+export default defineCloudflareConfig({
+  incrementalCache: withRegionalCache(r2IncrementalCache, {
+    mode: "long-lived",
+    shouldLazilyUpdateOnCacheHit: true,
+  }),
+  // ...
+});
+```
+
+</Tabs.Tab>
+</Tabs>
+
+##### 4. Configure the queue
+
+In your project's OpenNext config, enable the cache and set up a queue.
 
 The memory queue will send revalidation requests to a page when needed, and offers support for de-duplicating requests on a per-isolate basis. There might still be duplicate requests under high traffic or across regions.
 
@@ -63,11 +153,11 @@ The memory queue will send revalidation requests to a page when needed, and offe
 ```ts
 // open-next.config.ts
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import kvIncrementalCache from "@opennextjs/cloudflare/kv-cache";
+// ...
 import memoryQueue from "@opennextjs/cloudflare/memory-queue";
 
 export default defineCloudflareConfig({
-  incrementalCache: kvIncrementalCache,
+  // ...
   queue: memoryQueue,
 });
 ```
