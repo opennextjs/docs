@@ -47,7 +47,7 @@ Add bindings to your Worker by adding them to your [wrangler configuration file]
 To ensure that the `env` object from `getCloudflareContext().env` above has accurate TypeScript types, run the following Wrangler command to [generate types that match your Worker's configuration](https://developers.cloudflare.com/workers/languages/typescript/#generate-types-that-match-your-workers-configuration-experimental):
 
 ```
-npx wrangler types --experimental-include-runtime
+npx wrangler types
 ```
 
 This will generate a `d.ts` file and (by default) save it to `.wrangler/types/runtime.d.ts`. You will be prompted in the command's output to add that file to your `tsconfig.json`'s `compilerOptions.types` array.
