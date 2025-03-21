@@ -121,6 +121,13 @@ For the revalidation times, the default table name is `revalidations` and can be
 
 Wrangler can be used to create a table with it's [execute](https://developers.cloudflare.com/d1/wrangler-commands/#d1-execute) option. Ensure that you create a table for both your local dev database and your remote database.
 
+`local`
+```sh
+wrangler d1 execute NEXT_CACHE_D1 --command "CREATE TABLE IF NOT EXISTS tags (tag TEXT NOT NULL, path TEXT NOT NULL, UNIQUE(tag, path) ON CONFLICT REPLACE)" --local
+wrangler d1 execute NEXT_CACHE_D1 --command "CREATE TABLE IF NOT EXISTS revalidations (tag TEXT NOT NULL, revalidatedAt INTEGER NOT NULL, UNIQUE(tag) ON CONFLICT REPLACE)" --local
+```
+
+`remote`
 ```sh
 wrangler d1 execute NEXT_CACHE_D1 --command "CREATE TABLE IF NOT EXISTS tags (tag TEXT NOT NULL, path TEXT NOT NULL, UNIQUE(tag, path) ON CONFLICT REPLACE)"
 wrangler d1 execute NEXT_CACHE_D1 --command "CREATE TABLE IF NOT EXISTS revalidations (tag TEXT NOT NULL, revalidatedAt INTEGER NOT NULL, UNIQUE(tag) ON CONFLICT REPLACE)"
