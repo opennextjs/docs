@@ -94,6 +94,7 @@ You can customize the behaviors of the queue with environment variables:
 - The max time in milliseconds that a revalidation can take before being considered as failed (`REVALIDATION_TIMEOUT_MS`)
 - The amount of time after which a revalidation will be attempted again if it failed. If it fails again it will exponentially back off until it reaches the max retry interval (`REVALIDATION_RETRY_INTERVAL_MS`)
 - The maximum number of attempts that can be made to revalidate a path (`MAX_REVALIDATION_ATTEMPTS`)
+- Disable SQLite for this durable object. It should only be used if your incremental cache is not eventually consistent (`REVALIDATION_DO_DISABLE_SQLITE`)
 
 <Callout>
   There is 2 additional modes that you can use for the queue `direct` and the memory queue
