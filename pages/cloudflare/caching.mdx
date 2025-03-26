@@ -324,7 +324,7 @@ ShardedTagCache accepts 3 options:
 
 - `baseShardSize` - The number of shards to use for the cache. The more shards you have, the more evenly the cache will be distributed across the shards. The default is 4.  Soft (internal next tags used for `revalidatePath`) and hard tags (the one you define in your app) will be split in different shards.
 - `regionalCache` - Whether to use regional cache for the cache. The default is false. This option is useful when you want to reduce the stress on the durable object.
-- `regionalCacheTTL` - The TTL for the regional cache. The default is 5 seconds. Increasing this value will increase the time it takes for the cache to be invalidated across regions.
+- `regionalCacheTTLSec` - The TTL for the regional cache. The default is 5 seconds. Increasing this value will increase the time it takes for the cache to be invalidated across regions.
 
 </Tabs.Tab>
 
