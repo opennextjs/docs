@@ -1,9 +1,16 @@
 import { Callout } from "nextra/components";
-import WindowsSupport from "../../shared/WindowsSupport.mdx";
+import WindowsSupport from "../../../../shared/WindowsSupport.mdx";
 
 ## Cloudflare
 
 The [`@opennextjs/cloudflare`](https://www.npmjs.com/package/@opennextjs/cloudflare) adapter lets you deploy Next.js apps to [Cloudflare Workers](https://developers.cloudflare.com/workers) using the [Node.js "runtime" from Next.js](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes).
+
+<Callout>
+[`@opennextjs/cloudflare`](https://www.npmjs.com/package/@opennextjs/cloudflare) is pre 1.0, and still in active development. You should try it, [report bugs](https://github.com/opennextjs/opennextjs-cloudflare/issues), [share feedback](https://github.com/opennextjs/opennextjs-cloudflare/discussions), and contribute code to help make running Next.js apps on Cloudflare easier. We don't quite yet recommend using it for mission-critical production apps.
+
+You can also use [`@cloudflare/next-on-pages`](https://www.npmjs.com/package/@cloudflare/next-on-pages) to deploy Next.js apps to Cloudflare Pages. You can review the differences in supported Next.js features below and by reviewing [the docs for `@cloudflare/next-on-pages`](https://developers.cloudflare.com/pages/framework-guides/nextjs/ssr/supported-features/), and understand the differences between Workers and Pages [here](https://developers.cloudflare.com/workers/static-assets/compatibility-matrix/).
+
+</Callout>
 
 ### Get Started
 
@@ -42,7 +49,7 @@ We will update the list as we progress towards releasing 1.0.
 - [x] [Static Site Generation (SSG)](https://nextjs.org/docs/app/building-your-application/rendering/server-components#static-rendering-default)
 - [x] [Server-Side Rendering (SSR)](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
 - [x] [Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
-- [x] [Image optimization](https://nextjs.org/docs/app/building-your-application/optimizing/images) (See [this guide](/cloudflare/howtos/image) to configure [Cloudfare Images](https://developers.cloudflare.com/images/))
+- [x] [Image optimization](https://nextjs.org/docs/app/building-your-application/optimizing/images) (you can integrate Cloudflare Images with Next.js by following [this guide](https://developers.cloudflare.com/images/transform-images/integrate-with-frameworks/))
 - [x] [Partial Prerendering (PPR)](https://nextjs.org/docs/app/building-your-application/rendering/partial-prerendering)
 - [x] [Pages Router](https://nextjs.org/docs/pages)
 - [x] [Incremental Static Regeneration (ISR)](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration) <sup>1</sup>

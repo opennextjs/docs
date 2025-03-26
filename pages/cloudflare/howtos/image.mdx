@@ -1,0 +1,64 @@
+import { Callout } from "nextra/components";
+
+## Image Optimization
+
+Next.js has a builtin [`<Image>` component](https://nextjs.org/docs/pages/building-your-application/optimizing/images) to automatically optimize your images for faster page loads.
+
+In this post, we will look at how to integrate the Next.js image optimization with [Cloudflare Images](https://developers.cloudflare.com/images)
+
+### Enable Cloudflare Images
+
+You first need to [enable Cloudflare Images](https://developers.cloudflare.com/images/get-started/#enable-transformations-on-your-zone) for your zone.
+
+It is strongly advised to restrict the image origins that can be transformed to where your images are hosted, i.e. a [R2 bucket](https://developers.cloudflare.com/r2/buckets/).
+
+### Use a custom loader
+
+You then need to configure your Next application to use a custom loader for Cloudflare Images.
+
+Create an `image-loader.ts` at the root of your application:
+
+```ts
+// image-loader.ts
+import type { ImageLoaderProps } from "next/image";
+
+const normalizeSrc = (src: string) => {
+  return src.startsWith("/") ? src.slice(1) : src;
+};
+
+export default function cloudflareLoader({ src, width, quality }: ImageLoaderProps) {
+  if (process.env.NODE_ENV === "development") {
+    // Serve the original image when using `next dev`
+    return src;
+  }
+  const params = [`width=${width}`];
+  if (quality) {
+    params.push(`quality=${quality}`);
+  }
+  const paramsString = params.join(",");
+  return `/cdn-cgi/image/${paramsString}/${normalizeSrc(src)}`;
+}
+```
+
+You will then need to update your app configuration to use this loader:
+
+```ts
+// next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  // ...
+  images: {
+    loader: "custom",
+    loaderFile: "./image-loader.ts",
+  },
+};
+
+export default nextConfig;
+```
+
+<Callout type="info">
+  Images using the cloudflare loader are served directly without going through the middleware.
+</Callout>
+
+See more details in the [Cloudfare Images documentation](https://developers.cloudflare.com/images/transform-images/integrate-with-frameworks/).
