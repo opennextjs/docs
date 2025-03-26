@@ -293,13 +293,13 @@ The service binding should be a self reference to your worker where `<WORKER_NAM
         "class_name": "DOShardedTagCache",
       },
     ],
-    "migrations": [
-      {
-        "tag": "v1",
-        "new_sqlite_classes": ["DurableObjectQueueHandler", "DOShardedTagCache"],
-      },
-    ],
   },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DurableObjectQueueHandler", "DOShardedTagCache"],
+    },
+  ],
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
