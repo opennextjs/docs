@@ -282,22 +282,24 @@ The service binding should be a self reference to your worker where `<WORKER_NAM
 // wrangler.jsonc
 {
   // ...
-  "durable_objects": [
-    {
-      "name": "NEXT_CACHE_REVALIDATION_DURABLE_OBJECT",
-      "class_name": "DurableObjectQueueHandler",
-    },
-    {
-      "name": "NEXT_CACHE_DO_SHARDED",
-      "class_name": "DOShardedTagCache",
-    },
-  ],
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_sqlite_classes": ["DurableObjectQueueHandler", "DOShardedTagCache"],
-    },
-  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "NEXT_CACHE_REVALIDATION_DURABLE_OBJECT",
+        "class_name": "DurableObjectQueueHandler",
+      },
+      {
+        "name": "NEXT_CACHE_DO_SHARDED",
+        "class_name": "DOShardedTagCache",
+      },
+    ],
+    "migrations": [
+      {
+        "tag": "v1",
+        "new_sqlite_classes": ["DurableObjectQueueHandler", "DOShardedTagCache"],
+      },
+    ],
+  },
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
@@ -314,9 +316,9 @@ In your project's OpenNext config, enable the KV cache and set up a queue. The q
 ```ts
 // open-next.config.ts
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import kvIncrementalCache from "@opennextjs/cloudflare/kv-cache";
-import doShardedTagCache from "@opennextjs/cloudflare/do-sharded-tag-cache";
-import memoryQueue from "@opennextjs/cloudflare/memory-queue";
+import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache";
+import memoryQueue from "@opennextjs/cloudflare/overrides/queue/do-queue";
+import doShardedTagCache from "@opennextjs/cloudflare/overrides/tag-cache/do-sharded-tag-cache";
 
 export default defineCloudflareConfig({
   incrementalCache: kvIncrementalCache,
