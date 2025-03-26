@@ -5,13 +5,6 @@ import { Tabs } from "nextra/components";
 
 `@opennextjs/cloudflare` supports [caching](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#caching-data).
 
-Next.js primes the cache at build time. The build time values are serverd by the [Workers Assets](https://developers.cloudflare.com/workers/static-assets/).
-
-<Callout>
-  Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be
-  reflected globally, when using the default TTL of 60 seconds.
-</Callout>
-
 ### How to enable caching
 
 `@opennextjs/cloudflare` supports multiple caching mechanisms through a project's OpenNext configuration.
@@ -20,8 +13,13 @@ Next.js primes the cache at build time. The build time values are serverd by the
 
 There are two storage options to use for the incremental cache.
 
-- **Workers KV:** A [fast](https://blog.cloudflare.com/faster-workers-kv) and uses Cloudflare's [Tiered Cache](https://developers.cloudflare.com/cache/how-to/tiered-cache/) to increase cache hit rates. When you write cached data to Workers KV, you write to storage that can be read by any Cloudflare location. This means your app can fetch data, cache it in KV, and then subsequent requests anywhere around the world can read from this cache. Pricing information can be found in the Cloudflare [docs](https://developers.cloudflare.com/workers/platform/pricing/#workers-kv).
+- **Workers KV:** A [fast](https://blog.cloudflare.com/faster-workers-kv) and uses Cloudflare's [Tiered Cache](https://developers.cloudflare.com/cache/how-to/tiered-cache/) to increase cache hit rates. When you write cached data to Workers KV, you write to storage that can be read by any Cloudflare location. This means your app can fetch data, cache it in KV, and then subsequent requests anywhere around the world can read from this cache. The build time values are serverd by the [Workers Assets](https://developers.cloudflare.com/workers/static-assets/). Pricing information can be found in the Cloudflare [docs](https://developers.cloudflare.com/workers/platform/pricing/#workers-kv).
 - **R2 Object Storage:** A [cost-effective](https://developers.cloudflare.com/r2/pricing/) S3-compatible object storage option for large amounts of unstructured data. Data is stored in a single region, meaning cache interactions may be slower - this can be mitigated with a regional cache.
+
+<Callout>
+  Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be
+  reflected globally, when using the default TTL of 60 seconds.
+</Callout>
 
 <Tabs items={["Workers KV", "R2 Object Storage"]}>
 <Tabs.Tab>
@@ -129,11 +127,18 @@ import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cac
 import { withRegionalCache } from "@opennextjs/cloudflare/overrides/incremental-cache/regional-cache";
 // ...
 
+// With regional cache enabled:
 export default defineCloudflareConfig({
   incrementalCache: withRegionalCache(r2IncrementalCache, {
     mode: "long-lived",
     shouldLazilyUpdateOnCacheHit: true,
   }),
+  // ...
+});
+
+// Without regional cache:
+export default defineCloudflareConfig({
+  incrementalCache: r2IncrementalCache,
   // ...
 });
 ```
@@ -196,6 +201,8 @@ You can customize the behaviors of the queue with environment variables:
 - The `direct` mode for the queue is intended for debugging purposes and is not recommended for use in
   production. It only works in preview mode (i.e. `wrangler dev`)
 
+  For apps using the Page Router, `res.revalidate` requires to provide a self reference service binding named `WORKER_SELF_REFERENCE`.
+
 </Callout>
 
 #### On-Demand Revalidation
@@ -245,9 +252,7 @@ The binding name used in your app's worker is `NEXT_TAG_CACHE_D1`. The `WORKER_S
 
 ##### 2. Create table for tag revalidations
 
-The D1 tag cache requires 1 table that tracks On-Demand revalidation times.
-
-The default table name is `revalidations` and can be configured by setting the `NEXT_CACHE_D1_REVALIDATIONS_TABLE` environment variable to a string.
+The D1 tag cache requires a `revalidations` table that tracks On-Demand revalidation times.
 
 ##### 3. Configure the cache
 
@@ -310,21 +315,25 @@ In your project's OpenNext config, enable the KV cache and set up a queue. The q
 // open-next.config.ts
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
 import kvIncrementalCache from "@opennextjs/cloudflare/kv-cache";
-import shardedTagCache from "@opennextjs/cloudflare/do-sharded-tag-cache";
+import doShardedTagCache from "@opennextjs/cloudflare/do-sharded-tag-cache";
 import memoryQueue from "@opennextjs/cloudflare/memory-queue";
 
 export default defineCloudflareConfig({
   incrementalCache: kvIncrementalCache,
-  tagCache: shardedTagCache({ numberOfShards: 12, regionalCache: true }),
+  tagCache: doShardedTagCache({ baseShardSize: 12, regionalCache: true }),
   queue: memoryQueue,
 });
 ```
 
-ShardedTagCache accepts 3 options:
+doShardedTagCache tahes the following options:
 
-- `baseShardSize` - The number of shards to use for the cache. The more shards you have, the more evenly the cache will be distributed across the shards. The default is 4.  Soft (internal next tags used for `revalidatePath`) and hard tags (the one you define in your app) will be split in different shards.
-- `regionalCache` - Whether to use regional cache for the cache. The default is false. This option is useful when you want to reduce the stress on the durable object.
-- `regionalCacheTTLSec` - The TTL for the regional cache. The default is 5 seconds. Increasing this value will increase the time it takes for the cache to be invalidated across regions.
+- `baseShardSize` - The number of shards to use for the cache. The more shards you have, the more evenly the cache will be distributed across the shards. The default is 4. Soft (internal next tags used for `revalidatePath`) and hard tags (the one you define in your app) will be split in different shards
+- `regionalCache` - Whether to use regional cache for the cache. The default is false. This option is useful when you want to reduce the stress on the durable object
+- `regionalCacheTtlSec` - The TTL for the regional cache. The default is 5 seconds. Increasing this value will increase the time it takes for the cache to be invalidated across regions
+- `enableShardReplication`: Enable replicating the Shard. Shard replication will duplicate each shards into replicas to spread the load even more
+- `shardReplicationOptions.numberOfSoftReplicas`: Number of replicas for the soft tag shards
+- `shardReplicationOptions.numberOfHardReplicas`: Number of replicas for the hard tag shards
+- `maxWriteRetries`: The number of retries to perform when writing tags
 
 </Tabs.Tab>
 
