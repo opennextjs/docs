@@ -38,3 +38,10 @@ The CLI was previsouly invoked as `opennextjs-cloudflare` and now takes a mandat
 - `opennextjs-cloudflare populateCache local` is used to populate the `local` or `remote` cache
 - `opennextjs-cloudflare preview` is used to populate the local cache and start a dev server
 - `opennextjs-cloudflare deploy` is used to populate the remote cache and deploy
+
+You will need to update the `scripts` in your `package.json`:
+
+```json
+"preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+"deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+```
