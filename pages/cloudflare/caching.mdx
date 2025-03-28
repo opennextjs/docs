@@ -347,7 +347,7 @@ doShardedTagCache tahes the following options:
 
 ##### 1. Create a D1 database and Service Binding
 
-The binding name used in your app's worker is `NEXT_CACHE_D1`. The service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
+The binding name used in your app's worker is `NEXT_TAG_CACHE_D1`. The service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
 
 ```jsonc
 // wrangler.jsonc
@@ -356,7 +356,7 @@ The binding name used in your app's worker is `NEXT_CACHE_D1`. The service bindi
   "name": "<WORKER_NAME>",
   "d1_databases": [
     {
-      "binding": "NEXT_CACHE_D1",
+      "binding": "NEXT_TAG_CACHE_D1",
       "database_id": "<DATABASE_ID>",
       "database_name": "<DATABASE_NAME>",
     },
