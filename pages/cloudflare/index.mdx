@@ -64,3 +64,13 @@ The OpenNext Cloudflare adapter works by taking the Next.js build output and tra
 When you add [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare) as a dependency to your Next.js app, and then run `npx opennextjs-cloudflare` the adapter first builds your app by running the `build` script in your `package.json`, and then transforms the build output to a format that you can run locally using [Wrangler](https://developers.cloudflare.com/workers/wrangler/), and deploy to Cloudflare.
 
 You can view the code for `@opennextjs/cloudflare` [here](https://github.com/opennextjs/opennextjs-cloudflare/blob/main/packages/cloudflare/src) to understand what it does under the hood.
+
+### Note on Worker Size Limits
+
+The size limit of a Cloudflare Worker is 3 MiB on the Workers Free plan, and 10 MiB on the Workers Paid plan. After building your Worker, `wrangler` will show both the original and compressed sizes:
+
+```
+Total Upload: 13833.20 KiB / gzip: 2295.89 KiB
+```
+
+Only the latter (compressed size) matters for [the Worker size limit](https://developers.cloudflare.com/workers/platform/limits/#worker-size).
