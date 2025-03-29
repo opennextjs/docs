@@ -14,6 +14,10 @@ If you need to deploy to Cloudflare Pages, you can use `@cloudflare/next-on-page
 
 The Cloudflare Account you are deploying to is on the Workers Free plan, which [limits the size of each Worker to 3 MiB](https://developers.cloudflare.com/workers/platform/limits/#worker-size). When you subscribe to the Workers Paid plan, each Worker can be up to 10 MiB.
 
+Some common underlying factors could be:
+- [Metadata Icons](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons)
+- Assets located outside of the public directory
+
 ### My app fails to build when I import a specific NPM package
 
 First, make sure that the `nodejs_compat` compatibility flag is enabled, and your compatibility date is set to on or after "2024-09-23", in your [wrangler configuration file](https://developers.cloudflare.com/workers/wrangler/configuration/).
