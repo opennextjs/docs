@@ -112,3 +112,26 @@ This error is usually resolved by removing all yarn files in your repo. You shou
 If you use `yarn` there is a workaround [here](https://stackoverflow.com/a/76902985).
 
 If you are not using `yarn` and you see `yarn` related errors it might be solved by running `corepack disable` or updating `nvm` to `0.40.2`.
+
+#### A file/dependency is missing from my bundle
+
+Sometimes there might be a file missing from your server functions bundle. An example could be `sentry.server.config.ts`. In Next there is an option to include files that were not picked up by tracing.
+Its called `outputFileTracingIncludes`. Here is an example on how to use it in `next.config.ts`:
+
+```ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
+  outputFileTracingIncludes: {
+    "*": ["sentry.server.config.ts"],
+  },
+};
+
+export default nextConfig;
+```
+
+This will copy the file to `.open-next/server-functions/default/sentry.server.config.ts`. To read more about `outputFileTracingIncludes` you can refer to the [Next.js documentation](https://nextjs.org/docs/pages/api-reference/config/next-config-js/output#caveats).
+
+It works with splitting the functions in OpenNext aswell. If your key corresponds to a specific route (i.e `api/test`), it will only get copied into that functions bundle. However, using `*` will copy it into every function bundle. It will also work in a monorepo.
+Lets say you have your Next app in `packages/web`, the file will be written to: `packages/web/.open-next/server-functions/default/packages/web/sentry.server.config.ts`
