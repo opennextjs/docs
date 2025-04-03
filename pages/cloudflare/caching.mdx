@@ -21,57 +21,7 @@ There are two storage options to use for the incremental cache.
   reflected globally, when using the default TTL of 60 seconds.
 </Callout>
 
-<Tabs items={["Workers KV", "R2 Object Storage"]}>
-<Tabs.Tab>
-##### 1. Create a KV namespace
-
-```
-npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
-```
-
-##### 2. Add the KV namespace and Service Binding to your Worker
-
-The binding name used in your app's worker is `NEXT_INC_CACHE_KV`.
-The `WORKER_SELF_REFERENCE` service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
-
-```jsonc
-// wrangler.jsonc
-{
-  // ...
-  "name": "<WORKER_NAME>",
-  "kv_namespaces": [
-    {
-      "binding": "NEXT_INC_CACHE_KV",
-      "id": "<BINDING_ID>",
-    },
-  ],
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "<WORKER_NAME>",
-    },
-  ],
-}
-```
-
-##### 3. Configure the cache
-
-In your project's OpenNext config, enable the KV cache.
-
-```ts
-// open-next.config.ts
-import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache";
-// ...
-
-export default defineCloudflareConfig({
-  incrementalCache: kvIncrementalCache,
-  // ...
-});
-```
-
-</Tabs.Tab>
-
+<Tabs items={["R2 Object Storage", "Workers KV"]}>
 <Tabs.Tab>
 
 ##### 1. Create an R2 Bucket
@@ -139,6 +89,55 @@ export default defineCloudflareConfig({
 // Without regional cache:
 export default defineCloudflareConfig({
   incrementalCache: r2IncrementalCache,
+  // ...
+});
+```
+
+</Tabs.Tab>
+<Tabs.Tab>
+##### 1. Create a KV namespace
+
+```
+npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
+```
+
+##### 2. Add the KV namespace and Service Binding to your Worker
+
+The binding name used in your app's worker is `NEXT_INC_CACHE_KV`.
+The `WORKER_SELF_REFERENCE` service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
+
+```jsonc
+// wrangler.jsonc
+{
+  // ...
+  "name": "<WORKER_NAME>",
+  "kv_namespaces": [
+    {
+      "binding": "NEXT_INC_CACHE_KV",
+      "id": "<BINDING_ID>",
+    },
+  ],
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "<WORKER_NAME>",
+    },
+  ],
+}
+```
+
+##### 3. Configure the cache
+
+In your project's OpenNext config, enable the KV cache.
+
+```ts
+// open-next.config.ts
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache";
+// ...
+
+export default defineCloudflareConfig({
+  incrementalCache: kvIncrementalCache,
   // ...
 });
 ```
@@ -256,7 +255,7 @@ The D1 tag cache requires a `revalidations` table that tracks On-Demand revalida
 
 ##### 3. Configure the cache
 
-In your project's OpenNext config, enable the KV cache and set up a queue (see above). The queue will send a revalidation request to a page when needed, but it will not dedupe requests.
+In your project's OpenNext config, enable the R2 cache and set up a queue (see above). The queue will send a revalidation request to a page when needed, but it will not dedupe requests.
 
 ```ts
 // open-next.config.ts
