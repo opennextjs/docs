@@ -115,7 +115,7 @@ If you are not using `yarn` and you see `yarn` related errors it might be solved
 
 #### A file/dependency is missing from my bundle
 
-Sometimes there might be a file missing from your server functions bundle. An example could be `sentry.server.config.ts`. In Next there is an option to include files that were not picked up by tracing.
+Sometimes there might be a file missing from your server functions bundle. An example could be `sentry.server.config.ts`. It can be any file or directory and it also accept globs. In Next there is an option to include files that were not picked up by tracing.
 Its called `outputFileTracingIncludes`. Here is an example on how to use it in `next.config.ts`:
 
 ```ts
@@ -125,13 +125,44 @@ const nextConfig: NextConfig = {
   /* config options here */
   outputFileTracingIncludes: {
     "*": ["sentry.server.config.ts"],
+    // can also be a glob pattern
+    "/api/*": ["node_modules/.prisma/client/**/*"],
   },
 };
 
 export default nextConfig;
 ```
 
-This will copy the file to `.open-next/server-functions/default/sentry.server.config.ts`. To read more about `outputFileTracingIncludes` you can refer to the [Next.js documentation](https://nextjs.org/docs/pages/api-reference/config/next-config-js/output#caveats).
+This will copy the file to `.open-next/server-functions/default/sentry.server.config.ts`, or every splitted function in this case. To read more about `outputFileTracingIncludes` you can refer to the [Next.js documentation](https://nextjs.org/docs/pages/api-reference/config/next-config-js/output#caveats).
 
-It works with splitting the functions in OpenNext aswell. If your key corresponds to a specific route (i.e `api/test`), it will only get copied into that functions bundle. However, using `*` will copy it into every function bundle. It will also work in a monorepo.
-Lets say you have your Next app in `packages/web`, the file will be written to: `packages/web/.open-next/server-functions/default/packages/web/sentry.server.config.ts`
+It works with function splitting in OpenNext aswell. If your key corresponds to a specific route (i.e `api/test`), it will only get copied into that functions bundle. However, using `*` as key will copy it into every function bundle. Here is an example with function splitting:
+
+```ts
+// open-next.config.ts
+import type { OpenNextConfig } from "@opennextjs/aws/types/open-next";
+const config = {
+  default: {},
+  functions: {
+    extraFunction: {
+      patterns: ["api/test"],
+      // this is the route that will be used in this function
+      routes: ["app/api/test/route"],
+      override: {
+        wrapper: "aws-lambda-streaming",
+      },
+    },
+  },
+} satisfies OpenNextConfig;
+
+// next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  outputFileTracingIncludes: {
+    // these files will be copied only to the extraFunction bundle
+    "/api/test": ["sentry.config.ts", "node_modules/.prisma/client/**/*"],
+  },
+};
+```
+
+It will also work in a monorepo. Lets say you have your Next app in `packages/web`, the files will be written to: `packages/web/.open-next/server-functions/default/packages/web/*`
