@@ -62,12 +62,13 @@ You can create one yourself in the root directory of your Next.js app with the n
       "service": "my-app",
     },
   ],
-  "r2_buckets": [
-    // Create a R2 binding with the binding name "NEXT_INC_CACHE_R2_BUCKET"
+  "kv_namespaces": [
+    // Create a KV binding with the binding name "NEXT_INC_CACHE_KV"
+    // to enable the KV based caching:
     // {
-    //   "binding": "NEXT_INC_CACHE_R2_BUCKET",
-    //   "bucket_name": "<BUCKET_NAME>",
-    // },
+    //   "binding": "NEXT_INC_CACHE_KV",
+    //   "id": "<BINDING_ID>"
+    // }
   ],
 }
 ```
@@ -78,7 +79,7 @@ You can create one yourself in the root directory of your Next.js app with the n
   date](https://developers.cloudflare.com/workers/configuration/compatibility-dates/) to `2024-09-23` or
   later, in order for your Next.js app to work with @opennextjs/cloudflare - The `main` and `assets` values
   should also not be changed unless you modify the build output result in some way - You can add a binding
-  named `NEXT_INC_CACHE_R2_BUCKET` to make use of Next.js' caching as described in the [Caching
+  named `NEXT_INC_CACHE_KV` to make use of Next.js' caching as described in the [Caching
   docs](/cloudflare/caching)
 </Callout>
 
@@ -93,10 +94,10 @@ Add a [`open-next.config.ts`](https://opennext.js.org/aws/config) file to the ro
 
 ```ts
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
+import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache";
 
 export default defineCloudflareConfig({
-  incrementalCache: r2IncrementalCache,
+  incrementalCache: kvIncrementalCache,
 });
 ```
 
@@ -129,7 +130,7 @@ Add the following to the scripts field of your `package.json` file:
 - `npm run deploy`: Builds your app, and then deploys it to Cloudflare
 - `cf-typegen`: Generates a `cloudflare-env.d.ts` file at the root of your project containing [the types for the `env`](https://developers.cloudflare.com/workers/wrangler/commands/#types).
 
-##### 7. Add caching with Cloudflare R2
+##### 7. Add caching with Workers KV
 
 See the [Caching docs](/cloudflare/caching) for information on enabling Next.js caching in your OpenNext project.
 
