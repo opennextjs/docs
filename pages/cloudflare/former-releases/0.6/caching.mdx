@@ -172,14 +172,14 @@ You will also need to add some binding to your `wrangler.jsonc` file.
     "bindings": [
       {
         "name": "NEXT_CACHE_DO_QUEUE",
-        "class_name": "DOQueueHandler"
+        "class_name": "DurableObjectQueueHandler"
       }
     ]
   },
   "migrations": [
     {
       "tag": "v1",
-      "new_sqlite_classes": ["DOQueueHandler"]
+      "new_sqlite_classes": ["DurableObjectQueueHandler"]
     }
   ],
 ```
@@ -189,7 +189,7 @@ You can customize the behaviors of the queue with environment variables:
 - The max number of revalidations that can be processed by an instance of durable object at the same time (`NEXT_CACHE_DO_QUEUE_MAX_REVALIDATION`)
 - The max time in milliseconds that a revalidation can take before being considered as failed (`NEXT_CACHE_DO_QUEUE_REVALIDATION_TIMEOUT_MS`)
 - The amount of time after which a revalidation will be attempted again if it failed. If it fails again it will exponentially back off until it reaches the max retry interval (`NEXT_CACHE_DO_QUEUE_RETRY_INTERVAL_MS`)
-- The maximum number of attempts that can be made to revalidate a path (`NEXT_CACHE_DO_QUEUE_MAX_RETRIES`)
+- The maximum number of attempts that can be made to revalidate a path (`NEXT_CACHE_DO_QUEUE_MAX_NUM_REVALIDATIONS`)
 - Disable SQLite for this durable object. It should only be used if your incremental cache is not eventually consistent (`NEXT_CACHE_DO_QUEUE_DISABLE_SQLITE`)
 
 <Callout>
@@ -216,7 +216,7 @@ To use on-demand revalidation, you should also follow the [ISR setup steps](#inc
   You can also skip this step if your app doesn't to use `revalidateTag` nor `revalidatePath`.
 </Callout>
 
-There are 2 different options to choose from for the tag cache: `d1NextTagCache`, `doShardedTagCache`.
+There are 3 different options to choose from for the tag cache: `d1NextTagCache`, `doShardedTagCache` and `d1TagCache`.
 Which one to choose should be based on two key factors:
 
 1. **Expected Load**: Consider the volume of traffic or data you anticipate.
@@ -224,7 +224,7 @@ Which one to choose should be based on two key factors:
 
 If either of these factors is significant, opting for a sharded database is recommended. Additionally, incorporating a regional cache can further enhance performance.
 
-<Tabs items={["D1NextTagCache", "doShardedTagCache"]}>
+<Tabs items={["D1NextTagCache", "doShardedTagCache", "D1TagCache"]}>
 <Tabs.Tab>
 ##### 1. Create a D1 database and Service Binding
 
@@ -261,36 +261,15 @@ In your project's OpenNext config, enable the KV cache and set up a queue (see a
 ```ts
 // open-next.config.ts
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
-import d1NextTagCache from "@opennextjs/cloudflare/overrides/tag-cache/d1-next-tag-cache";
-import doQueue from "@opennextjs/cloudflare/overrides/queue/do-queue";
+import kvIncrementalCache from "@opennextjs/cloudflare/kv-cache";
+import d1NextTagCache from "@opennextjs/cloudflare/d1-next-tag-cache";
+import memoryQueue from "@opennextjs/cloudflare/memory-queue";
 
 export default defineCloudflareConfig({
-  incrementalCache: r2IncrementalCache,
+  incrementalCache: kvIncrementalCache,
   tagCache: d1NextTagCache,
-  queue: doQueue,
+  queue: memoryQueue,
 });
-```
-
-##### 4. Initialise the cache during deployments
-
-In order for the cache to be properly initialised with the build-time revalidation data, you need to run a command as part of your deploy step. This should be run as part of each deployment to ensure that the cache is being populated with each build's data.
-
-To populate remote bindings and deploy your application at the same time, you can use the `deploy` command. Similarly, the `preview` command will populate your local bindings and start a Wrangler dev server.
-
-```sh
-# Populate remote and deploy.
-opennextjs-cloudflare deploy
-
-# Populate local and start dev server.
-opennextjs-cloudflare preview
-```
-
-It is possible to only populate the cache without any other steps with the `populateCache` command.
-
-```sh
-# The target is passed as an option, either `local` or `remote`.
-opennextjs-cloudflare populateCache local
 ```
 
 </Tabs.Tab>
@@ -307,7 +286,7 @@ The service binding should be a self reference to your worker where `<WORKER_NAM
     "bindings": [
       {
         "name": "NEXT_CACHE_DO_QUEUE",
-        "class_name": "DOQueueHandler",
+        "class_name": "DurableObjectQueueHandler",
       },
       {
         "name": "NEXT_TAG_CACHE_DO_SHARDED",
@@ -318,7 +297,7 @@ The service binding should be a self reference to your worker where `<WORKER_NAM
   "migrations": [
     {
       "tag": "v1",
-      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"],
+      "new_sqlite_classes": ["DurableObjectQueueHandler", "DOShardedTagCache"],
     },
   ],
   "services": [
@@ -352,10 +331,88 @@ doShardedTagCache tahes the following options:
 
 - `baseShardSize` - The number of shards to use for the cache. The more shards you have, the more evenly the cache will be distributed across the shards. The default is 4. Soft (internal next tags used for `revalidatePath`) and hard tags (the one you define in your app) will be split in different shards
 - `regionalCache` - Whether to use regional cache for the cache. The default is false. This option is useful when you want to reduce the stress on the durable object
-- `shardReplication`: Enable replicating the Shard. Shard replication will duplicate each shards into replicas to spread the load even more
-- `shardReplication.numberOfSoftReplicas`: Number of replicas for the soft tag shards
-- `shardReplication.numberOfHardReplicas`: Number of replicas for the hard tag shards
+- `regionalCacheTtlSec` - The TTL for the regional cache. The default is 5 seconds. Increasing this value will increase the time it takes for the cache to be invalidated across regions
+- `enableShardReplication`: Enable replicating the Shard. Shard replication will duplicate each shards into replicas to spread the load even more
+- `shardReplicationOptions.numberOfSoftReplicas`: Number of replicas for the soft tag shards
+- `shardReplicationOptions.numberOfHardReplicas`: Number of replicas for the hard tag shards
 - `maxWriteRetries`: The number of retries to perform when writing tags
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+<Callout>
+  The `d1TagCache` is not recommended for production use, as it does not scale well with the number of tags.
+</Callout>
+
+##### 1. Create a D1 database and Service Binding
+
+The binding name used in your app's worker is `NEXT_TAG_CACHE_D1`. The service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
+
+```jsonc
+// wrangler.jsonc
+{
+  // ...
+  "name": "<WORKER_NAME>",
+  "d1_databases": [
+    {
+      "binding": "NEXT_TAG_CACHE_D1",
+      "database_id": "<DATABASE_ID>",
+      "database_name": "<DATABASE_NAME>",
+    },
+  ],
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "<WORKER_NAME>",
+    },
+  ],
+}
+```
+
+The D1 database uses two tables, created when initialising the cache:
+
+- the "tags" table keeps a record of the tag/path mappings
+- the "revalidations" table tracks revalidation times
+
+##### 2. Configure the cache
+
+In your project's OpenNext config, enable the KV cache and set up a queue. The queue will send a revalidation request to a page when needed, but it will not dedupe requests.
+
+```ts
+// open-next.config.ts
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache";
+import d1TagCache from "@opennextjs/cloudflare/overrides/tag-cache/d1-tag-cache";
+import memoryQueue from "@opennextjs/cloudflare/overrides/queue/memory-queue";
+
+export default defineCloudflareConfig({
+  incrementalCache: kvIncrementalCache,
+  tagCache: d1TagCache,
+  queue: memoryQueue,
+});
+```
+
+##### 3. Initialise the cache during deployments
+
+In order for the cache to be properly initialised with the build-time revalidation data, you need to run a command as part of your deploy step. This should be run as part of each deployment to ensure that the cache is being populated with each build's data.
+
+To populate remote bindings and deploy your application at the same time, you can use the `deploy` command. Similarly, the `preview` command will populate your local bindings and start a Wrangler dev server.
+
+```sh
+# Populate remote and deploy.
+opennextjs-cloudflare deploy
+
+# Populate local and start dev server.
+opennextjs-cloudflare preview
+```
+
+It is possible to only populate the cache without any other steps with the `populateCache` command.
+
+```sh
+# The target is passed as an option, either `local` or `remote`.
+opennextjs-cloudflare populateCache local
+```
 
 </Tabs.Tab>
 </Tabs>
