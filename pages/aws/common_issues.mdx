@@ -135,7 +135,7 @@ export default nextConfig;
 
 This will copy the file to `.open-next/server-functions/default/sentry.server.config.ts`, or every splitted function in this case. To read more about `outputFileTracingIncludes` you can refer to the [Next.js documentation](https://nextjs.org/docs/pages/api-reference/config/next-config-js/output#caveats).
 
-It works with function splitting in OpenNext aswell. If your key corresponds to a specific route (i.e `api/test`), it will only get copied into that functions bundle. However, using `*` as key will copy it into every function bundle. Here is an example with function splitting:
+It works with function splitting in OpenNext aswell. If your key corresponds to a specific route (i.e `api/test`), it will only get copied into the functions bundle that has that route. However, using `*` as key will copy it into every function bundle. Here is an example with function splitting:
 
 ```ts
 // open-next.config.ts
