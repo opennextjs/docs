@@ -8,12 +8,12 @@ Next.js offers multiple ways to improve an application's performance by [caching
 The cache data are updated using revalidation, either peridiocally or on-demand:
 
 - "[Time-based revalidation](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration#time-based-revalidation)" updates the cache data after the revalidation delay specified by the applications expires
-- "[On-demand revalidation](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration#on-demand-revalidation-with-revalidatetag)" allows to invalid cache entries with a specific tag (via `revalidateTag`) or at a given path (via `revalidatePath`).
+- "[On-demand revalidation](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration#on-demand-revalidation-with-revalidatetag)" allows to invalid cache entries with a specific tag (via `revalidateTag`) or at a given path (via `revalidatePath`). You can also use `res.revalidate` in Pages router API route.
 
 The `@opennextjs/cloudflare` caching supports rely on 3 components:
 
 - An **Incremental Cache** to store the cache data
-- A **Queue** to synchronize and deduplicate revalidations
+- A **Queue** to synchronize and deduplicate time-based revalidations
 - A **Tag Cache** for On-demand revalidations via [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) and [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath).
 
 The adapter provides several implementations for each of those components configured in `open-next.config.ts`.
