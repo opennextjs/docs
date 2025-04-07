@@ -227,17 +227,13 @@ For staging, when your site receives low traffic from a single IP, you can repla
 
 #### Incremental Static Regeneration (ISR)
 
-There are 2 storage options for the incremental cache:
+There are 3 storage options for the incremental cache:
 
 - **R2 Object Storage:** A [cost-effective](https://developers.cloudflare.com/r2/pricing/) S3-compatible object storage option for large amounts of unstructured data. Data is stored in a single region, meaning cache interactions may be slower - this can be mitigated with a regional cache.
-- **Workers KV:** A [fast](https://blog.cloudflare.com/faster-workers-kv) key value store, it uses Cloudflare's [Tiered Cache](https://developers.cloudflare.com/cache/how-to/tiered-cache/) to increase cache hit rates. When you write cached data to Workers KV, you write to storage that can be read by any Cloudflare location. This means your app can fetch data, cache it in KV, and then subsequent requests anywhere around the world can read from this cache. The build time values are serverd by the [Workers Assets](https://developers.cloudflare.com/workers/static-assets/).
+- **Workers KV:** A [fast](https://blog.cloudflare.com/faster-workers-kv) key value store, it uses Cloudflare's [Tiered Cache](https://developers.cloudflare.com/cache/how-to/tiered-cache/) to increase cache hit rates. When you write cached data to Workers KV, you write to storage that can be read by any Cloudflare location. This means your app can fetch data, cache it in KV, and then subsequent requests anywhere around the world can read from this cache.
+- **Workers Static Assets:** A read-only store for the incremental cache, serving build-time values from [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/).
 
-<Callout>
-  Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be
-  reflected globally, when using the default TTL of 60 seconds.
-</Callout>
-
-<Tabs items={["R2 Object Storage", "Workers KV"]}>
+<Tabs items={["R2 Object Storage", "Workers KV", "Workers Static Assets"]}>
 <Tabs.Tab>
 
 ##### 1. Create an R2 Bucket
@@ -311,6 +307,11 @@ export default defineCloudflareConfig({
 </Tabs.Tab>
 <Tabs.Tab>
 
+<Callout>
+  Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be
+  reflected globally, when using the default TTL of 60 seconds.
+</Callout>
+
 **Create a KV namespace**
 
 ```sh
@@ -355,6 +356,28 @@ import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cac
 export default defineCloudflareConfig({
   incrementalCache: kvIncrementalCache,
   // ...
+});
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+<Callout>
+  The Workers Static Assets cache is read-only. Requests that attempt to modify it will be ignored.
+</Callout>
+
+**Configure the cache**
+
+In your project's OpenNext config, enable the static assets cache.
+
+```ts
+// open-next.config.ts
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import staticAssetsIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache";
+
+export default defineCloudflareConfig({
+  incrementalCache: staticAssetsIncrementalCache,
 });
 ```
 
