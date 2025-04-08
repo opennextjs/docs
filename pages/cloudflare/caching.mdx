@@ -212,7 +212,7 @@ There are 3 storage options for the incremental cache:
 
 - **R2 Object Storage:** A [cost-effective](https://developers.cloudflare.com/r2/pricing/) S3-compatible object storage option for large amounts of unstructured data. Data is stored in a single region, meaning cache interactions may be slower - this can be mitigated with a regional cache.
 - **Workers KV:** A [fast](https://blog.cloudflare.com/faster-workers-kv) key value store, it uses Cloudflare's [Tiered Cache](https://developers.cloudflare.com/cache/how-to/tiered-cache/) to increase cache hit rates. When you write cached data to Workers KV, you write to storage that can be read by any Cloudflare location. This means your app can fetch data, cache it in KV, and then subsequent requests anywhere around the world can read from this cache.
-- **Workers Static Assets:** A read-only store for the incremental cache, serving build-time values from [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/).
+- **Workers Static Assets:** A read-only store for the incremental cache, serving build-time values from [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/). Revalidation is not supported with this cache.
 
 <Tabs items={["R2 Object Storage", "Workers KV", "Workers Static Assets"]}>
 <Tabs.Tab>
