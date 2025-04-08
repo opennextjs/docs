@@ -113,11 +113,14 @@ export function middleware(request: NextRequest) {
 
 As mentioned in the [Server function](./architecture#server-lambda-function) section, the server function uses the `NextServer` class from Next.js' build output to handle requests. However, `NextServer` does not seem to set the correct `Cache Control` headers.
 
-To work around the issue, the server function checks if the request is for an HTML page, and sets the `Cache Control` header to:
+To work around the issue, the server function checks if the request is for a fully static HTML page from page router (i.e. without `getStaticProps`), and sets the `Cache Control` header to:
 
 ```
 public, max-age=0, s-maxage=31536000, must-revalidate
 ```
+
+If you plan on using fully static HTML pages, you should also add the `x-middleware-prefetch` header to cloudfront cache headers to avoid cloudfront caching an empty response when this header is set.
+You can also just add an empty `getStaticProps` function to your page, which will set the correct cache headers.
 
 #### WORKAROUND: `NextServer` does not set correct SWR cache headers
 
