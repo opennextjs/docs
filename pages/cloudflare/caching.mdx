@@ -183,36 +183,17 @@ export default defineCloudflareConfig({
 
 #### SSG site
 
-If your site is static, you do not need a Queue nor a Tag Cache. You can also use the `long-lived` mode of the R2 Incremental Cache to make reading from the store faster.
+If your site is static, you do not need a Queue nor a Tag Cache. You can use a read-only Workers Static Assets-based incremental cache for the prerendered routes.
 
-<Tabs items={["wrangler.jsonc", "open-next.config.ts"]}>
-<Tabs.Tab>
-
-```jsonc
-{
-  "name": "<WORKER_NAME>",
-  // ...
-
-  // R2 incremental cache
-  "r2_buckets": [
-    {
-      "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "<BUCKET_NAME>",
-    },
-  ],
-}
-```
-
-</Tabs.Tab>
+<Tabs items={["open-next.config.ts"]}>
 <Tabs.Tab>
 
 ```ts
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
-import { withRegionalCache } from "@opennextjs/cloudflare/overrides/incremental-cache/regional-cache";
+import staticAssetsIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache";
 
 export default defineCloudflareConfig({
-  incrementalCache: withRegionalCache(r2IncrementalCache, { mode: "long-lived" }),
+  incrementalCache: staticAssetsIncrementalCache,
 });
 ```
 
