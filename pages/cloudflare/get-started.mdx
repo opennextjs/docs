@@ -122,11 +122,13 @@ Add the following to the scripts field of your `package.json` file:
 ```json
 "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
 "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+"upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
 "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
 ```
 
 - `npm run preview`: Builds your app and serves it locally, allowing you to quickly preview your app running locally in the Workers runtime, via a single command.
-- `npm run deploy`: Builds your app, and then deploys it to Cloudflare
+- `npm run deploy`: Builds your app, and then immediately deploys it to Cloudflare.
+- `npm run upload`: Builds your app, and then uploads a new [version](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/#versions) of it to Cloudflare.
 - `cf-typegen`: Generates a `cloudflare-env.d.ts` file at the root of your project containing [the types for the `env`](https://developers.cloudflare.com/workers/wrangler/commands/#types).
 
 ##### 7. Add caching with Cloudflare R2
