@@ -3,5 +3,6 @@
   "stripeAPI": "Stripe API",
   "dev-deploy": "Develop and Deploy",
   "env-vars": "Enviroment Variables",
-  "image": "Image Optimization"
+  "image": "Image Optimization",
+  "custom-worker": "Custom Worker"
 }
