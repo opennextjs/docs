@@ -601,6 +601,8 @@ doShardedTagCache takes the following options:
 </Callout>
 This enhanced tag cache selectively filters which tags trigger revalidations, allowing you to focus on a specific subset and reduce unnecessary load on the underlying tag cache. For convenience, we provide the ready-to-use `softTagFilter` that automatically filters out tags used by the `revalidatePath` function making it a no-op.
 
+Its primary purpose is to filter out soft tags (i.e., those used by `revalidatePath`) from the tag cache, which are not relevant for your application. It could also be used to filter out hard tags (i.e., those you define in your app) if one of your dependencies uses them.
+
 ```ts
 // open-next.config.ts
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
