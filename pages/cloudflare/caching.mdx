@@ -94,12 +94,18 @@ import { defineCloudflareConfig } from "@opennextjs/cloudflare";
 import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
 import d1NextTagCache from "@opennextjs/cloudflare/overrides/tag-cache/d1-next-tag-cache";
 import doQueue from "@opennextjs/cloudflare/overrides/queue/do-queue";
+//import { withFilter, softTagFilter } from "@opennextjs/cloudflare/overrides/tag-cache/tag-cache-filter";
 
 export default defineCloudflareConfig({
   incrementalCache: r2IncrementalCache,
   queue: doQueue,
   // This is only required if you use On-demand revalidation
   tagCache: d1NextTagCache,
+  //If you don't use `revalidatePath`, you can also filter internal soft tags using the `softTagFilter`
+  // tagCache: withFilter({
+  //   tagCache: d1NextTagCache,
+  //   filterFn: softTagFilter,
+  // }),
 });
 ```
 
@@ -449,7 +455,7 @@ Which one to choose should be based on two key factors:
 
 If either of these factors is significant, opting for a sharded database is recommended. Additionally, incorporating a regional cache can further enhance performance.
 
-<Tabs items={["D1NextTagCache", "doShardedTagCache"]}>
+<Tabs items={["D1NextTagCache", "doShardedTagCache", "withFilter"]}>
 <Tabs.Tab>
 
 **Create a D1 database and Service Binding**
@@ -587,6 +593,35 @@ doShardedTagCache takes the following options:
   - `numberOfSoftReplicas`: Number of replicas for the soft tag shards
   - `numberOfHardReplicas`: Number of replicas for the hard tag shards
 - `maxWriteRetries`: The number of retries to perform when writing tags
+
+</Tabs.Tab>
+<Tabs.Tab>
+<Callout>
+  The `withFilter` option is a specialized configuration that enhances your `tagCache` by layering an additional filter. It requires another tag cache to be passed in as the tagCache (e.g., `d1NextTagCache`, `doShardedTagCache` or your own).
+</Callout>
+This enhanced tag cache selectively filters which tags trigger revalidations, allowing you to focus on a specific subset and reduce unnecessary load on the underlying tag cache. For convenience, we provide the ready-to-use `softTagFilter` that automatically filters out tags used by the `revalidatePath` function making it a no-op.
+
+Its primary purpose is to filter out soft tags (i.e., those used by `revalidatePath`) from the tag cache, which are not relevant for your application. It could also be used to filter out hard tags (i.e., those you define in your app) if one of your dependencies uses them.
+
+```ts
+// open-next.config.ts
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
+import doQueue from "@opennextjs/cloudflare/overrides/queue/do-queue";
+import d1NextTagCache from "@opennextjs/cloudflare/overrides/tag-cache/d1-next-tag-cache";
+import { withFilter, softTagFilter } from "@opennextjs/cloudflare/overrides/tag-cache/tag-cache-filter";
+
+export default defineCloudflareConfig({
+  incrementalCache: r2IncrementalCache,
+  queue: doQueue,
+  tagCache: withFilter({
+    tagCache: d1NextTagCache,
+    filterFn: softTagFilter,
+  }),
+});
+```
+
+You can also create your own custom filter function. This function must return a boolean value indicating whether a tag should be included. It will be invoked with a single tag (as a string) as its argument. Please note that "soft tags" (i.e., those used by revalidatePath) always start with the prefix `_N_T`.
 
 </Tabs.Tab>
 </Tabs>
