@@ -597,9 +597,9 @@ doShardedTagCache takes the following options:
 </Tabs.Tab>
 <Tabs.Tab>
 <Callout>
-  The withFilter option is a specialized configuration that enhances your tagCache by layering an additional filter. It requires another tag cache to be passed in as the originalTagCache (e.g., `d1NextTagCache`, `doShardedTagCache` or your own).
+  The `withFilter` option is a specialized configuration that enhances your `tagCache` by layering an additional filter. It requires another tag cache to be passed in as the tagCache (e.g., `d1NextTagCache`, `doShardedTagCache` or your own).
 </Callout>
-This enhanced tag cache selectively filters which tags trigger revalidations, allowing you to focus on a specific subset and reduce unnecessary load on the underlying tag cache. For convenience, we provide the ready-to-use softTagFilter that automatically filters out tags used within the `revalidatePath` function. Using this filter will break the `revalidatePath` function.
+This enhanced tag cache selectively filters which tags trigger revalidations, allowing you to focus on a specific subset and reduce unnecessary load on the underlying tag cache. For convenience, we provide the ready-to-use `softTagFilter` that automatically filters out tags used by the `revalidatePath` function making it a no-op.
 
 ```ts
 // open-next.config.ts
