@@ -53,3 +53,36 @@ The following error is generated in such a case:
 ```
 
 To solve this, you should create the DB client inside a request context and not keep a global DB client.
+
+A global client would not work:
+
+```ts
+// src/lib/db.ts
+import postgres from "postgres";
+
+// `client` is global.
+// As the connection would be shared across requests, it fails on worker
+export const client = postgres(process.env.DATABASE_URL, { max: 5 });
+
+// src/app/api/route.ts
+import { client } from "@/db/db";
+
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  return new Response(JSON.stringify(await client`SELECT * FROM users;`));
+}
+```
+
+It can fixed by creating the client for each incoming request:
+
+```ts
+// src/app/api/route.ts
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  // The client is created for each incoming request and no connection is shared across requests
+  const client = postgres(process.env.DATABASE_URL, { max: 5 });
+  return new Response(JSON.stringify(await client`SELECT * FROM users;`));
+}
+```
