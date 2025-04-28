@@ -40,3 +40,16 @@ You may want to modify how Wrangler resolves multiple exports, such that when yo
 WRANGLER_BUILD_CONDITIONS=""
 WRANGLER_BUILD_PLATFORM="node"
 ```
+
+### `Error: Cannot perform I/O on behalf of a different request.`
+
+Some DB clients (i.e. [`postgres`](https://www.npmjs.com/package/postgres)) create a connection to the DB server when they are first instantiated and re-use it for later requests.
+This programming model is not compatible with the Workers runtime where a connection can not be re-used in a different request.
+
+The following error is generated in such a case:
+
+```text
+⨯ Error: Cannot perform I/O on behalf of a different request. I/O objects (such as streams, request/response bodies, and others) created in the context of one request handler cannot be accessed from a different request's handler. This is a limitation of Cloudflare Workers which allows us to improve overall performance. (I/O type: Writable)
+```
+
+To solve this, you should create the DB client inside a request context and not keep a global DB client.
