@@ -4,5 +4,6 @@
   "dev-deploy": "Develop and Deploy",
   "env-vars": "Environment Variables",
   "image": "Image Optimization",
-  "custom-worker": "Custom Worker"
+  "custom-worker": "Custom Worker",
+  "keep_names": "__name issues"
 }
