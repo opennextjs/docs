@@ -5,9 +5,9 @@ import { Callout } from "nextra/components";
 When using the OpenNext adapter, Wrangler processes the worker's code with [esbuild](https://esbuild.github.io/), and by default
 enables the [`keep-names`](https://esbuild.github.io/api/#keep-names) option. While this is generally useful for debugging, it can
 cause issues with certain Next.js libraries (e.g. [next-themes](https://www.npmjs.com/package/next-themes)) that convert scripts
-to strings. This happens because `esbuild` introduces an `__name` function at the top of modules, which may inadvertently appear
+to strings. This happens because `esbuild` introduces a `__name` function at the top of modules, which may inadvertently appear
 in the generated script strings. When these strings are evaluated at runtime, the `__name` function might therefore not be defined,
-leading to errors like the following:
+leading to errors logged in the developper console:
 
 ```
 Uncaught ReferenceError: __name is not defined
@@ -20,7 +20,7 @@ Uncaught ReferenceError: __name is not defined
 
 ### How to fix such issues
 
-To fix the issue you can simply set the `keep_names` option to `false` in your `wrangler.jsonc` file, like in the following example:
+To fix the issue you can simply set the `keep_names` option to `false` in your [`wrangler.jsonc` file](https://developers.cloudflare.com/workers/wrangler/configuration), like in the following example:
 
 ```jsonc
 {
