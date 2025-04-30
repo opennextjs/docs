@@ -2,7 +2,7 @@
   "NextAuth": "NextAuth",
   "stripeAPI": "Stripe API",
   "dev-deploy": "Develop and Deploy",
-  "env-vars": "Enviroment Variables",
+  "env-vars": "Environment Variables",
   "image": "Image Optimization",
   "custom-worker": "Custom Worker"
 }
