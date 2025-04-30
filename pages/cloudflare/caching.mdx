@@ -310,6 +310,8 @@ npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
 The binding name used in your app's worker is `NEXT_INC_CACHE_KV`.
 The `WORKER_SELF_REFERENCE` service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
 
+The prefix used by the cache keys can be configured with the `NEXT_INC_CACHE_KV_PREFIX` environment variable, and defaults to `incremental-cache`.
+
 ```jsonc
 // wrangler.jsonc
 {
