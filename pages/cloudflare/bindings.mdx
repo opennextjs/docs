@@ -49,13 +49,7 @@ To ensure that the `env` object from `getCloudflareContext().env` above has accu
 npx wrangler types --env-interface CloudflareEnv
 ```
 
-This will generate a `d.ts` file and (by default) save it to `.wrangler/types/runtime.d.ts`. You will be prompted in the command's output to add that file to your `tsconfig.json`'s `compilerOptions.types` array.
-
-If you would like to commit the file to git, you can provide a custom path. Here, for instance, the `runtime.d.ts` file will be saved to the root of your project:
-
-```bash
-npx wrangler types --env-interface CloudflareEnv ./runtime.d.ts
-```
+This will generate a `d.ts` file and save it to `worker-configuration.d.ts`.
 
 To ensure that your types are always up-to-date, make sure to run `wrangler types --env-interface CloudflareEnv` after any changes to your config file.
 
