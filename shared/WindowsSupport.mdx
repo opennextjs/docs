@@ -1,14 +1,17 @@
 OpenNext can be used on Windows systems but Windows full support is not guaranteed because:
 
-- historically the Next.js tooling itself has had Windows support issues
-  (and OpenNext is built on these tools)
+- Next.js tooling itself has Windows support issues and OpenNext is built on these tools
 - the OpenNext team has limited capacity and fully supporting Windows (given the point above)
   has been determined to be a lower priority, thus the effort and testing on Windows is limited
 
 Given the above, you can develop your application under Windows at your own risk. If you don't have an alternative we
 recommend either:
 
-- running OpenNext using [WSL2](https://learn.microsoft.com/en-us/windows/wsl/),
+- running OpenNext using [the Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/),
 - in a Linux Virtual Machine or
 - develop your application using the standard Next.js tooling and deploy it using OpenNext in CI/CD systems such
   as [GitHub Actions](https://github.com/features/actions) that run linux/MacOS environments
+
+Windows Subsystem for Linux (WSL) allows you to run a Linux environment on your Windows machine, without the need for
+a separate virtual machine or dual booting. Visual Studio Code has [an extension](https://code.visualstudio.com/docs/remote/wsl)
+that makes developing with WSL very easy.
