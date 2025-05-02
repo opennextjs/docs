@@ -2,10 +2,10 @@ This page will show you how to setup some popular database ORM libraries to use 
 
 If you encounter issue with a specific library, please open an issue on the [OpenNext GitHub repository](https://github.com/opennextjs/opennextjs-cloudflare/issues).
 
-## Drizzle
+## Drizzle ORM
 
 [Drizzle](https://developers.cloudflare.com/d1/reference/community-projects/#drizzle-orm) is a TypeScript ORM for SQL databases. It is designed to be lightweight and easy to use, making it a great choice for Cloudflare Workers.
-There is not much specific to configure in drizzle, but there is one important thing to note is that you don't want to have a global client.
+There is not much specific to configure in Drizzle, but there is one important thing to note is that you don't want to have a global client.
 
 ### `lib/db.ts`
 
@@ -41,7 +41,6 @@ import { Pool } from "pg";
 
 export const getDb = cache(() => {
   const pool = new Pool({
-    // This env could be set either in the .env file or in wrangler.jsonc
     connectionString: process.env.PG_URL,
     // You don't want to reuse the same connection for multiple requests
     maxUses: 1,
@@ -83,7 +82,6 @@ export const getDb = cache(() => {
   const { env } = getCloudflareContext();
   const connectionString = env.HYPERDRIVE.connectionString;
   const pool = new Pool({
-    // This env could be set either in the .env file or in wrangler.jsonc
     connectionString: process.env.PG_URL,
     // You don't want to reuse the same connection for multiple requests
     maxUses: 1,
@@ -96,7 +94,6 @@ export const getDbAsync = cache(async () => {
   const { env } = await getCloudflareContext({ async: true });
   const connectionString = env.HYPERDRIVE.connectionString;
   const pool = new Pool({
-    // This env could be set either in the .env file or in wrangler.jsonc
     connectionString: process.env.PG_URL,
     // You don't want to reuse the same connection for multiple requests
     maxUses: 1,
@@ -107,7 +104,7 @@ export const getDbAsync = cache(async () => {
 
 You can then use the `getDb` function to get a new client for each request. This will ensure that you don't run into any issues with connection pooling.
 
-## Prisma
+## Prisma ORM
 
 [Prisma](https://developers.cloudflare.com/d1/reference/community-projects/#prisma-orm) is a popular ORM for Node.js and TypeScript. It is designed to be easy to use and provides a lot of features out of the box. However, there are some subtleties to be aware of when using Prisma in Cloudflare Workers.
 
@@ -134,7 +131,7 @@ const nextConfig: NextConfig = {
 };
 ```
 
-By doing this, this will ensure that both the generated client and the prisma client are included in the build for the correct runtime.
+By doing this, this will ensure that both the generated client and the prisma client are included in the build for the `workerd` runtime.
 
 ### `lib/db.ts`
 
