@@ -4,7 +4,7 @@ If you encounter issue with a specific library, please open an issue on the [Ope
 
 ## Drizzle
 
-Drizzle is a TypeScript ORM for SQL databases. It is designed to be lightweight and easy to use, making it a great choice for Cloudflare Workers.
+[Drizzle](https://developers.cloudflare.com/d1/reference/community-projects/#drizzle-orm) is a TypeScript ORM for SQL databases. It is designed to be lightweight and easy to use, making it a great choice for Cloudflare Workers.
 There is not much specific to configure in drizzle, but there is one important thing to note is that you don't want to have a global client.
 
 ### `lib/db.ts`
@@ -24,6 +24,7 @@ import { Pool } from "pg";
 const pool = new Pool({
   connectionString: process.env.PG_URL,
 });
+
 export const db = drizzle({ client: pool, schema });
 ```
 
@@ -108,7 +109,7 @@ You can then use the `getDb` function to get a new client for each request. This
 
 ## Prisma
 
-Prisma is a popular ORM for Node.js and TypeScript. It is designed to be easy to use and provides a lot of features out of the box. However, there are some subtleties to be aware of when using Prisma in Cloudflare Workers.
+[Prisma](https://developers.cloudflare.com/d1/reference/community-projects/#prisma-orm) is a popular ORM for Node.js and TypeScript. It is designed to be easy to use and provides a lot of features out of the box. However, there are some subtleties to be aware of when using Prisma in Cloudflare Workers.
 
 ### `schema.prisma`
 

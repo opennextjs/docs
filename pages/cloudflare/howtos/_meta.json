@@ -1,7 +1,7 @@
 {
   "NextAuth": "NextAuth",
   "stripeAPI": "Stripe API",
-  "db": "Database",
+  "db": "Database & ORM",
   "dev-deploy": "Develop and Deploy",
   "env-vars": "Environment Variables",
   "image": "Image Optimization",
