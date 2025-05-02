@@ -1,5 +1,4 @@
 {
-  "NextAuth": "NextAuth",
   "stripeAPI": "Stripe API",
   "dev-deploy": "Develop and Deploy",
   "env-vars": "Environment Variables",
