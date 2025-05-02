@@ -212,6 +212,22 @@ For staging, when your site receives low traffic from a single IP, you can repla
 
 ### References
 
+#### Static Assets Caching
+
+<Callout type="info">
+  The worker doesn't run **in front** of static assets, so `next.config.js` `headers` option doesn't apply to
+  public files (`public`) and static build files (like `_next/static`).
+</Callout>
+
+By default, Cloudflare [Static Assets headers](https://developers.cloudflare.com/workers/static-assets/headers/#default-headers) don't enable browser caching. To add browser cache headers or any custom headers to Static Assets, create a `public/_headers` file:
+
+```txt
+/_next/static/*
+  Cache-Control: public,max-age=31536000,immutable
+```
+
+Internal usage of Static Assets, such as for ISR where assets aren't sent directly to the browser, isn’t affected.
+
 #### Incremental Static Regeneration (ISR)
 
 There are 3 storage options for the incremental cache:
