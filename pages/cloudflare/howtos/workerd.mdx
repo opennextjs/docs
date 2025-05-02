@@ -5,7 +5,7 @@
 [`workerd`](https://github.com/cloudflare/workerd) is the runtime cloudflare uses to run Workers code.
 
 While the [`nodejs_compat`](https://developers.cloudflare.com/workers/configuration/compatibility-flags/#nodejs-compatibility-flag) flag makes `workerd` mostly compatible with Node.js,
-there are still minor differences. Some packages publish code for different runtimes to account for those differences. For example, `postgres` has [conditional exports](https://nodejs.org/api/packages.html#conditional-exports) in its [`]`package.json`](https://github.com/porsager/postgres/blob/ad0ed4476e09f41f147859cb5a42971d2b99e9c7/package.json#L8-L13):
+there are still minor differences. Some packages publish code for different runtimes to account for those differences. For example, `postgres` has [conditional exports](https://nodejs.org/api/packages.html#conditional-exports) in its [`package.json`](https://github.com/porsager/postgres/blob/ad0ed4476e09f41f147859cb5a42971d2b99e9c7/package.json#L8-L13):
 
 ```json
 "exports": {
@@ -22,7 +22,7 @@ With such exports, Node.js applications used either `src/index.js` or `cjs/src/i
 However we want to use the `workerd` specific entrypoint when using the Cloudflare adapter.
 For that, you need to instruct Next.js not to bundle packages as it would use the node conditions by default.
 
-To do that, list those packages in the `serverExternalPackages` key of `next.config.ts`:
+To do that, list those packages in the `serverExternalPackages` key of your `next.config.ts`:
 
 ```ts
 // node.config.ts
