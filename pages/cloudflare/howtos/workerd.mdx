@@ -22,7 +22,7 @@ With such exports, Node.js applications use either `src/index.js` or `cjs/src/in
 However we want to use the `workerd` specific entrypoint when using the Cloudflare adapter.
 For that, you need to instruct Next.js not to bundle packages as it would use the node conditions by default.
 
-To do that, list those packages in the `serverExternalPackages` key of your `next.config.ts`:
+To do that, add those packages in the `serverExternalPackages` key of your `next.config.ts`:
 
 ```ts
 // node.config.ts
