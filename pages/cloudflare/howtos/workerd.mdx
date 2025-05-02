@@ -17,7 +17,7 @@ there are still minor differences. Some packages publish code for different runt
 },
 ```
 
-With such exports, Node.js applications used either `src/index.js` or `cjs/src/index.js` depending if the app use ESM or CJS.
+With such exports, Node.js applications use either `src/index.js` or `cjs/src/index.js` depending if the app use ESM or CJS.
 
 However we want to use the `workerd` specific entrypoint when using the Cloudflare adapter.
 For that, you need to instruct Next.js not to bundle packages as it would use the node conditions by default.
