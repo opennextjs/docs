@@ -216,7 +216,7 @@ For staging, when your site receives low traffic from a single IP, you can repla
 
 <Callout type="info">
   The worker doesn't run **in front** of static assets, so the `headers` option of `next.config.ts` doesn't
-  apply to public files (`public`) and static build files (like `_next/static`).
+  apply to public files (`public`) and immutable build files (like `_next/static`).
 </Callout>
 
 By default, Cloudflare [Static Assets headers](https://developers.cloudflare.com/workers/static-assets/headers/#default-headers) use `max-age=0` with `must-revalidate`, allowing the browser to cache assets but with a revalidation request. This is the [same default behavior as the `public` folder on Next.js](https://nextjs.org/docs/app/api-reference/file-conventions/public-folder#caching).
