@@ -86,3 +86,20 @@ export async function GET() {
   return new Response(JSON.stringify(await client`SELECT * FROM users;`));
 }
 ```
+
+### `Error: Failed to load chunk server/chunks/ssr/<chunk_name>.js`
+
+If you see an error similar to:
+
+```text
+✘ [ERROR] ⨯ Error: Failed to load chunk server/chunks/ssr/[root-of-the-server]__77c027b2._.js
+
+      at loadChunkPath
+  (...)
+      at Object.loadChunk
+  (...)
+      at .open-next/server-functions/default/.next/server/app/page.js
+```
+
+You are proably using a turbopack enabled build (`next build --turbo`) which is not currently supported by OpenNext.
+Change your build command to `next build` to fix the issue.
