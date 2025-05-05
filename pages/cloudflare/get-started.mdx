@@ -138,21 +138,32 @@ Add the following to the scripts field of your `package.json` file:
 - `npm run upload`: Builds your app, and then uploads a new [version](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/#versions) of it to Cloudflare.
 - `cf-typegen`: Generates a `cloudflare-env.d.ts` file at the root of your project containing [the types for the `env`](https://developers.cloudflare.com/workers/wrangler/commands/#types).
 
-##### 7. Add caching with Cloudflare R2
+##### 7. Add Static Asset Caching
+
+Add a `public/_headers` file, with at least the following headers:
+
+```txt
+/_next/static/*
+  Cache-Control: public,max-age=31536000,immutable
+```
+
+See the [Static Assets Caching docs](/cloudflare/caching#static-assets-caching) for more information.
+
+##### 8. Add caching with Cloudflare R2
 
 See the [Caching docs](/cloudflare/caching) for information on enabling Next.js caching in your OpenNext project.
 
-##### 8. Remove any `export const runtime = "edge";` if present
+##### 9. Remove any `export const runtime = "edge";` if present
 
 Before deploying your app, remove the `export const runtime = "edge";` line from any of your source files.
 
 The edge runtime is not supported yet with `@opennextjs/cloudflare`.
 
-##### 9. Add `.open-next` to `.gitignore`
+##### 10. Add `.open-next` to `.gitignore`
 
 You should add `.open-next` to your `.gitignore` file to prevent the build output from being committed to your repository.
 
-##### 10. Remove `@cloudflare/next-on-pages` (if necessary)
+##### 11. Remove `@cloudflare/next-on-pages` (if necessary)
 
 If your Next.js app currently uses `@cloudflare/next-on-pages`, you'll want to remove it, and make a few changes.
 
@@ -166,7 +177,7 @@ This includes:
   (those can be replaced with `getCloudflareContext` calls from `@opennextjs/cloudflare`)
 - next-on-pages eslint rules set in your Eslint config file
 
-##### 11. Develop locally
+##### 12. Develop locally
 
 You can continue to run `next dev` when developing locally.
 
@@ -194,7 +205,7 @@ After having added the `initOpenNextCloudflareForDev()` call in your Next.js con
 In step 3, we also added the `npm run preview`, which allows you to quickly preview your app running locally in the Workers runtime,
 rather than in Node.js. This allows you to test changes in the same runtime as your app will run in when deployed to Cloudflare.
 
-##### 12. Deploy to Cloudflare Workers
+##### 13. Deploy to Cloudflare Workers
 
 Either deploy via the command line:
 
