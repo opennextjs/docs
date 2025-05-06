@@ -16,6 +16,9 @@ The `@opennextjs/cloudflare` caching supports rely on 3 components:
 - A **Queue** to synchronize and deduplicate time-based revalidations
 - A **Tag Cache** for On-demand revalidations via [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) and [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath).
 
+You can also enable `cache interception`, which allows to avoid calling `NextServer` and thus loading the javascript associated with the page. It can slightly improve cold start performance for ISR/SSG route.
+As of now, cache interception does not work with PPR and is not enabled by default.
+
 The adapter provides several implementations for each of those components configured in `open-next.config.ts`.
 
 This guide provides guidelines for common use cases before detailing all the configuration options.
@@ -106,6 +109,8 @@ export default defineCloudflareConfig({
   //   tagCache: d1NextTagCache,
   //   filterFn: softTagFilter,
   // }),
+  // Disable this if you want to use PPR
+  enableCacheInterception: true,
 });
 ```
 
@@ -181,6 +186,8 @@ export default defineCloudflareConfig({
   queue: doQueue,
   // This is only required if you use On-demand revalidation
   tagCache: doShardedTagCache({ baseShardSize: 12 }),
+  // Disable this if you want to use PPR
+  enableCacheInterception: true,
 });
 ```
 
@@ -200,6 +207,7 @@ import staticAssetsIncrementalCache from "@opennextjs/cloudflare/overrides/incre
 
 export default defineCloudflareConfig({
   incrementalCache: staticAssetsIncrementalCache,
+  enableCacheInterception: true,
 });
 ```
 
