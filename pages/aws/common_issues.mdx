@@ -17,14 +17,28 @@ You might stumble upon this error inside cloudwatch logs: `Cannot find module 'n
 Next might incorrectly include some dependencies in the bundle. To remove them you can use this configuration inside `next.config.js`:
 
 ```javascript
-experimental: {
-    outputFileTracingExcludes: {
-      "*": ["node_modules/the-unwanted-package"],
-    },
-  },
+outputFileTracingExcludes: {
+  "*": ["node_modules/the-unwanted-package"],
+},
 ```
 
 Also you should not add sharp as a dependencies unless absolutely necessary, the image optimization already has it's own version of sharp.
+
+##### Sentry server sourcemaps
+
+Sentry does not remove server side sourcemaps, only client ones, even if "deleteSourcemapsAfterUpload" is true. [See the Sentry source code](https://github.com/getsentry/sentry-javascript/blob/develop/packages/nextjs/src/config/webpackPluginOptions.ts#L83).
+
+Excluding them from standalone output reduces bundle size:
+
+```javascript
+outputFileTracingExcludes: {
+  "*": [
+    './**/*.js.map',
+    './**/*.mjs.map',
+    './**/*.cjs.map'
+  ],
+},
+```
 
 #### Patch fetch behaviour for ISR. Only for next@13.5.1+
 
@@ -76,24 +90,25 @@ Here's a working Sentry config which resolves the error:
 `instrumentation.ts`
 
 ```typescript
-import * as Sentry from "@sentry/nextjs";
-import { initSentry } from "../sentry.server.config";
+import * as Sentry from '@sentry/nextjs';
+
+import { initSentry } from '../sentry.server.config';
 
 export const onRequestError = Sentry.captureRequestError;
 
 export async function register() {
-  initSentry(process.env.NEXT_RUNTIME as "nodejs" | "edge");
+  initSentry(process.env.NEXT_RUNTIME as 'nodejs' | 'edge');
 }
 ```
 
 `sentry.server.config.ts`
 
 ```typescript
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from '@sentry/nextjs';
 
-export const initSentry = (runtime: "nodejs" | "edge") => {
+export const initSentry = (runtime: 'nodejs' | 'edge') => {
   Sentry.init({
-    dsn: "https://...",
+    dsn: 'https://...',
 
     //...rest of your config
   });
@@ -119,14 +134,14 @@ Sometimes there might be a file missing from your server functions bundle. An ex
 Its called `outputFileTracingIncludes`. Here is an example on how to use it in `next.config.ts`:
 
 ```ts
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
   outputFileTracingIncludes: {
-    "*": ["sentry.server.config.ts"],
+    '*': ['sentry.server.config.ts'],
     // can also be a glob pattern
-    "/api/*": ["node_modules/.prisma/client/**/*"],
+    '/api/*': ['node_modules/.prisma/client/**/*'],
   },
 };
 
@@ -141,28 +156,28 @@ Using `*` as a key, however, will include it in every function bundle. Here is a
 
 ```ts
 // open-next.config.ts
-import type { OpenNextConfig } from "@opennextjs/aws/types/open-next";
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next';
+// next.config.ts
+import type { NextConfig } from 'next';
+
 const config = {
   default: {},
   functions: {
     extraFunction: {
-      patterns: ["api/test"],
+      patterns: ['api/test'],
       // this is the route that will be used in this function
-      routes: ["app/api/test/route"],
+      routes: ['app/api/test/route'],
       override: {
-        wrapper: "aws-lambda-streaming",
+        wrapper: 'aws-lambda-streaming',
       },
     },
   },
 } satisfies OpenNextConfig;
 
-// next.config.ts
-import type { NextConfig } from "next";
-
 const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     // these files will be copied only to the extraFunction bundle
-    "/api/test": ["sentry.config.ts", "node_modules/.prisma/client/**/*"],
+    '/api/test': ['sentry.config.ts', 'node_modules/.prisma/client/**/*'],
   },
 };
 ```
