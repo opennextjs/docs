@@ -17,14 +17,28 @@ You might stumble upon this error inside cloudwatch logs: `Cannot find module 'n
 Next might incorrectly include some dependencies in the bundle. To remove them you can use this configuration inside `next.config.js`:
 
 ```javascript
-experimental: {
-    outputFileTracingExcludes: {
-      "*": ["node_modules/the-unwanted-package"],
-    },
-  },
+outputFileTracingExcludes: {
+  "*": ["node_modules/the-unwanted-package"],
+},
 ```
 
 Also you should not add sharp as a dependencies unless absolutely necessary, the image optimization already has it's own version of sharp.
+
+##### Sentry server sourcemaps
+
+Sentry does not remove server side sourcemaps, only client ones, even if "deleteSourcemapsAfterUpload" is true. [See the Sentry source code](https://github.com/getsentry/sentry-javascript/blob/develop/packages/nextjs/src/config/webpackPluginOptions.ts#L83).
+
+Excluding them from standalone output reduces bundle size:
+
+```javascript
+outputFileTracingExcludes: {
+  "*": [
+    './**/*.js.map',
+    './**/*.mjs.map',
+    './**/*.cjs.map'
+  ],
+},
+```
 
 #### Patch fetch behaviour for ISR. Only for next@13.5.1+
 
