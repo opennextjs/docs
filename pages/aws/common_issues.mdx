@@ -25,6 +25,7 @@ outputFileTracingExcludes: { // or experimental.outputFileTracingExcludes on Nex
 Also you should not add sharp as a dependencies unless absolutely necessary, the image optimization already has it's own version of sharp.
 
 ##### Remove sourcemaps
+
 Source maps could add a lot to the bundle, excluding them from standalone output could be worth it.
 For example, Sentry does not remove server side sourcemaps, only client ones, even if "deleteSourcemapsAfterUpload" is true. [See the Sentry source code](https://github.com/getsentry/sentry-javascript/blob/develop/packages/nextjs/src/config/webpackPluginOptions.ts#L83).
 
