@@ -103,3 +103,46 @@ If you see an error similar to:
 
 You are proably using a turbopack enabled build (`next build --turbo`) which is not currently supported by OpenNext.
 Change your build command to `next build` to fix the issue.
+
+### Issues with Payload CMS
+
+If you are using [Payload CMS](https://payloadcms.com/) with `@opennextjs/cloudflare`, you may run into issues while trying to `preview` or `deploy` your app.
+Here are a few steps that will let you run Payload CMS with `@opennextjs/cloudflare`:
+
+1. Make sure you are using the latest version of `@opennextjs/cloudflare` and `payload`.
+2. Override the `pg` versions in your `package.json` file:
+
+```json
+{
+  "overrides": {
+    "pg": "^8.15.6"
+  }
+}
+```
+
+3. Add `@payloadcms/db-postgres` and `jose` to `serverExternalPackages` in your `next.config.js` file:
+
+```js
+export default {
+  serverExternalPackages: ["@payloadcms/db-postgres", "jose"],
+  // The rest of your config
+};
+```
+
+4. Make sure to add `maxUses:1` and `push:false` in your db adapter and `telemetry: false` in your `payload.config.ts` file:
+
+```ts
+import { buildConfig } from "payload";
+import { postgresAdapter } from "@payloadcms/db-postgres";
+export default buildConfig({
+  telemetry: false,
+  db: postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URI || "",
+      maxUses: 1,
+    },
+    push: false,
+  }),
+  // The rest of your config
+});
+```
