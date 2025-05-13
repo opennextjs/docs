@@ -1,3 +1,5 @@
+import { Callout } from "nextra/components";
+
 ## Environment variables
 
 This entry describe the most sensible way to handle your environment variables which works well both during local development and once your application is deployed to Cloudflare Workers.
@@ -34,3 +36,9 @@ By settings the "Build variables and secrets", the Next build executed by Worker
 #### Runtime variables
 
 Your Next application needs to access environment variables at runtime. You should always set the runtime environment variables [in the Cloudflare dashboard](https://developers.cloudflare.com/workers/configuration/environment-variables/#add-environment-variables-via-the-dashboard)
+
+<Callout type="info">
+  If you set environment variables from the dashboard, you can use the
+  [`--keep-vars`](https://developers.cloudflare.com/workers/wrangler/commands/#deploy) option of wrangler to
+  prevent them from being deleted by deployments, i.e. `opennextjs-cloudflare deploy -- --keep-vars`
+</Callout>
