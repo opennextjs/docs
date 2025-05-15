@@ -19,6 +19,9 @@ The `@opennextjs/cloudflare` caching supports rely on 3 components:
 You can also enable cache interception, to avoid calling the `NextServer` and thus loading the javascript associated with the page. It can slightly improve cold start performance for ISR/SSG route on cached routes.
 As of now, cache interception does not work with PPR and is not enabled by default.
 
+Additionally some components uses the [Cache Api](https://developers.cloudflare.com/workers/runtime-apis/cache/) to improve the performance of these different components.
+If you're planning on using On-Demand revalidation, you should also use the [Cache Purge component](#automatic-cache-purge) to automatically purge the cache when a page is revalidated.
+
 The adapter provides several implementations for each of those components configured in `open-next.config.ts`.
 
 This guide provides guidelines for common use cases before detailing all the configuration options.
@@ -156,6 +159,10 @@ For a larger site, you should use the `ShardedDOTagCache` that can handle a high
         "name": "NEXT_TAG_CACHE_DO_SHARDED",
         "class_name": "DOShardedTagCache",
       },
+      {
+        "name": "NEXT_CACHE_DO_PURGE",
+        "class_name": "BucketCachePurge",
+      },
     ],
   },
   "migrations": [
@@ -165,6 +172,7 @@ For a larger site, you should use the `ShardedDOTagCache` that can handle a high
         "DOQueueHandler",
         // This is only required if you use On-demand revalidation
         "DOShardedTagCache",
+        "BucketCachePurge",
       ],
     },
   ],
@@ -180,14 +188,17 @@ import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cac
 import { withRegionalCache } from "@opennextjs/cloudflare/overrides/incremental-cache/regional-cache";
 import doShardedTagCache from "@opennextjs/cloudflare/overrides/tag-cache/do-sharded-tag-cache";
 import doQueue from "@opennextjs/cloudflare/overrides/queue/do-queue";
+import { cachePurge } from "@opennextjs/cloudflare/overrides/cache-purge/index";
 
 export default defineCloudflareConfig({
-  incrementalCache: withRegionalCache(r2IncrementalCache, { mode: "short-lived" }),
+  incrementalCache: withRegionalCache(r2IncrementalCache, { mode: "long-lived" }),
   queue: doQueue,
   // This is only required if you use On-demand revalidation
   tagCache: doShardedTagCache({ baseShardSize: 12 }),
   // Disable this if you want to use PPR
   enableCacheInterception: true,
+  // you can also use the `durableObject` option to use a durable object as a cache purge
+  cachePurge: purgeCache({ type: "direct" }),
 });
 ```
 
@@ -651,3 +662,62 @@ You can also create your own custom filter function. This function must return a
 
 </Tabs.Tab>
 </Tabs>
+
+#### Automatic Cache Purge
+
+<Callout>
+
+You can only enable cache purge functionality on a zone (e.g., when using a custom domain).
+
+</Callout>
+
+The cache purge component automatically clears the cache when a page is revalidated. It is only necessary if you use On-Demand revalidation along with one of the cache components that leverage the Cache API.
+
+This component can either call the Cache API's purge function directly or route the purge request through an intermediate durable object. Using a durable object helps buffer requests and avoid reaching API rate limits (see https://developers.cloudflare.com/cache/how-to/purge-cache/#hostname-tag-prefix-url-and-purge-everything-limits for more details).
+
+Cache purge are only called when you call `revalidateTag`, `revalidatePath` or `res.revalidate` in the pages router. It is not called for ISR revalidation.
+
+Below is an example configuration for integrating the cache purge component in your open-next.config.ts:
+
+```ts
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
+import { withRegionalCache } from "@opennextjs/cloudflare/overrides/incremental-cache/regional-cache";
+import doShardedTagCache from "@opennextjs/cloudflare/overrides/tag-cache/do-sharded-tag-cache";
+import doQueue from "@opennextjs/cloudflare/overrides/queue/do-queue";
+import { cachePurge } from "@opennextjs/cloudflare/overrides/cache-purge/index";
+
+export default defineCloudflareConfig({
+  incrementalCache: withRegionalCache(r2IncrementalCache, { mode: "long-lived" }),
+  queue: doQueue,
+  // This is only required if you use On-demand revalidation
+  tagCache: doShardedTagCache({ baseShardSize: 12 }),
+  // Disable this if you want to use PPR
+  enableCacheInterception: true,
+  // you can also use the `durableObject` option to use a durable object as a cache purge
+  cachePurge: purgeCache({ type: "direct" }),
+});
+```
+
+If you want to use the durable object option, you will need to add the following binding to your `wrangler.jsonc` file:
+
+```jsonc
+{
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "NEXT_CACHE_DO_PURGE",
+        "class_name": "BucketCachePurge",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["BucketCachePurge"],
+    },
+  ],
+}
+```
+
+You can customize the duration of the cache purge buffering with the `NEXT_CACHE_DO_PURGE_BUFFER_TIME_IN_SECONDS` environment variable. The default is 5 seconds. It works by buffering the purge requests for a given amount of time and then sending them all at once. This is useful to avoid hitting the API rate limits.
