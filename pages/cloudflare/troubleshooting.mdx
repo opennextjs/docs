@@ -103,3 +103,17 @@ If you see an error similar to:
 
 You are proably using a turbopack enabled build (`next build --turbo`) which is not currently supported by OpenNext.
 Change your build command to `next build` to fix the issue.
+
+### `X [ERROR] Could not resolve "<package>"`
+
+When you see the following error during the build:
+
+```text
+⚙️ Bundling the OpenNext server...
+
+X [ERROR] Could not resolve "<package name>"
+```
+
+It might be because the package contains workerd specific code.
+
+Check this [howto](/cloudflare/howtos/workerd) for a solution.
