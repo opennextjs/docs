@@ -185,7 +185,18 @@ export default defineCloudflareConfig({
   incrementalCache: withRegionalCache(r2IncrementalCache, { mode: "short-lived" }),
   queue: doQueue,
   // This is only required if you use On-demand revalidation
-  tagCache: doShardedTagCache({ baseShardSize: 12 }),
+  tagCache: doShardedTagCache({
+    baseShardSize: 12,
+    regionalCache: true, // Enable regional cache to reduce the load on the DOs
+    regionalCacheTtlSec: 5, // The TTL for the regional cache
+    shardReplication: {
+      numberOfSoftReplicas: 4,
+      numberOfHardReplicas: 2,
+      regionalReplicationOptions: {
+        defaultRegion: "enam",
+      },
+    },
+  }),
   // Disable this if you want to use PPR
   enableCacheInterception: true,
 });
@@ -618,6 +629,8 @@ doShardedTagCache takes the following options:
 - `shardReplication`: Enable replicating the Shard. Shard replication will duplicate each shards into replicas to spread the load even more
   - `numberOfSoftReplicas`: Number of replicas for the soft tag shards
   - `numberOfHardReplicas`: Number of replicas for the hard tag shards
+  - `regionalReplicationOptions` : This setting enables you to replicate shards across different regions, thereby reducing read latency and distributing the load more evenly. By enabling this option, each shard will be replicated in all available regions. Please note that this will increase the number of Durable Objects (DOs) created and the volume of write requests sent to the DOs.
+    - `defaultRegion`: The default region to use for the replication.
 - `maxWriteRetries`: The number of retries to perform when writing tags
 
 </Tabs.Tab>
