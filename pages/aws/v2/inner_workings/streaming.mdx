@@ -1,10 +1,10 @@
 import { Callout } from "nextra/components";
 
-<Callout type="warning" emoji="⚠️">
-  Streaming support is **EXTREMELY EXPERIMENTAL**... AWS has updated their runtime in the past which broke streaming... It seems stable now but if they do another rugpull, it could cause your app to break.
-
-**It's not recommended to use streaming in production.**
-
+<Callout variant="info">
+  Streaming in AWS has been stable for a while now. There has been some trouble with AWS breaking the
+  streaming functionality in the past. It seems to be working well now. If you have an issue with streaming
+  send a message on [discord](https://discord.com/channels/1283128968140161065/1286094576788177059) and
+  contact AWS support to let them know of the issue.
 </Callout>
 
 Streaming is using the new AWS lambda support for [streaming responses](https://docs.aws.amazon.com/lambda/latest/dg/configuration-response-streaming.html). This allows you to send data to the client as it's generated instead of waiting for the entire response to be generated.
