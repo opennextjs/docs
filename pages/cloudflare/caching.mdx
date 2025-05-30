@@ -484,6 +484,30 @@ You can customize the behaviors of the queue with environment variables:
 
 </Callout>
 
+In certain situations, you may encounter the limits of what the Durable Object queue can manage for a single page or route. In such cases, you can utilize the queueCache to minimize the number of stale requests sent to the queue. This is achieved by adding and verifying a cache entry via the Cache API before dispatching a request to the queue. If a cache entry already exists, the request will not be sent to the queue, as it will be considered already in process.
+
+```ts
+// open-next.config.ts
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+// ...
+import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
+import doQueue from "@opennextjs/cloudflare/overrides/queue/do-queue";
+import queueCache from "@opennextjs/cloudflare/overrides/queue/queue-cache";
+
+export default defineCloudflareConfig({
+  // ...
+  incrementalCache: r2IncrementalCache,
+  queue: queueCache(doQueue, {
+    regionalCacheTtlSec: 5, // The TTL for the regional cache, defaults to 5 seconds
+
+    // Whether to wait for the queue to acknowledge the request before returning
+    // When set to false, the cache will be populated asap and the queue will be called after.
+    // When set to true, the cache will be populated only after the queue ack is received.
+    waitForQueueAck: true,
+  }),
+});
+```
+
 #### Tag Cache for On-Demand Revalidation
 
 The tag revalidation mechanism can use either a [Cloudflare D1](https://developers.cloudflare.com/d1/) database or [Durable Objects](https://developers.cloudflare.com/durable-objects/) with `SqliteStorage` as its backing store for information about tags, paths, and revalidation times.
