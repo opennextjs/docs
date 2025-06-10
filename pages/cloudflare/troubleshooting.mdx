@@ -16,6 +16,14 @@ The Cloudflare Account you are deploying to is on the Workers Free plan, which [
 
 When deploying your Worker, `wrangler` will show both the original and compressed sizes. Only the latter (gzipped size) matters for these limits.
 
+### "Your Worker exceeded the size limit of 10 MiB"
+
+If your Worker is larger than 10 MiB compressed — there might be unnecessary code ending up in your production bundle. You can visualize and understand this by running:
+
+1. `npx opennextjs-cloudflare build` within your project's root directory
+2. `cd .open-next/server-functions/default` to open the directory that contains the bundled code
+3. Take the file named `handler.mjs.meta.json` and use the [ESBuild Bundle Analyzer](https://esbuild.github.io/analyze/) to visualize your application's code, and understand the largest parts of your production bundle
+
 ### My app fails to build when I import a specific NPM package
 
 First, make sure that the `nodejs_compat` compatibility flag is enabled, and your compatibility date is set to on or after "2024-09-23", in your [wrangler configuration file](https://developers.cloudflare.com/workers/wrangler/configuration/).
