@@ -40,6 +40,13 @@ export default function cloudflareLoader({ src, width, quality }: ImageLoaderPro
 }
 ```
 
+<Callout type="warning">
+  This simple loader does not respect [Next.js
+  remotePatterns](https://nextjs.org/docs/pages/api-reference/components/image#remotepatterns). You should
+  configured [the allowed source origins](https://developers.cloudflare.com/images/transform-images/sources/)
+  in the dashboard.
+</Callout>
+
 You will then need to update your app configuration to use this loader:
 
 ```ts
