@@ -1,0 +1,82 @@
+import { Callout } from "nextra/components";
+
+### Migrate from 0.2 to 0.3
+
+The `@opennextjs/cloudflare` adapter is now more closely intgrated with `@opennextjs/aws`.
+
+You will need to update your projects based on the 0.2 release as described in the following sections.
+
+##### 1. Update the `wrangler.toml` file
+
+The entry point is now `.open-next/worker.js`, update `wrangler.toml` accordingly:
+
+```toml
+# CHANGED: new entry point location
+main = ".open-next/worker.js"
+name = "my-app"
+
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# The binding name must be "ASSETS" when the cache is enabled
+# CHANGED: output folder location
+assets = { directory = ".open-next/assets", binding = "ASSETS" }
+```
+
+##### 2. Add a `open-next.config.ts` file
+
+Add a [`open-next.config.ts`](https://opennext.js.org/aws/config) file to the root directory of your Next.js app:
+
+```ts
+import type { OpenNextConfig } from "@opennextjs/aws/types/open-next.js";
+import cache from "@opennextjs/cloudflare/kvCache";
+
+const config: OpenNextConfig = {
+  default: {
+    override: {
+      wrapper: "cloudflare-node",
+      converter: "edge",
+      // Set `incrementalCache` to "dummy" to disable KV cache
+      incrementalCache: async () => cache,
+      tagCache: "dummy",
+      queue: "dummy",
+    },
+  },
+
+  middleware: {
+    external: true,
+    override: {
+      wrapper: "cloudflare-edge",
+      converter: "edge",
+      proxyExternalRequest: "fetch",
+    },
+  },
+};
+
+export default config;
+```
+
+You can either install the `@opennextjs/aws` NPM package to get the types or `open-next.config.ts` to the [`exclude`](https://www.typescriptlang.org/tsconfig/#exclude) configuration key of your `tsconfig.json`.
+
+##### 3. Add a `.dev.vars` file
+
+Add a [`.dev.vars`](https://developers.cloudflare.com/workers/testing/local-development/#local-only-environment-variables) file to the root directory of your Next.js app:
+
+```text
+NEXTJS_ENV=development
+```
+
+The `NEXTJS_ENV` variable defines the environment to use when loading Next.js `.env` files. It defaults to "production" when not defined.
+
+##### 4. Update `package.json`
+
+The name of the CLI was changed to `opennextjs-cloudflare`:
+
+```json
+"build:worker": "opennextjs-cloudflare",
+```
+
+##### 5 Add `.open-next` to `.gitignore`
+
+You should change `.worker-next` to `.open-next` in your `.gitignore` file to prevent the build output from being committed to your repository.
+You can safely delete the content of the now unused `.worker-next`.

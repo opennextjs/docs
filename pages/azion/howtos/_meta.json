@@ -1,0 +1,10 @@
+{
+  "stripeAPI": "Stripe API",
+  "db": "Database & ORM",
+  "dev-deploy": "Develop and Deploy",
+  "env-vars": "Environment Variables",
+  "image": "Image Optimization",
+  "custom-worker": "Custom Worker",
+  "keep_names": "__name issues",
+  "workerd": "workerd specific packages"
+}
