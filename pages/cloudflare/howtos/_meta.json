@@ -6,5 +6,6 @@
   "image": "Image Optimization",
   "custom-worker": "Custom Worker",
   "keep_names": "__name issues",
-  "workerd": "workerd specific packages"
+  "workerd": "workerd specific packages",
+  "skew": "Skew Protection"
 }
