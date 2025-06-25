@@ -16,8 +16,6 @@ You can access [bindings](https://developers.cloudflare.com/workers/runtime-apis
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export async function GET(request) {
-  let responseText = "Hello World";
-
   const myKv = getCloudflareContext().env.MY_KV_NAMESPACE;
   await myKv.put("foo", "bar");
   const foo = await myKv.get("foo");
