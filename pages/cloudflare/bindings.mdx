@@ -79,6 +79,12 @@ When the feature is turned on all you then need to do to enable remote mode for 
 is to set the `experimental_remote` configuration field to `true`, exactly
 as documented in the [remote bindings documentation](https://developers.cloudflare.com/workers/development-testing/#remote-bindings).
 
+<Callout>
+  Note that remote bindings will also be used during build, this can be very useful for example when using
+  features such [ISR](https://nextjs.org/docs/app/guides/incremental-static-regeneration) so that read
+  production data can be used for the site's static generation
+</Callout>
+
 ## Other Cloudflare APIs (`cf`, `ctx`)
 
 You can access context about the incoming request from the [`cf` object](https://developers.cloudflare.com/workers/runtime-apis/request/#the-cf-property-requestinitcfproperties), as well as lifecycle methods from the [`ctx` object](https://developers.cloudflare.com/workers/runtime-apis/context) from the return value of [`getCloudflareContext()`](https://github.com/opennextjs/opennextjs-cloudflare/blob/main/packages/cloudflare/src/api/cloudflare-context.ts):
