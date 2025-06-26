@@ -60,14 +60,13 @@ Such bindings are by default local simulation that mimic the behavior of the act
 
 ### Remote bindings
 
-As mentioned above, by default locally only simulations of the bindings will be used.
+As mentioned above, by default local emulations of the bindings are used.
 
 However [remote bindings](https://developers.cloudflare.com/workers/development-testing/#remote-bindings) can also be
-used, allowing your application code, while still running locally, to connect to real remote resources associated to your
+used, allowing your application code, while still running locally, to connect to remote resources associated to your
 Cloudflare account.
 
-In order to use such remote bindings, since the feature is currently experimental, you'll need to explicitly
-enabled it in your `next.config.mjs` file:
+Remote bindings are currently experimental and can be enabled enabled it in your `next.config.ts` file:
 
 ```diff
 - initOpenNextCloudflareForDev();
