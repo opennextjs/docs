@@ -51,6 +51,40 @@ This will generate a `d.ts` file and save it to `worker-configuration.d.ts`.
 
 To ensure that your types are always up-to-date, make sure to run `wrangler types --env-interface CloudflareEnv` after any changes to your config file.
 
+## Local access to bindings
+
+As presented in the [getting started](/cloudflare/get-started#12-develop-locally) your application can be both developed (`next dev`) and
+previewed (`opennextjs-cloudflare preview`) locally, in both cases bindings will be accessible from your application's code.
+
+Such bindings are by default local simulation that mimic the behavior of the actual Cloudflare resources.
+
+### Remote bindings
+
+As mentioned above, by default local emulations of the bindings are used.
+
+However [remote bindings](https://developers.cloudflare.com/workers/development-testing/#remote-bindings) can also be
+used, allowing your application code, while still running locally, to connect to remote resources associated to your
+Cloudflare account.
+
+Remote bindings are currently experimental and can be enabled it in your `next.config.ts` file:
+
+```diff
+- initOpenNextCloudflareForDev();
++ initOpenNextCloudflareForDev({
++  experimental: { remoteBindings: true }
++ });
+```
+
+When the feature is turned on all you then need to do to enable remote mode for any of your bindings
+is to set the `experimental_remote` configuration field to `true`, exactly
+as documented in the [remote bindings documentation](https://developers.cloudflare.com/workers/development-testing/#remote-bindings).
+
+<Callout>
+  Note that remote bindings will also be used during build, this can be very useful for example when using
+  features such [ISR](https://nextjs.org/docs/app/guides/incremental-static-regeneration) so that read
+  production data can be used for the site's static generation
+</Callout>
+
 ## Other Cloudflare APIs (`cf`, `ctx`)
 
 You can access context about the incoming request from the [`cf` object](https://developers.cloudflare.com/workers/runtime-apis/request/#the-cf-property-requestinitcfproperties), as well as lifecycle methods from the [`ctx` object](https://developers.cloudflare.com/workers/runtime-apis/context) from the return value of [`getCloudflareContext()`](https://github.com/opennextjs/opennextjs-cloudflare/blob/main/packages/cloudflare/src/api/cloudflare-context.ts):
