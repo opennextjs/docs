@@ -7,5 +7,6 @@
   "custom-worker": "Custom Worker",
   "keep_names": "__name issues",
   "workerd": "workerd specific packages",
-  "skew": "Skew Protection"
+  "skew": "Skew Protection",
+  "assets": "Static assets"
 }
