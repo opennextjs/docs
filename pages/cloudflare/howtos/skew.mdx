@@ -84,4 +84,5 @@ const nextConfig = {
 - Because the Worker is configured to run in front of the assets Worker (`run_worker_first`), requesting an asset will count as a request to your Worker
 - Requesting an older deployment will generate 2 requests: the request to the latest version and the request to the older version
 - It is not currently possible to delete a deployment
-- Requests to an older deployement will be a few milli-seconds slower than requests to the latest version of the app
+- Requests to an older deployment will be a few milli-seconds slower than requests to the latest version of the app
+- Request to a deployment older than the `maxNumberOfVersions` or older than `maxVersionAgeDays` will fallback to the current deployment
