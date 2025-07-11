@@ -417,3 +417,21 @@ export default config;
 ```
 
 [Included](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/proxyExternalRequest) ones are `'fetch' | 'node' | 'dummy'`
+
+## Custom Asset Resolver
+
+This is used by OpenNext to resolve static assets. You can read more about it [here](/aws/config/overrides/asset_resolver). To have a custom override for the Asset Resolver, you need an `open-next.config.ts` with this:
+
+```ts
+import type { OpenNextConfig } from "@opennextjs/aws/types/open-next.js";
+const config = {
+  default: {},
+  middleware: {
+    assetResolver: import("./customAssetResolver").then((mod) => mod.default),
+  },
+} satisfies OpenNextConfig;
+
+export default config;
+```
+
+[Included](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/assetResolver) one is `'dummy'`
