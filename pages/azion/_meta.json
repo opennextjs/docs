@@ -1,12 +1,9 @@
 {
   "index": "Overview",
-  "get-started": "",
-  "bindings": "",
-  "caching": "",
-  "howtos": "How-Tos",
-  "examples": "",
+  "how-it-works": "How it Works",
+  "get-started": "Get Started",
+  "caching": "Caching",
+  "examples": "Examples",
   "known-issues": "Known issues",
-  "troubleshooting": "",
-  "migrate-from-0.6-to-1.0.0-beta": "Migrate from 0.6 to 1.0.0-beta",
-  "former-releases": "Former releases"
+  "troubleshooting": "Troubleshooting"
 }

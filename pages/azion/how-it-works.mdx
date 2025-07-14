@@ -1,0 +1,9 @@
+import { Callout } from "nextra/components";
+
+# How it Works
+
+The OpenNext Azion adapter works by taking the Next.js build output and transforming it, so that it can run in Azion Edge Functions.
+
+When you add [@aziontech/opennextjs-azion](https://www.npmjs.com/package/@aziontech/opennextjs-azion) as a dependency to your Next.js app, and then run `npx opennextjs-azion` the adapter first builds your app by running the `build` script in your `package.json`, and then transforms the build output to a format that you can run locally using [Azion CLI](https://www.azion.com/en/documentation/products/cli/), and deploy to Azion.
+
+You can view the code for `@aziontech/opennextjs-azion` [here](https://github.com/aziontech/opennextjs-azion/tree/main/packages/azion/src) to understand what it does under the hood. 
