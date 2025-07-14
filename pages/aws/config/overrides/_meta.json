@@ -8,5 +8,6 @@
   "proxy_external_request": "External Request Proxy",
   "origin_resolver": "Origin Resolver",
   "invoke_function": "Invoke Function for the warmer",
-  "automatic_cdn_invalidation": "Automatic CDN Invalidation"
+  "automatic_cdn_invalidation": "Automatic CDN Invalidation",
+  "asset_resolver": "Asset Resolver"
 }
