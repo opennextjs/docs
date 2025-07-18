@@ -82,7 +82,7 @@ export const getDb = cache(() => {
   const { env } = getCloudflareContext();
   const connectionString = env.HYPERDRIVE.connectionString;
   const pool = new Pool({
-    connectionString: process.env.PG_URL,
+    connectionString,
     // You don't want to reuse the same connection for multiple requests
     maxUses: 1,
   });
@@ -94,7 +94,7 @@ export const getDbAsync = cache(async () => {
   const { env } = await getCloudflareContext({ async: true });
   const connectionString = env.HYPERDRIVE.connectionString;
   const pool = new Pool({
-    connectionString: process.env.PG_URL,
+    connectionString,
     // You don't want to reuse the same connection for multiple requests
     maxUses: 1,
   });
