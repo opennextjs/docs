@@ -57,7 +57,7 @@ The Worker needs to serve the correct version of the app assets. For that it nee
 The following environment variables should be set when the skew protection is used:
 
 - `CF_WORKER_NAME` should be set to the name of the worker, i.e. `my-app` given the config above. If you're using environment, the name of the app should contain your env, i.e. `my-app-<env>`
-- `CF_PREVIEW_DOMAIN` is the the subdomain of `workers.dev` where the previews are deployed, i.e. `<version-name>.<domain>.workers.dev`
+- `CF_PREVIEW_DOMAIN` is the the subdomain of `workers.dev` where the previews are deployed, i.e. `<version>-<worker_name>.<domain>.workers.dev`
 - `CF_WORKERS_SCRIPTS_API_TOKEN` is an API token with the `Workers Scripts:Read` permission
 - `CF_ACCOUNT_ID` is the Cloudflare account id where the app is deployed.
 
