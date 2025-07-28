@@ -63,6 +63,9 @@ The following environment variables should be set when the skew protection is us
 
 Those variables are used to retrieve the past deployments of your application.
 
+Note that in this context, environment variables include both your local [Cloudflare environment variables](https://developers.cloudflare.com/workers/configuration/environment-variables/)
+and the process' environment variables. If a variable is set in both places, the process environment variable will take precedence.
+
 **Next config**
 
 You must set a different `deploymentId` in your next config each time your app is deployed. You will get an error if the `deployementId` has already been used by a previous deployment.
