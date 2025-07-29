@@ -198,6 +198,7 @@ export default defineCloudflareConfig({
     baseShardSize: 12,
     regionalCache: true, // Enable regional cache to reduce the load on the DOs
     regionalCacheTtlSec: 5, // The TTL for the regional cache
+    regionalCacheDangerouslyPersistMissingTags: true, // Enable this to persist missing tags in the regional cache
     shardReplication: {
       numberOfSoftReplicas: 4,
       numberOfHardReplicas: 2,
@@ -661,6 +662,7 @@ doShardedTagCache takes the following options:
 - `baseShardSize`: The number of shards to use for the cache. The more shards you have, the more evenly the cache will be distributed across the shards. The default is 4. Soft (internal next tags used for `revalidatePath`) and hard tags (the ones you define in your app) will be split in different shards
 - `regionalCache`: Whether to use regional cache for the cache. The default is false. This option is useful when you want to reduce the stress on the durable object
 - `regionalCacheTtlSec`: The TTL for the regional cache. The default is 5 seconds. Increasing this value will increase the time it takes for the cache to be invalidated across regions
+- `regionalCacheDangerouslyPersistMissingTags`: This option allows you to persist missing tags in the regional cache. Without this option, only tags that have been revalidated at least once will be persisted in the regional cache. This option should only be used if you also purge the cache using the [Cache Purge component](#automatic-cache-purge) (or any similar methods). It is disabled by default.
 - `shardReplication`: Enable replicating the Shard. Shard replication will duplicate each shards into replicas to spread the load even more
   - `numberOfSoftReplicas`: Number of replicas for the soft tag shards
   - `numberOfHardReplicas`: Number of replicas for the hard tag shards
