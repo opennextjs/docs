@@ -1,31 +1,27 @@
 ### Known issues
 
-#### Caching Durable Objects (`DOQueueHandler` and `DOShardedTagCache`)
+#### TS Config
+- Your `tsconfig.json` must include the following setting:
+  
+  ```json
+  "moduleResolution": "bundler"
+  ```
+  
+  If this is not set, you may encounter issues during the build or runtime process.
 
-If your app uses [Durable Objects](https://developers.cloudflare.com/durable-objects/) for caching, you might see a warning while building your app:
+- There is a known issue with ESM and the `open-next.config.ts` file. If you have an older project or one that depends on a specific TypeScript version or custom configuration, you may need to:
+  - Reconfigure your project (for example, by setting `moduleResolution: bundler` as above), **or**
+  - Add the following to your `tsconfig.json`:
+    
+    ```json
+    "exclude": ["node_modules", "open-next.config.ts"]
+    ```
+  
+  Whether this works depends on your project setup. In some cases, excluding `open-next.config.ts` allows the build to proceed, but you may still encounter errors, especially if your project uses features like `_app.mdx` or other advanced configurations. This is particularly relevant for projects that haven't been tested with these setups, and issues may also occur in other environments (such as the Cloudflare package).
 
-```text
-┌─────────────────────────────────┐
-│ OpenNext — Building Next.js app │
-└─────────────────────────────────┘
+#### Local Development
 
+- Some applications may use Node.js or Web Standard APIs that are not fully supported by Azion's local development environment. However, these features might be available in the actual Azion runtime.
 
-> next build
+  If your application does not work as expected during local development, try deploying it to Azion before troubleshooting further, as it may work correctly in the deployed environment.
 
-   ▲ Next.js 15.2.4
-
-▲ [WARNING] 				You have defined bindings to the following internal Durable Objects:
-
-  				- {"name":"NEXT_CACHE_DO_QUEUE","class_name":"DOQueueHandler"}
-  				These will not work in local development, but they should work in production.
-
-  				If you want to develop these locally, you can define your DO in a separate Worker, with a
-  separate configuration file.
-  				For detailed instructions, refer to the Durable Objects section here:
-  https://developers.cloudflare.com/workers/wrangler/api#supported-bindings
-
-   Creating an optimized production build ...
-workerd/server/server.c++:1951: warning: A DurableObjectNamespace in the config referenced the class "DOQueueHandler", but no such Durable Object class is exported from the worker. Please make sure the class name matches, it is exported, and the class extends 'DurableObject'. Attempts to call to this Durable Object class will fail at runtime, but historically this was not a startup-time error. Future versions of workerd may make this a startup-time error.
-```
-
-The warning can be safely ignored as the caching Durable Objects are not used during the build.

@@ -1,127 +1,150 @@
 import { Callout } from "nextra/components";
 
-## Troubleshooting
+# Troubleshooting
 
-### Trying to deploy to Cloudflare Pages, instead of Cloudflare Workers?
+## 1. Local Development and Debugging with the Azion CLI
 
-`@opennextjs/cloudflare` is specifically built for deploying Next.js apps to [Cloudflare Workers](https://developers.cloudflare.com/workers/)
+The first and most crucial troubleshooting step is performed even before deployment. The Azion CLI allows you to run your edge function in a local environment that simulates the Azion platform.
 
-Cloudflare Workers now support the majority of functionality from Cloudflare Pages, and have features that are not yet supported by Cloudflare Pages. Refer to the [Compatibility Matrix](https://developers.cloudflare.com/workers/static-assets/compatibility-matrix/) in the Cloudflare Workers docs.
-
-If you need to deploy to Cloudflare Pages, you can use `@cloudflare/next-on-pages`, and follow the [Cloudflare Pages guides for deploying Next.js apps](https://developers.cloudflare.com/pages/framework-guides/nextjs/).
-
-### "Your Worker exceeded the size limit of 3 MiB"
-
-The Cloudflare Account you are deploying to is on the Workers Free plan, which [limits the size of each Worker to 3 MiB](https://developers.cloudflare.com/workers/platform/limits/#worker-size). When you subscribe to the Workers Paid plan, each Worker can be up to 10 MiB.
-
-When deploying your Worker, `wrangler` will show both the original and compressed sizes. Only the latter (gzipped size) matters for these limits.
-
-### "Your Worker exceeded the size limit of 10 MiB"
-
-If your Worker is larger than 10 MiB compressed — there might be unnecessary code ending up in your production bundle. You can visualize and understand this by running:
-
-1. `npx opennextjs-cloudflare build` within your project's root directory
-2. `cd .open-next/server-functions/default` to open the directory that contains the bundled code
-3. Take the file named `handler.mjs.meta.json` and use the [ESBuild Bundle Analyzer](https://esbuild.github.io/analyze/) to visualize your application's code, and understand the largest parts of your production bundle
-
-### My app fails to build when I import a specific NPM package
-
-First, make sure that the `nodejs_compat` compatibility flag is enabled, and your compatibility date is set to on or after "2024-09-23", in your [wrangler configuration file](https://developers.cloudflare.com/workers/wrangler/configuration/).
-Refer to the [Node.js Workers docs](https://developers.cloudflare.com/workers/runtime-apis/nodejs/) for more details on Node.js support in Cloudflare Workers.
-
-Some NPM packages define multiple exports. For example:
-
+**Key Command:**
+```bash
+azion dev
 ```
-"exports": {
-    "other": "./src/other.js",
-    "node": "./src/node.js",
-    "browser": "./src/browser.js",
-    "default": "./src/default.js"
-},
+When you run this command in the root of your project, the CLI starts a local server. Any request made to this server will execute your function, and outputs from `console.log`, as well as any errors, will be displayed directly in your terminal.
+
+**Benefits:**
+*   **Immediate Feedback:** See the results of your code changes instantly.
+*   **Time Savings:** Avoids the need to deploy for every minor change.
+*   **Controlled Environment:** Debug your application's logic without affecting the production environment.
+
+**Example:**
+```javascript
+// main.js
+export default function myWorker(event) {
+  console.log("Function executed successfully!");
+  return new Response('Hello World');
+}
+```
+After running `azion dev` and accessing the local server, your terminal will display:
+```
+Function executed successfully!
 ```
 
-When you use `@opennextjs/cloudflare`, [Wrangler](https://developers.cloudflare.com/workers/wrangler/) bundles your code before running it locally, or deploying it to Cloudflare. Wrangler has to choose which export to use, when you import a module. By default, Wrangler, which uses [esbuild](https://esbuild.github.io/), handles this in a way that is not compatible with some NPM packages.
+## 2. Monitoring Logs in Production
 
-You may want to modify how Wrangler resolves multiple exports, such that when you import packages, the `node` export, if present, is used. You can do do by defining the following variables in a `.env` file within the root directory of your Next.js app:
+Once your application is in production, you need tools to observe its behavior in real time and analyze past events.
 
+### Real-Time Access (Tailing)
+
+To monitor logs as they happen, use the `--tail` argument with the Azion CLI. This creates a continuous session that displays new logs as they are generated.
+
+**Key Command:**
+```bash
+azion logs cells --tail
 ```
-WRANGLER_BUILD_CONDITIONS=""
-WRANGLER_BUILD_PLATFORM="node"
-```
+This command is ideal for debugging issues that are currently happening or for monitoring the application's behavior during a new deployment.
 
-### `Error: Cannot perform I/O on behalf of a different request.`
+### Viewing via the Azion Console (Real-Time Events)
 
-Some DB clients (i.e. [`postgres`](https://www.npmjs.com/package/postgres)) create a connection to the DB server when they are first instantiated and re-use it for later requests.
-This programming model is not compatible with the Workers runtime where a connection can not be re-used in a different request.
+For a more visual analysis with more filtering options, the Azion Console is the ideal tool.
 
-The following error is generated in such a case:
+1.  Access the **Real-Time Manager**.
+2.  In the menu, go to **Observe > Real-Time Events**.
+3.  Select the **Edge Functions Console** tab.
 
-```text
-⨯ Error: Cannot perform I/O on behalf of a different request. I/O objects (such as streams, request/response bodies, and others) created in the context of one request handler cannot be accessed from a different request's handler. This is a limitation of Cloudflare Workers which allows us to improve overall performance. (I/O type: Writable)
-```
+On this screen, you can:
+*   View all logs generated by `console.log` in your functions.
+*   Filter events by time periods (last 15 minutes, last hour, custom range).
+*   Search for specific log messages.
+*   Analyze detailed information for each event, such as `Function ID` and `Timestamp`.
 
-To solve this, you should create the DB client inside a request context and not keep a global DB client.
+## 3. Advanced Analysis with the Metadata API
 
-A global client would not work:
+Often, the problem lies not just in the code, but in the context of the request (origin, headers, etc.). The Azion **Metadata API** allows your functions to access this data. You can log this metadata to better understand your application's behavior.
 
-```ts
-// src/lib/db.ts
-import postgres from "postgres";
+**Practical Example:**
+Imagine you want to check which continent a request is coming from.
 
-// `client` is global.
-// As the connection would be shared across requests, it fails on worker
-export const client = postgres(process.env.DATABASE_URL, { max: 5 });
+```javascript
+// main.js
+export default function myWorker(event) {
+  const request = event.request;
+  const continentCode = request.metadata['geoip_continent_code'];
 
-// src/app/api/route.ts
-import { client } from "@/db/db";
+  console.log(`Request received from continent: ${continentCode}`);
 
-export const dynamic = "force-dynamic";
+  // Additional logic based on the continent...
 
-export async function GET() {
-  return new Response(JSON.stringify(await client`SELECT * FROM users;`));
+  return new Response(`Hello, ${continentCode}!`);
 }
 ```
 
-It can fixed by creating the client for each incoming request:
+By deploying this code and monitoring the logs with `azion logs cells --tail`, you will see messages like:
 
-```ts
-// src/app/api/route.ts
-export const dynamic = "force-dynamic";
+```
+Request received from continent: SA
 
-export async function GET() {
-  // The client is created for each incoming request and no connection is shared across requests
-  const client = postgres(process.env.DATABASE_URL, { max: 5 });
-  return new Response(JSON.stringify(await client`SELECT * FROM users;`));
+```
+This allows you to debug routing logic, security (e.g., blocking by region), and content personalization.
+
+## 4. Structured Log Collection with the GraphQL API
+
+For automation, integration with external monitoring systems (like Datadog or New Relic), or for performing complex analyses, Azion provides a **GraphQL API**.
+
+With it, you can execute queries to fetch logs in a structured format.
+
+**Key Tool:** The **GraphQL Playground**, available in the Azion Console, allows you to build and test your queries before integrating them into your tools.
+
+**Example Query:**
+This query fetches the 10 most recent console events containing a specific log line.
+
+```graphql
+query getConsoleEvents {
+  cellsConsoleEvents(
+    limit: 10,
+    filter: {
+      tsRange: {begin: "2024-09-28T12:00:00", end: "2024-09-28T13:00:00"},
+      line: {contains: "Edge Function failed"}
+    },
+    orderBy: [ts_ASC]
+  ) {
+    ts
+    configurationId
+    functionId
+    line
+  }
 }
 ```
 
-### `Error: Failed to load chunk server/chunks/ssr/<chunk_name>.js`
+## 5. Function size exceeds limit
 
-If you see an error similar to:
+Azion imposes limits on the size of edge functions, the default limit is 20MB. If your deployment fails with an error about function size, it usually means your bundled code is too large for the platform.
 
-```text
-✘ [ERROR] ⨯ Error: Failed to load chunk server/chunks/ssr/<chunk_name>.js
+To resolve this:
 
-      at loadChunkPath
-  (...)
-      at Object.loadChunk
-  (...)
-      at .open-next/server-functions/default/.next/server/app/page.js
-```
+1. **Analyze your bundle:** Use tools like [Webpack Bundle Analyzer](https://www.npmjs.com/package/webpack-bundle-analyzer) or [ESBuild Analyzer](https://esbuild.github.io/analyze/) to identify large dependencies.
+2. **Remove unused dependencies:** Audit your `package.json` and codebase for unnecessary packages.
+3. **Optimize imports:** Prefer importing specific functions instead of entire libraries (e.g., `import { parse } from "date-fns"` instead of `import * as dateFns from "date-fns"`).
+4. **Leverage Azion’s edge caching:** Move static assets and large files to Azion’s Edge Storage or CDN, and reference them via URLs instead of bundling them.
 
-You are proably using a turbopack enabled build (`next build --turbo`) which is not currently supported by OpenNext.
-Change your build command to `next build` to fix the issue.
+Refer to [Azion’s documentation on function limits](https://www.azion.com/en/documentation/products/build/edge-application/edge-functions/#limits) for up-to-date size restrictions.
 
-### `X [ERROR] Could not resolve "<package>"`
+---
 
-When you see the following error during the build:
+## 6. My environment variables are not available in the Edge Function
 
-```text
-⚙️ Bundling the OpenNext server...
+Azion allows you to define environment variables for your edge functions, but they must be configured explicitly in the Azion console or via the API.
 
-X [ERROR] Could not resolve "<package name>"
-```
+If your code cannot access an expected environment variable:
 
-It might be because the package contains workerd specific code.
+1. **Check the Azion console:** Go to your Edge Application > Edge Functions > Environment Variables and ensure the variable is defined.
+2. **Redeploy after changes:** Any change to environment variables requires a redeploy of your function to take effect.
+3. **Access variables correctly:** In your code, use `process.env.MY_VARIABLE` (for Node.js compatibility) or the platform-specific API if using another runtime.
 
-Check this [howto](/cloudflare/howtos/workerd) for a solution.
+If you’re using a framework like Next.js, ensure your build process does not overwrite or ignore these variables. For more, see [Azion’s guide to environment variables](https://www.azion.com/en/documentation/products/edge-functions/environment-variables/).
+
+---
+
+If you encounter other issues, check the [Azion documentation](https://www.azion.com/en/documentation/) or reach out to their support for platform-specific guidance.
+
+---

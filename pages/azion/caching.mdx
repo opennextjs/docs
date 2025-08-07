@@ -1,27 +1,27 @@
 import { Callout } from "nextra/components";
 import { Tabs } from "nextra/components";
 
-## Caching
+## **Caching**
 
-Next.js offers multiple ways to improve an application's performance by [caching](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#caching-data) routes and network requests. An application will try to pre-render and cache as much data as possible during build-time to reduce the amount of work required when serving a response to a user.
+Next.js offers multiple ways to improve an application's performance by caching routes and network requests. An Azion-deployed Next.js app will pre-render and cache as much data as possible at build time to minimize work when serving user requests.
 
-The cache data are updated using revalidation, either peridiocally or on-demand:
+Cache data is updated via **revalidation**, either periodically or on-demand:
 
-- "[Time-based revalidation](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration#time-based-revalidation)" updates the cache data after the revalidation delay specified by the applications expires
-- "[On-demand revalidation](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration#on-demand-revalidation-with-revalidatetag)" allows to invalid cache entries with a specific tag (via `revalidateTag`) or at a given path (via `revalidatePath`). You can also use `res.revalidate` in Pages router API route.
+* **Time-based revalidation:** After a specified interval (set via `revalidate`), stale data is served once and then updated in the background. This behavior is similar to *stale-while-revalidate*, providing fresh content on subsequent requests.
 
-The `@opennextjs/cloudflare` caching supports rely on 3 components:
+* **On-demand revalidation:** Specific cached entries are invalidated immediately via functions like [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) or [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath). This ensures the latest data is shown as soon as possible by purging the stale cache entry so that the next request fetches fresh data. In the Pages Router, you can also trigger revalidation with `res.revalidate()`.
 
-- An **Incremental Cache** to store the cache data
-- A **Queue** to synchronize and deduplicate time-based revalidations
-- A **Tag Cache** for On-demand revalidations via [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) and [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath).
+OpenNext’s Azion adapter supports caching through three key components:
 
-You can also enable cache interception, to avoid calling the `NextServer` and thus loading the javascript associated with the page. It can slightly improve cold start performance for ISR/SSG route on cached routes.
-As of now, cache interception does not work with PPR and is not enabled by default.
+* An **Incremental Cache** to persist generated pages and data.
 
-Additionally some components uses the [Cache Api](https://developers.cloudflare.com/workers/runtime-apis/cache/) to improve the performance of these different components.
-If you're planning on using On-Demand revalidation, you should also use the [Cache Purge component](#automatic-cache-purge) to automatically purge the cache when a page is revalidated.
+* A **Revalidation mechanism** (analogous to a queue) to coordinate and deduplicate background revalidations for time-based ISR.
 
+* A **Tag Cache** to track tags/paths for on-demand revalidation (used by `revalidateTag`/`revalidatePath`).
+
+It is also possible to enable *cache interception*, which allows the Edge Function to serve cached responses directly from Azion’s Edge Cache without invoking the full Next.js server runtime for ISR/SSG pages. This can slightly improve cold start performance on cached routes by bypassing Next.js rendering when a cached HTML is available. (Note: Cache interception may not be compatible with certain dynamic SSR features and is typically disabled by default.)
+
+Internally, these components leverage Azion’s platform features like [Edge Cache](https://www.azion.com/en/documentation/products/build/edge-application/edge-cache/) and [Edge Storage](https://www.azion.com/en/documentation/products/store/edge-storage/) to maximize performance. For example, Azion’s Edge Cache can serve cached content from edge nodes near users, and its Edge Functions Runtime provides a [Cache API for programmatic caching](https://www.azion.com/en/documentation/runtime/api-reference/cache/) and a [Storage API for persistent data](https://www.azion.com/en/documentation/runtime/api-reference/storage/). If you plan to use on-demand revalidation, you should also integrate Azion’s [Real-Time Purge](https://www.azion.com/en/documentation/products/azion-lib/purge/) to invalidate content from the edge cache when a page is updated.
 The adapter provides several implementations for each of those components configured in `open-next.config.ts`.
 
 This guide provides guidelines for common use cases before detailing all the configuration options.
@@ -31,64 +31,72 @@ This guide provides guidelines for common use cases before detailing all the con
   any caching config.
 </Callout>
 
-### Guidelines
+### **Guidelines**
 
-#### Small site using revalidation
+#### **Small site using revalidation**
 
-You should use the following implementation for a small site:
+For a small Next.js site with Incremental Static Regeneration enabled, we recommend the following configuration on Azion:
 
-- Incremental Cache: use R2 to store the data
-- Queue: use a Queue backed by Durable Objects
-- Tag Cache: `D1NextModeTagCache`
+* **Incremental Cache:** Use **Azion Edge Storage** (object storage) to store generated pages and data. Edge Storage is an S3-compatible, cost-effective storage service integrated with Azion’s platform.
 
-<Tabs items={["wrangler.jsonc", "open-next.config.ts"]}>
+* **Revalidation Coordination:** Rely on Azion’s built-in request coordination. Azion Edge Cache implements thundering herd protection at each edge node (only one request per node triggers an origin fetch for a stale resource). This reduces the need for a custom queue. The Next.js adapter will use background rendering (via `event.waitUntil`) to update content asynchronously when possible.
+
+<Tabs items={["azion.config.cjs", "open-next.config.ts"]}>
 <Tabs.Tab>
 
-```jsonc
-{
-  "name": "<WORKER_NAME>",
-  // ...
-
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "<WORKER_NAME>",
-    },
-  ],
-
-  // R2 incremental cache
-  "r2_buckets": [
-    {
-      "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "<BUCKET_NAME>",
-    },
-  ],
-
-  // DO Queue
-  "durable_objects": {
-    "bindings": [
-      {
-        "name": "NEXT_CACHE_DO_QUEUE",
-        "class_name": "DOQueueHandler",
-      },
-    ],
+```js
+module.exports = {
+  build: {
+    preset: 'opennextjs',
+    polyfills: true
   },
-  "migrations": [
+  origin: [
     {
-      "tag": "v1",
-      "new_sqlite_classes": ["DOQueueHandler"],
-    },
+      name: 'origin-storage-default',
+      type: 'object_storage'
+    }
   ],
-
-  // D1 Tag Cache (Next mode)
-  // This is only required if you use On-demand revalidation
-  "d1_databases": [
+  functions: [
     {
-      "binding": "NEXT_TAG_CACHE_D1",
-      "database_id": "<DATABASE_ID>",
-      "database_name": "<DATABASE_NAME>",
-    },
+      name: 'handler',
+      path: '.edge/worker.js'
+    }
   ],
+  rules: {
+    request: [
+      {
+        name: 'Set storage origin for all requests _next_static',
+        match: '^\\/_next\\/static\\/',
+        behavior: {
+          setOrigin: {
+            name: 'origin-storage-default',
+            type: 'object_storage'
+          },
+          deliver: true
+        }
+      },
+      {
+        name: 'Deliver Static Assets',
+        match:
+          '.(css|js|ttf|woff|woff2|pdf|svg|jpg|jpeg|gif|bmp|png|ico|mp4|json)$',
+        behavior: {
+          setOrigin: {
+            name: 'origin-storage-default',
+            type: 'object_storage'
+          },
+          deliver: true
+        }
+      },
+      {
+        name: 'Execute Edge Function',
+        match: '^/',
+        behavior: {
+          runFunction: 'handler',
+          forwardCookies: true
+        }
+      }
+    ]
+  }
 }
 ```
 
@@ -96,31 +104,33 @@ You should use the following implementation for a small site:
 <Tabs.Tab>
 
 ```ts
-import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
-import d1NextTagCache from "@opennextjs/cloudflare/overrides/tag-cache/d1-next-tag-cache";
-import doQueue from "@opennextjs/cloudflare/overrides/queue/do-queue";
-//import { withFilter, softTagFilter } from "@opennextjs/cloudflare/overrides/tag-cache/tag-cache-filter";
+/**
+ * This code was originally copied and modified from the @opennextjs/cloudflare repository.
+ * Significant changes have been made to adapt it for use with Azion.
+ */
+// default open-next.config.ts file created by @aziontech/opennextjs-azion
+import { defineAzionConfig } from "@aziontech/opennextjs-azion/config";
+import StorageIncrementalCache from "@aziontech/opennextjs-azion/overrides/incremental-cache/storage-incremental-cache";
+import MemoryCacheQueue from "@aziontech/opennextjs-azion/overrides/queue/memory-queue";
+import StorageTagCache from "@aziontech/opennextjs-azion/overrides/tag-cache/storage-tag-cache";
+import AzionWrapperNode from "@aziontech/opennextjs-azion/overrides/wrapper/azion-wrapper-node";
 
-export default defineCloudflareConfig({
-  incrementalCache: r2IncrementalCache,
-  queue: doQueue,
-  // This is only required if you use On-demand revalidation
-  tagCache: d1NextTagCache,
-  //If you don't use `revalidatePath`, you can also filter internal soft tags using the `softTagFilter`
-  // tagCache: withFilter({
-  //   tagCache: d1NextTagCache,
-  //   filterFn: softTagFilter,
-  // }),
-  // Disable this if you want to use PPR
-  enableCacheInterception: true,
+export default defineAzionConfig({
+  incrementalCache: StorageIncrementalCache,
+  queue: MemoryCacheQueue,
+  wrapper: AzionWrapperNode,
+  tagCache: StorageTagCache,
 });
 ```
 
 </Tabs.Tab>
 </Tabs>
 
-#### Large site using revalidation
+<Callout type="info">
+  If your application does not use on-demand revalidation (no revalidateTag/revalidatePath), you can omit the tag cache configuration. Also, Azion’s adapter uses an in-memory queue for deduplicating revalidation requests within a single edge function instance (to avoid redundant renders). This is sufficient for low traffic scenarios.
+</Callout>
+
+#### **Large site using revalidation**
 
 For a larger site, you should use the `ShardedDOTagCache` that can handle a higher load than the `D1NextModeTagCache`:
 
