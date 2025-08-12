@@ -22,7 +22,15 @@ outputFileTracingExcludes: { // or experimental.outputFileTracingExcludes on Nex
 },
 ```
 
-Also you should not add sharp as a dependencies unless absolutely necessary, the image optimization already has it's own version of sharp.
+Also you should not add sharp as a dependencies unless absolutely necessary, the image optimization already has it's own version of sharp. By default OpenNext does exclude these packages:
+
+- `caniuse-lite`
+- `sharp`
+- `@img`
+- `typescript`
+- `next/dist/compiled/babel`
+- `next/dist/compiled/babel-packages`
+- `next/dist/compiled/amphtml-validator`
 
 ##### Remove sourcemaps
 
