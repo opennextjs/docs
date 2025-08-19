@@ -14,12 +14,12 @@ Consider these limitations carefully before proceeding.
 OpenNext lets you split your application into smaller, lighter parts in several workers. This can improve performance and reduce the memory footprint of your application.
 It's a more advanced feature that doesn't support deploying through the standard `@opennextjs/cloudflare deploy` command.
 
-As an example, we'll split the middleware into its own worker and the rest of the application into another worker.
+As an example, we'll split the middleware into its own worker and the rest of the application into another worker. You could split the application further by creating additional workers for specific routes or features, but this won't be covered here.
 When referring to the middleware here, we talk about both the middleware you built, and the routing layer of OpenNext.
 
 You can find an example of such a deployment in the [GitBook repository](https://github.com/GitbookIO/gitbook).
 
-## When to Use This Setup
+## When to use this setup
 
 This multi-worker approach is beneficial when you need:
 
@@ -66,9 +66,9 @@ export default defineCloudflareConfig({
 You'll need 2 custom workers in order for this to work:
 
 ```js
-//middleware.js
+// middleware.js
 import { WorkerEntrypoint } from "cloudflare:workers";
-// Replace with your actual build output directory, typically:
+
 // ./.open-next/cloudflare/init.js
 import { runWithCloudflareRequestContext } from "./.open-next/cloudflare/init.js";
 
@@ -95,7 +95,7 @@ export default class extends WorkerEntrypoint {
       reqOrResp.headers.set("Cloudflare-Workers-Version-Overrides", `server="${this.env.WORKER_VERSION_ID}"`);
 
       // Proxy to the server worker with cache disabled for dynamic content
-      return this.env.DEFAULT_WORKER?.fetch(reqOrResp, {
+      return this.env.DEFAULT_WORKER.fetch(reqOrResp, {
         // We return redirects as is
         redirect: "manual",
         cf: {
@@ -108,7 +108,7 @@ export default class extends WorkerEntrypoint {
 ```
 
 ```js
-//server.js
+// server.js
 
 // Replace with your actual build output directory, typically:
 // ./.open-next/cloudflare/init.js
@@ -221,9 +221,7 @@ export default {
 
 ### Actual deployment
 
-You cannot use `@opennextjs/cloudflare deploy` to deploy this setup, as it will not work with the multiple workers.
-
-Here is a quick overview of the deployment process:
+You cannot use `@opennextjs/cloudflare deploy` to deploy this setup, as it will not work with the multiple workers setup.
 
 1. **Server Upload** → Get version ID
 2. **Middleware Preparation** → Update version reference
@@ -231,17 +229,17 @@ Here is a quick overview of the deployment process:
 4. **Gradual Rollout** → Server (0%) → Middleware (100%) → Server (100%)
 
 In order to make this work, you need to deploy each worker separately using the `wrangler` CLI and override the `WORKER_VERSION_ID` variable in the middleware wrangler configuration for **each deployment**.
-We use the gradual deployment as a trick to allow us to deploy new versions without affecting the currently running ones.
+Note that we use gradual deployments as a solution for deploying new versions without affecting the currently running ones.
 
 The steps to deploy without causing downtime to the already deployed ones are as follows:
 
 1. First you'll need to upload a new version of the server worker `wrangler versions upload --config ./path-to/serverWrangler.jsonc`
-2. Then you'll need to extract the new version id of the server `grep "Worker Version ID" | awk '{print $4}'`
-3. Before uploading the middleware, you'll need to replace the `WORKER_VERSION_ID` variable in the middleware wrangler configuration with the new server version id. You could use a script for that.
+2. Then you'll need to extract the new version id of the server from the previous command's output. The value you need is labeled as `Worker Version ID`.
+3. Before uploading the middleware, you'll need to replace the `WORKER_VERSION_ID` variable in the middleware wrangler configuration with the new server version id.
 4. You then need to upload a new version of the middleware worker `wrangler versions upload --config ./path-to/middlewareWrangler.jsonc`
-5. And extract the new version id of the middleware `grep "Worker Version ID" | awk '{print $4}'`
+5. And extract the new version id of the middleware from the previous command's output. The value you need is labeled as `Worker Version ID`.
 6. Use `wrangler deployments status --config ./path-to/server-wrangler.jsonc` to get the currently deployed version id of the server
-7. Extract the version id of the server, you can use a script or a bash command to do that.
+7. Extract the version id of the server from the previous command's output.
 8. You then use gradual deployment to deploy the server at 0% `wrangler versions deploy <CURRENT_SERVER_ID>@100% <NEW_SERVER_VERSION_ID>@0% -y --config ./path-to/server-wrangler.jsonc`
 9. You then deploy the middleware at 100% `wrangler versions deploy <NEW_MIDDLEWARE_ID>@100% -y --config ./path-to/middlewareWrangler.jsonc`. At this stage you are already serving the new version of the website in production.
 10. To finish it off you deploy the server at 100% `wrangler versions deploy <NEW_SERVER_VERSION_ID>@100% -y --config ./path-to/server-wrangler.jsonc`.
