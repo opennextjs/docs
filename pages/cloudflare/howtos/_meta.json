@@ -8,5 +8,6 @@
   "keep_names": "__name issues",
   "workerd": "workerd specific packages",
   "skew": "Skew Protection",
-  "assets": "Static assets"
+  "assets": "Static assets",
+  "multi-worker": "Multi-Worker Advanced Setup"
 }

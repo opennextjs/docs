@@ -3,11 +3,12 @@ import { Callout } from "nextra/components";
 <Callout type="warning">
   This is an advanced feature and requires a good understanding of both OpenNext and Cloudflare Workers.
   This advanced setup **cannot** be used with:
-    - Preview URLs (staging deployments)  
+    - Preview URLs (staging deployments)
     - Skew protection features
     - The standard `@opennextjs/cloudflare deploy` command
 
-  Consider these limitations carefully before proceeding.
+Consider these limitations carefully before proceeding.
+
 </Callout>
 
 OpenNext lets you split your application into smaller, lighter parts in several workers. This can improve performance and reduce the memory footprint of your application.
@@ -128,48 +129,13 @@ export default {
 ### Wrangler configurations
 
 ```jsonc
-// main server wrangler file
-{
-  "main": "server.js",
-  "name": "main-server",
-  "compatibility_date": "2025-04-14",
-  "compatibility_flags": ["nodejs_compat", "allow_importable_env", "global_fetch_strictly_public"],
-  "r2_buckets": [
-    {
-      "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "<BUCKET_NAME>",
-    },
-  ],
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "middleware",
-    },
-  ],
-  "durable_objects": {
-    "bindings": [
-      {
-        "name": "NEXT_TAG_CACHE_DO_SHARDED",
-        "class_name": "DOShardedTagCache",
-        "script_name": "middleware",
-      },
-      {
-        "name": "NEXT_CACHE_DO_QUEUE",
-        "class_name": "DOQueueHandler",
-        "script_name": "middleware",
-      },
-    ],
-  },
-}
-```
-
-```jsonc
-// middleware wrangler file
+// Middleware wrangler file
 {
   "main": "middleware.js",
   "name": "middleware",
   "compatibility_date": "2025-04-14",
   "compatibility_flags": ["nodejs_compat", "allow_importable_env", "global_fetch_strictly_public"],
+  // The middleware serves the assets
   "assets": {
     "directory": "../../.open-next/assets",
     "binding": "ASSETS",
@@ -218,6 +184,42 @@ export default {
 }
 ```
 
+```jsonc
+// Server wrangler file
+{
+  "main": "server.js",
+  "name": "main-server",
+  "compatibility_date": "2025-04-14",
+  "compatibility_flags": ["nodejs_compat", "allow_importable_env", "global_fetch_strictly_public"],
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "<BUCKET_NAME>",
+    },
+  ],
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "middleware",
+    },
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "NEXT_TAG_CACHE_DO_SHARDED",
+        "class_name": "DOShardedTagCache",
+        "script_name": "middleware",
+      },
+      {
+        "name": "NEXT_CACHE_DO_QUEUE",
+        "class_name": "DOQueueHandler",
+        "script_name": "middleware",
+      },
+    ],
+  },
+}
+```
+
 ### Actual deployment
 
 You cannot use `@opennextjs/cloudflare deploy` to deploy this setup, as it will not work with the multiple workers setup.
@@ -233,13 +235,13 @@ Note that we use gradual deployments as a solution for deploying new versions wi
 The steps to deploy without causing downtime to the already deployed ones are as follows:
 
 1. First you'll need to upload a new version of the server worker `wrangler versions upload --config ./path-to/serverWrangler.jsonc`
-2. Then you'll need to extract the new version id of the server from the previous command's output. The value you need is labeled as `Worker Version ID`.
-3. Before uploading the middleware, you'll need to replace the `WORKER_VERSION_ID` variable in the middleware wrangler configuration with the new server version id.
-4. You then need to upload a new version of the middleware worker `wrangler versions upload --config ./path-to/middlewareWrangler.jsonc`
-5. And extract the new version id of the middleware from the previous command's output. The value you need is labeled as `Worker Version ID`.
+2. Then you'll need to extract the new version id of the server from the previous command's output. The value you need is displayed as `Worker Version ID: <ID>` in the console output. This value is referred to as `NEW_SERVER_VERSION_ID` in step 8.
+3. Before uploading the middleware, you'll need to replace the `WORKER_VERSION_ID` variable in the middleware wrangler configuration with the new server version id from the previous step.
+4. You then need to upload a new version of the middleware worker `wrangler versions upload --config ./path-to/middlewareWrangler.jsonc`. Retrieve the version id, you'll need it in step 9 (`NEW_MIDDLEWARE_ID`).
+5. And extract the new version id of the middleware from the previous command's output. The value you need is displayed as `Worker Version ID: <ID>` in the console output.
 6. Use `wrangler deployments status --config ./path-to/server-wrangler.jsonc` to get the currently deployed version id of the server
-7. Extract the version id of the server from the previous command's output.
-8. You then use gradual deployment to deploy the server at 0% `wrangler versions deploy <CURRENT_SERVER_ID>@100% <NEW_SERVER_VERSION_ID>@0% -y --config ./path-to/server-wrangler.jsonc`
+7. Extract the version id of the server from the previous command's output. This value is referred to as `CURRENT_SERVER_ID` in step 8.
+8. You then use gradual deployment to deploy the server uploaded at step 1 to 0% `wrangler versions deploy <CURRENT_SERVER_ID>@100% <NEW_SERVER_VERSION_ID>@0% -y --config ./path-to/server-wrangler.jsonc`
 9. You then deploy the middleware at 100% `wrangler versions deploy <NEW_MIDDLEWARE_ID>@100% -y --config ./path-to/middlewareWrangler.jsonc`. At this stage you are already serving the new version of the website in production.
 10. To finish it off you deploy the server at 100% `wrangler versions deploy <NEW_SERVER_VERSION_ID>@100% -y --config ./path-to/server-wrangler.jsonc`.
 
