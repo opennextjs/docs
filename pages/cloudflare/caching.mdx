@@ -313,10 +313,10 @@ The regional cache has two modes:
 - `short-lived`: Responses are re-used for up to a minute.
 - `long-lived`: Fetch responses are re-used until revalidated, and ISR/SSG responses are re-used for up to 30 minutes.
 
-Additionally there are two options you can use to customize the behavior of the regional cache:
+Additionally there are options you can use to customize the behavior of the regional cache:
 
 - `shouldLazilyUpdateOnCacheHit`: Instructs the cache to be lazily updated, meaning that when requesting data from the cache, a background request is sent to the R2 bucket to get the latest entry. This is enabled by default for the `long-lived` mode.
-- `bypassTagCacheOnCacheHit`: Instructs the cache not to check the tag cache when there is a regional cache hit reducing response times. When this option is used you need to make sure that the cache gets correctly purged either by enabling the auto cache purging feature or doing that manually. Defaults to `false`.
+- `bypassTagCacheOnCacheHit`: Instructs the cache not to check the tag cache when there is a regional cache hit. This enables reducing response times. When this option is used you need to make sure that the cache gets correctly purged either by enabling the [automatic cache purge](https://opennext.js.org/cloudflare/caching#automatic-cache-purge) or purging the cache manually. Defaults to `false`.
 
 ```ts
 // open-next.config.ts
