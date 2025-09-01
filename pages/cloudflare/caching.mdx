@@ -425,7 +425,8 @@ export default defineCloudflareConfig({
 
 #### Queue
 
-A queue must be setup for projects using revalidation (either Time based or On-demand).
+A queue must be setup for projects using Time-Based revalidation.
+It is not needed when revalidation is not used nor only On-Demand revalidation is used.
 
 **Configure the queue**
 
@@ -718,6 +719,9 @@ The cache purge component automatically clears the cache when a page is revalida
 This component can either call the Cache API's purge function directly or route the purge request through an intermediate durable object. Using a durable object helps buffer requests and avoid reaching [API rate limits](https://developers.cloudflare.com/cache/how-to/purge-cache/#hostname-tag-prefix-url-and-purge-everything-limits).
 
 Cache purge are only called when you call `revalidateTag`, `revalidatePath` or `res.revalidate` in the pages router. It is not called for ISR revalidation.
+
+The `CACHE_PURGE_API_TOKEN` environment variable/secret need to be set to enable cache purge.
+The Token must have the `Cache Purge` permission.
 
 Below is an example configuration for integrating the cache purge component in your `open-next.config.ts`:
 
