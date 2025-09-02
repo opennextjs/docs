@@ -200,6 +200,7 @@ export default {
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
+      // Note: The middleware worker must be referenced here, *not* the server.
       "service": "middleware",
     },
   ],
