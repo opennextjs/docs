@@ -721,6 +721,7 @@ This component can either call the Cache API's purge function directly or route 
 Cache purge are only called when you call `revalidateTag`, `revalidatePath` or `res.revalidate` in the pages router. It is not called for ISR revalidation.
 
 To use cache purge, you need to define the following wrangler secrets:
+
 - `CACHE_PURGE_API_TOKEN` should be set to [an API token](https://developers.cloudflare.com/fundamentals/api/get-started/create-token/) with the `Cache Purge` permission
 - `CACHE_PURGE_ZONE_ID` should be set to the [zone ID of your deployment domain](https://developers.cloudflare.com/fundamentals/account/find-account-and-zone-ids/)
 
