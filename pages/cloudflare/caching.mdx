@@ -720,8 +720,9 @@ This component can either call the Cache API's purge function directly or route 
 
 Cache purge are only called when you call `revalidateTag`, `revalidatePath` or `res.revalidate` in the pages router. It is not called for ISR revalidation.
 
-The `CACHE_PURGE_API_TOKEN` environment variable/secret need to be set to enable cache purge.
-The Token must have the `Cache Purge` permission.
+To use cache purge, you need to define the following wrangler secrets:
+- `CACHE_PURGE_API_TOKEN` should be set to [an API token](https://developers.cloudflare.com/fundamentals/api/get-started/create-token/) with the `Cache Purge` permission
+- `CACHE_PURGE_ZONE_ID` should be set to the [zone ID of your deployment domain](https://developers.cloudflare.com/fundamentals/account/find-account-and-zone-ids/)
 
 Below is an example configuration for integrating the cache purge component in your `open-next.config.ts`:
 
