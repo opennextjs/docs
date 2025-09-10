@@ -134,7 +134,7 @@ If you encounter this error when using features that rely on modern JavaScript A
 ✘ [ERROR] ⨯ ReferenceError: FinalizationRegistry is not defined
 ```
 
-This error occurs because the `FinalizationRegistry` API is not available in older Cloudflare Workers compatibility dates. 
+This error occurs because the `FinalizationRegistry` API is not available in older Cloudflare Workers compatibility dates.
 
 To fix this issue, update your `compatibility_date` in `wrangler.toml` or `wrangler.jsonc` to `2025-05-05` or later:
 
