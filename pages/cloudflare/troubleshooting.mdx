@@ -125,3 +125,23 @@ X [ERROR] Could not resolve "<package name>"
 It might be because the package contains workerd specific code.
 
 Check this [howto](/cloudflare/howtos/workerd) for a solution.
+
+### `ReferenceError: FinalizationRegistry is not defined`
+
+If you encounter this error when using features that rely on modern JavaScript APIs:
+
+```text
+✘ [ERROR] ⨯ ReferenceError: FinalizationRegistry is not defined
+```
+
+This error occurs because the `FinalizationRegistry` API is not available in older Cloudflare Workers compatibility dates.
+
+To fix this issue, update your `compatibility_date` in `wrangler.toml` or `wrangler.jsonc` to `2025-05-05` or later:
+
+```json
+{
+  "compatibility_date": "2025-05-05"
+}
+```
+
+Refer to the [Cloudflare Workers compatibility flags documentation](https://developers.cloudflare.com/workers/configuration/compatibility-flags/#enable-finalizationregistry-and-weakref) for more details.
