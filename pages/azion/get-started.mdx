@@ -1,0 +1,239 @@
+import { Callout } from "nextra/components";
+import { Tabs } from "nextra/components";
+
+---
+
+### Get Started with Azion
+
+The `@aziontech/opennextjs-azion` adapter lets you deploy Next.js apps to [Azion Web Platform](https://www.azion.com/en/). This guide will help you set up a new or existing Next.js project for Azion, configure caching, develop locally, and deploy to production.
+
+---
+### Install Azion CLI
+
+You can install the Azion CLI using your preferred package manager. Select your operating system or package manager below:
+
+<Tabs items={["RPM", "dpkg", "APK", "Brew", "APT", "Windows"]}>
+  <Tabs.Tab>
+    **RPM**: For Red Hat-based distributions (Fedora, CentOS, RHEL, etc.)
+    ```sh
+    sudo rpm -i <downloaded_file>
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **dpkg**: For Debian-based distributions (Debian, Ubuntu, etc.)
+    ```sh
+    sudo dpkg -i <downloaded_file>
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **APK**: For Alpine Linux
+    ```sh
+    apk add <downloaded_file>
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **Brew**: For macOS and Linux with Homebrew
+    ```sh
+    brew install azion
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **APT**: For Debian/Ubuntu using APT
+    ```sh
+    sudo apt install ./<download_file_path>
+    ```
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **Windows**:
+    
+    Using **Chocolatey**:
+    ```sh
+    choco install azion
+    ```
+    
+    Using **Windows Package Manager**:
+    ```sh
+    winget install aziontech.azion
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+For more details and advanced usage, see the [Azion CLI documentation](https://www.azion.com/en/documentation/products/cli/).
+---
+
+#### New Next.js Apps
+
+To create a new Next.js app pre-configured for Azion:
+
+```sh
+npx create-next-app@14.2.4 my-next-app --use-npm
+cd my-next-app
+npm install @aziontech/opennextjs-azion@latest
+```
+
+Or use a starter template:
+
+- [Next.js + TypeScript + Tailwind Template](https://github.com/aziontech/azion-samples/tree/dev/templates/opennextjs/nextal-next-typescript-tailwind)
+- [Node Playground (Next.js 13)](https://github.com/aziontech/bundler-examples/tree/main/examples/nextjs/node-playground-13)
+
+---
+
+#### Existing Next.js Apps
+
+1. **Install the Azion Adapter**
+
+```sh
+npm install @aziontech/opennextjs-azion@latest
+```
+
+2. **Configure `open-next.config.ts`**
+
+Create or update `open-next.config.ts` in your project root. Example:
+
+```ts
+import { defineAzionConfig } from "@aziontech/opennextjs-azion";
+
+export default defineAzionConfig({
+  // See /azion/caching for advanced options
+});
+```
+
+3. **Update `tsconfig.json`**
+
+<Callout type="warning">
+  Your `tsconfig.json` must include: ```json "moduleResolution": "bundler" ``` This is required for correct
+  build and runtime behavior.
+</Callout>
+
+If you encounter issues with ESM or `open-next.config.ts`, you may need to add:
+
+```json
+"exclude": ["node_modules", "open-next.config.ts"]
+```
+
+See [Known Issues](/azion/known-issues) for more details.
+
+4. **Azion CLI Build and Deploy**
+
+
+- `azion build`: Builds your app for Azion.
+- `azion preview`: Runs a local preview using Azion CLI.
+- `azion deploy`: Deploys to Azion Web Platform using Remote Deployment.
+  - or `azion deploy --local` to deploy to Azion Web Platform using Local Deployment.
+
+
+5. **Set Up Caching and Storage**
+
+See the [Caching Guide](/azion/caching) for how to configure Azion Edge Storage and Edge Cache for ISR/SSG. Example Azion config:
+
+```ts
+AzionCache
+Type definition for the cache configuration.
+
+Properties:
+
+name: string - Name of the cache configuration.
+stale?: boolean - Whether to allow stale content.
+queryStringSort?: boolean - Whether to sort query string parameters.
+methods?: CacheMethods - HTTP methods to cache.
+post?: boolean - Whether to cache POST requests.
+options?: boolean - Whether to cache OPTIONS requests.
+browser?: BrowserCacheConfig - Browser cache settings.
+maxAgeSeconds: number | string - Maximum age for browser cache in seconds.
+edge?: EdgeCacheConfig - Edge cache settings.
+maxAgeSeconds: number | string - Maximum age for edge cache in seconds.
+cacheByCookie?: CacheByCookieConfig - Cache by cookie settings.
+option: 'ignore' | 'varies' | 'whitelist' | 'blacklist' - Cache by cookie option.
+list?: string[] - List of cookies to use for caching.
+cacheByQueryString?: CacheByQueryStringConfig - Cache by query string settings.
+option: 'ignore' | 'varies' | 'whitelist' | 'blacklist' - Cache by query string option.
+list?: string[] - List of query string parameters to use for caching.
+
+```
+
+
+```js
+// azion.config.cjs
+module.exports = {
+  build: { preset: "opennextjs", polyfills: true },
+  origin: [{ name: "origin-storage-default", type: "object_storage" }],
+  functions: [{ name: "handler", path: ".edge/worker.js" }],
+  cache: [
+    {
+      name: 'Default Cache',
+      browser: { maxAgeSeconds: 3600 },
+      edge: { maxAgeSeconds: 7200 },
+    },
+  ],
+  rules: {
+    request: [
+      {
+        name: "Set storage origin for _next/static",
+        match: "^/_next/static/",
+        behavior: { setOrigin: { name: "origin-storage-default", type: "object_storage" }, deliver: true },
+      },
+      {
+        name: "Deliver Static Assets",
+        match: ".(css|js|ttf|woff|woff2|pdf|svg|jpg|jpeg|gif|bmp|png|ico|mp4|json)$",
+        behavior: { setOrigin: { name: "origin-storage-default", type: "object_storage" }, deliver: true },
+      },
+      {
+        name: "Execute Edge Function",
+        match: "^/",
+        behavior: { runFunction: "handler", forwardCookies: true },
+      },
+    ],
+  },
+};
+```
+
+---
+
+### Local Development
+
+Use the [Azion CLI](https://www.azion.com/en/documentation/products/cli/) for local development:
+
+```sh
+azion dev
+```
+
+This runs your Application locally, simulating the Azion platform. See [Troubleshooting](/azion/troubleshooting) for tips on debugging and log monitoring.
+
+---
+
+### Deployment
+
+Deploy your app to Azion Web Platform:
+
+```sh
+azion deploy
+```
+
+Or use the Azion CLI to deploy to Azion Web Platform using Local Deployment:
+
+```sh
+azion deploy --local
+```
+
+<Callout type="info">
+  Azion Edge Functions have a 50 MiB compressed size limit per function. Monitor your build output size.
+  [Learn more](https://www.azion.com/en/documentation/products/build/edge-application/edge-functions/#limits).
+</Callout>
+
+---
+
+### Best Practices & Troubleshooting
+
+- See [Known Issues](/azion/known-issues) for important config notes.
+- See [Troubleshooting](/azion/troubleshooting) for local dev, logging, and debugging tips.
+- Explore [Examples](/azion/examples) for starter projects and templates.
+- For advanced caching, see [Caching](/azion/caching).
+
+<Callout type="info">
+  Some Node.js or Web APIs may not be fully supported in Azion's local dev environment but will work in
+  production. If you hit issues locally, try deploying before deep troubleshooting.
+</Callout>
+
+---
+
+You are now ready to build, test, and deploy Next.js apps on Azion Edge Functions!
