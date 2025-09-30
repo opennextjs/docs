@@ -66,7 +66,12 @@ However [remote bindings](https://developers.cloudflare.com/workers/development-
 used, allowing your application code, while still running locally, to connect to remote resources associated to your
 Cloudflare account.
 
-Remote bindings are currently experimental and can be enabled it in your `next.config.ts` file:
+All you then need to do to enable remote mode for any of your bindings is to set the `remote` configuration field to `true`, just
+as documented in the [remote bindings documentation](https://developers.cloudflare.com/workers/development-testing/#remote-bindings).
+
+<Callout type="info">
+  The remote bindings APIs have been stabilized in wrangler `4.36.0`, so if you're using an earlier version of wrangler in order to use remote
+  bindings you need to enabled it in your `next.config.ts` file:
 
 ```diff
 - initOpenNextCloudflareForDev();
@@ -75,11 +80,11 @@ Remote bindings are currently experimental and can be enabled it in your `next.c
 + });
 ```
 
-When the feature is turned on all you then need to do to enable remote mode for any of your bindings
-is to set the `experimental_remote` configuration field to `true`, exactly
-as documented in the [remote bindings documentation](https://developers.cloudflare.com/workers/development-testing/#remote-bindings).
+And instead of setting `remote` to bindings configuration options you need to set `experimental_remote`.
 
-<Callout>
+</Callout>
+
+<Callout type="info">
   Note that remote bindings will also be used during build, this can be very useful for example when using
   features such [ISR](https://nextjs.org/docs/app/guides/incremental-static-regeneration) so that read
   production data can be used for the site's static generation
