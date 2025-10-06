@@ -1,6 +1,7 @@
 {
   "index": "Overview",
   "get-started": "",
+  "cli": "CLI (opennextjs-cloudflare)",
   "bindings": "",
   "caching": "",
   "howtos": "How-Tos",

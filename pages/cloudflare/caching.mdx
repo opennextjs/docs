@@ -585,25 +585,7 @@ export default defineCloudflareConfig({
 
 In order for the cache to be properly initialised with the build-time revalidation data, you need to run a command as part of your deploy step. This should be run as part of each deployment to ensure that the cache is being populated with each build's data.
 
-To populate remote bindings and create a new [version](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/#versions) of your application at the same time, you can use either the `deploy` command or the `upload` command. Similarly, the `preview` command will populate your local bindings and start a Wrangler dev server.
-
-```sh
-# Populate remote and deploy the worker immediately.
-opennextjs-cloudflare deploy
-
-# Populate remote and upload a new version of the worker.
-opennextjs-cloudflare upload
-
-# Populate local and start dev server.
-opennextjs-cloudflare preview
-```
-
-It is possible to only populate the cache without any other steps with the `populateCache` command.
-
-```sh
-# The target is passed as an option, either `local` or `remote`.
-opennextjs-cloudflare populateCache local
-```
+To populate remote bindings and create a new [version](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/#versions) of your application at the same time, you can use either the [`deploy`](/cloudflare/cli#deploy-command) command or the [`upload`](/cloudflare/cli#upload-command) command. Similarly, the [`preview`](/cloudflare/cli#preview-command) command will populate your local bindings and start a Wrangler dev server.
 
 </Tabs.Tab>
 <Tabs.Tab>
