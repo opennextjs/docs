@@ -24,7 +24,7 @@ When your app uses re-validation, use the R2 based store instead. We recommend t
 
 - use regional cache by wrapping the handler into `withRegionalCache(...)`
   - use the `long-lived` mode
-  - you should not need to explictely set `shouldLazilyUpdateOnCacheHit` nor `bypassTagCacheOnCacheHit` as they are set to the most performant mode by default
+  - you should not need to explicitly set `shouldLazilyUpdateOnCacheHit` nor `bypassTagCacheOnCacheHit` as they are set to the most performant mode by default
 - setup [automatic cache purge](/cloudflare/caching#automatic-cache-purge)
 
 <Callout type="info">Using KV is not recommended as it is eventually consistent.</Callout>
