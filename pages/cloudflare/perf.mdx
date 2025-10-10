@@ -29,7 +29,10 @@ When your app uses re-validation, use the R2 based store instead. We recommend t
   - you should not need to explicitly set `shouldLazilyUpdateOnCacheHit` nor `bypassTagCacheOnCacheHit` as they are set to the most performant mode by default
 - setup [automatic cache purge](/cloudflare/caching#automatic-cache-purge)
 
-<Callout type="info">Using KV is not recommended as it is eventually consistent. It could cause stale data to be persisted indefinitely</Callout>
+<Callout type="info">
+  Using KV is not recommended as it is eventually consistent. It could cause stale data to be persisted
+  indefinitely
+</Callout>
 
 #### [Tag Cache](/cloudflare/caching#tag-cache-for-on-demand-revalidation)
 
