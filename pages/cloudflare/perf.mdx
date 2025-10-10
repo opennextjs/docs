@@ -18,6 +18,8 @@ You should then check [how to configure caching](/cloudflare/caching) for the Op
 
 #### [Incremental Cache](/cloudflare/caching#incremental-static-regeneration-isr)
 
+The Incremental cache is the store containing all the cached data (i.e. pages, `fetch`, `unstable_cache`).
+
 You should use the Workers Static Assets based cache if your site is SSG. It is the fastest available option. Note that as Workers Static Assets are read-only, this option can not be used with revalidation.
 
 When your app uses re-validation, use the R2 based store instead. We recommend the following settings to get the best perfomance:
@@ -31,7 +33,9 @@ When your app uses re-validation, use the R2 based store instead. We recommend t
 
 #### [Tag Cache](/cloudflare/caching#tag-cache-for-on-demand-revalidation)
 
-The Tag should be configured for App-Router based app using `revalidateTag` or `revalidatePath`.
+The Tag Cache is not properly a cache. It only stores the timestamp at which tags have been revalidated.
+
+It should be configured for App-Router based app using `revalidateTag` or `revalidatePath`.
 
 The D1 based tag cache should only be used if your site receives low traffic. The Durable Object based tag cache is the recommend option for most sites. See [the reference guide](/cloudflare/caching#tag-cache-for-on-demand-revalidation) for the available configuration options.
 
@@ -42,6 +46,10 @@ Application using `revalidateTag` exclusively (and not `revalidatePath`) will be
 You should add a `public/_headers` file to cache the static assets served by your app.
 
 See the [Cloudflare documentation](https://developers.cloudflare.com/workers/static-assets/headers/) for a detailed explanation of the default and the syntax.
+
+### [Multiple Workers](https://opennext.js.org/cloudflare/howtos/multi-worker)
+
+Deploying the middleware and the main server to distinct Workers can help with performance. As when a page can be retrieved from the cache, the main server can be fully bypassed.
 
 ### Troubleshooting performance
 
