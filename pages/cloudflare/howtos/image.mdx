@@ -31,12 +31,11 @@ export default function cloudflareLoader({ src, width, quality }: ImageLoaderPro
   if (quality) {
     params.push(`quality=${quality}`);
   }
-  const paramsString = params.join(",");
   if (process.env.NODE_ENV === "development") {
     // Serve the original image when using `next dev`
-    return `${src}?${paramsString}`;
+    return `${src}?${params.join("&")}`;
   }
-  return `/cdn-cgi/image/${paramsString}/${normalizeSrc(src)}`;
+  return `/cdn-cgi/image/${params.join(",")}/${normalizeSrc(src)}`;
 }
 ```
 
