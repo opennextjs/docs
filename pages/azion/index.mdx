@@ -1,0 +1,141 @@
+import { SITE } from "../../config";
+import { Callout } from "nextra/components";
+
+# Next.js on Azion
+
+Azion's OpenNext.js adapter enables the deployment of Next.js applications to Azion's platform, providing optimized performance through advanced caching, ISR (Incremental Static Regeneration), and global content delivery.
+
+The adapter automatically configures your Next.js application to run on Azion's infrastructure, handling server-side functionality (SSR, ISR, API routes, Server Actions) while leveraging Azion's global network for optimal performance and low latency worldwide.
+
+## About Azion
+
+Azion is a Web Platform that enables you to build, secure, and scale global applications with low latency and high performance. With Azion's solutions, you can create applications, protect your data with security, and gain real-time insights.
+
+Access the [Azion Console](https://console.azion.com/signup) and get started now.
+
+## Get started
+
+The easiest way to get started is to use an existing Next.js project or create a new one, then add the Azion OpenNext.js adapter.
+
+### Prerequisites
+
+- Next.js version 13.5 and later (up to the latest stable version)
+- [Node 18.x or later](https://nodejs.org/)
+- npm, yarn, or pnpm package manager
+
+### Installation
+
+Install the Azion OpenNext.js adapter in your Next.js project:
+
+```bash
+pnpm add @aziontech/opennextjs-azion
+```
+
+Or with npm:
+
+```bash
+npm install @aziontech/opennextjs-azion
+```
+
+Or with yarn:
+
+```bash
+yarn add @aziontech/opennextjs-azion
+```
+
+### Build and Deploy
+
+Build your Next.js application for Azion:
+
+```bash
+pnpm exec opennextjs-azion build
+```
+
+Preview your application locally:
+
+```bash
+pnpm exec opennextjs-azion preview
+```
+
+## Key features
+
+- **App Router Support:** Full support for Next.js App Router with nested layouts, Server Components, and Streaming capabilities.
+
+- **Optimized Caching:** Dual-layer caching system using Azion's Cache API and Storage for optimal ISR performance and content delivery.
+
+- **Incremental Static Regeneration (ISR):** Advanced ISR support with tag-based cache invalidation and efficient revalidation strategies.
+
+- **Global Network:** Leverage Azion's worldwide infrastructure for ultra-low latency and improved user experience.
+
+- **Server-Side Rendering (SSR):** Full SSR support running on Azion's platform.
+
+- **API Routes & Server Actions:** Complete support for Next.js API routes and Server Actions.
+
+- **Tag-Based Cache Management:** Sophisticated cache invalidation system using tags for precise content revalidation.
+
+## Advanced Features
+
+### Override System
+
+The Azion adapter implements custom overrides specifically designed for Azion's platform:
+
+#### Incremental Cache
+
+Dual-layer caching system that combines Azion's Cache API with Storage for optimal ISR performance:
+
+- Fast cache for immediate content delivery
+- Persistent storage layer for cache durability
+- Automatic cache warming and invalidation
+
+#### Tag Cache
+
+Advanced tag-based cache invalidation system:
+
+- Efficient content revalidation using cache tags
+- Granular cache control for specific content types
+- Optimized for Azion's computing environment
+
+#### Memory Queue
+
+Lightweight ISR revalidation queue with intelligent features:
+
+- Deduplication to prevent redundant revalidations
+- Timeout protection for reliable processing
+- Memory-efficient queue management
+
+### Configuration
+
+The adapter automatically detects Next.js applications and applies optimal configurations for Azion's platform. For custom configurations, refer to your `next.config.js` file.
+
+<Callout type="info">
+The adapter works with Next.js applications built in standalone mode, ensuring compatibility with Azion's runtime environment.
+</Callout>
+
+## Example Project
+
+Check out the [playground-13 example](https://github.com/aziontech/bundler-examples/tree/main/examples/nextjs/node-playground-13) for a complete Next.js application using the Azion OpenNext.js adapter.
+
+## Limitations
+
+Currently, the Azion OpenNext.js adapter has the following considerations:
+
+- **Runtime Optimization:** The adapter is specifically optimized for Azion's computing environment and may not be compatible with other platforms.
+
+- **Standalone Mode Required:** Applications must be built in Next.js standalone mode for proper compatibility with Azion's runtime.
+
+- **Cache Configuration:** Custom cache configurations should align with Azion's caching strategies for optimal performance.
+
+## Troubleshooting
+
+For issues with the Azion OpenNext.js adapter:
+
+1. Ensure your Next.js version is supported (13.5+)
+2. Verify standalone mode is enabled in your `next.config.js`
+3. Check that all dependencies are properly installed
+4. Review build logs for any configuration issues
+
+### More resources
+
+- [Azion's OpenNext Adapter Repo](https://github.com/aziontech/opennextjs-azion)
+- [Azion Documentation](https://docs.azion.com/)
+- [Azion CLI](https://www.azion.com/en/documentation/products/azion-cli/overview/)
