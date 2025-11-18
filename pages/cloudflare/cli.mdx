@@ -22,11 +22,19 @@ It first builds the Next.js application by invoking the `build` script of the `p
 
 It populates the configured [Open Next cache components](/cloudflare/caching) so that caching works at runtime. It can populate the local bindings (`populateCache local`) used during development on your local machine or the remote bindings (`populateCache remote`) used by the deployed application. Note that this command is implicitly called by the `preview`, `deploy`, and `upload` commands so there is no need to explicitly call `populateCache` when one of those is used.
 
+<Callout type='info'>
+
+From version 1.13.0 of the Cloudflare adapter, R2 batch uploads are supported out of the box for preview and deploy without any additional setup.
+
+Before version 1.13.0 of the Cloudflare adapter, the `populateCache` command was supporting R2 batch uploads via `rclone` which required the following additional setup:
+
 The `populateCache` command supports R2 batching to speed up the upload of large number of files. To enable R2 batching, you need to create an R2 Account API token as described [in the docs](https://developers.cloudflare.com/r2/api/tokens/) and provide the following environment variables:
 
 - `R2_ACCESS_KEY_ID`: The access key ID of the R2 API token
 - `R2_SECRET_ACCESS_KEY`: The secret access key of the R2 API token
 - `CLOUDFLARE_ACCOUNT_ID`: The [account ID](https://developers.cloudflare.com/fundamentals/account/find-account-and-zone-ids/#copy-your-account-id) where the R2 bucket is located
+
+</Callout>
 
 ### `preview` command
 
