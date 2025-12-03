@@ -104,6 +104,11 @@ If you see an error similar to:
 You are proably using a turbopack enabled build (`next build --turbo`) which is not currently supported by OpenNext.
 Change your build command to `next build` to fix the issue.
 
+<Callout type="important">
+  On Next.js 16, you have to explictly opt-out of Turbo using the  `next build --webpack` flag
+</Callout>
+
+
 ### `X [ERROR] Could not resolve "<package>"`
 
 When you see the following error during the build:
