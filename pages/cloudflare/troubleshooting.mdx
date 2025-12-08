@@ -12,7 +12,7 @@ When deploying your Worker, `wrangler` will show both the original and compresse
 
 If your Worker is larger than 10 MiB compressed — there might be unnecessary code ending up in your production bundle. You can visualize and understand this by running:
 
-1. `npx opennextjs-cloudflare build` within your project's root directory
+1. `npx @opennextjs/cloudflare build` within your project's root directory
 2. `cd .open-next/server-functions/default` to open the directory that contains the bundled code
 3. Take the file named `handler.mjs.meta.json` and use the [ESBuild Bundle Analyzer](https://esbuild.github.io/analyze/) to visualize your application's code, and understand the largest parts of your production bundle
 
