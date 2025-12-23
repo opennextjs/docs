@@ -29,6 +29,17 @@ The `aws-lambda-streaming` Wrapper is a wrapper that allows you to use streaming
 - [x] Streaming
 - [x] Proper support for `waitUntil`
 
+### aws-lambda-compressed
+
+The `aws-lambda-compressed` Wrapper is a wrapper that will compress the response body by default. Compression will be applied in the following priority order: `br` (Brotli) → `gzip` → `deflate`.
+If none of these is found, we just return the body as is. The compression quality for brotli can be configured using the `BROTLI_QUALITY` environment variable. If not set, it defaults to 6.
+
+#### Features
+
+- [x] Compression
+- [ ] Streaming
+- [ ] Proper support for `waitUntil`
+
 ### cloudflare-edge
 
 The `cloudflare-edge` Wrapper is the wrapper for Cloudflare Workers. It should be used for the external middleware and for the `edge` runtime of Next.
