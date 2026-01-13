@@ -32,6 +32,73 @@ export { DOQueueHandler, DOShardedTagCache } from "./.open-next/worker.js";
 
 See [an example in the adapter repository](https://github.com/opennextjs/opennextjs-cloudflare/blob/main/examples/playground14/worker.ts).
 
+### Queue handlers with Next.js request context
+
+You can also add a `queue` handler to the same custom worker while still running code inside the OpenNext/Next.js request context.
+This is useful when queue processing needs access to the same `getCloudflareContext()`, `headers()`, `cookies()`, and other helpers as a normal request.
+
+The pattern is:
+
+- The producer enqueues messages that contain the target URL and any metadata you need (headers, cookies, or additional fields)
+- The queue handler reconstructs a `Request` from that metadata
+- The work runs inside `runWithCloudflareRequestContext` so that your application code can use the usual context helpers
+
+```ts
+// custom-worker.ts
+
+// @ts-ignore `.open-next/worker.ts` is generated at build time
+import { default as handler } from "./.open-next/worker.js";
+// @ts-ignore `.open-next/cloudflare/init.js` is generated at build time
+import { runWithCloudflareRequestContext } from "./.open-next/cloudflare/init.js";
+
+type QueueMessageBody = {
+  url: string;
+  headers?: Record<string, string>;
+  cookies?: string;
+  // Add other fields your application needs here
+};
+
+async function handleQueueMessage(
+  request: Request,
+  message: Message<QueueMessageBody>,
+  env: CloudflareEnv,
+  ctx: ExecutionContext,
+) {
+  // Application-specific processing goes here
+}
+
+export default {
+  fetch: handler.fetch,
+
+  async queue(batch, env, ctx) {
+    const promises = batch.messages.map((message) => {
+      const body = message.body as QueueMessageBody;
+
+      const headers = new Headers(body.headers ?? {});
+      if (body.cookies) {
+        headers.set("Cookie", body.cookies);
+      }
+
+      const request = new Request(body.url, { headers });
+
+      return runWithCloudflareRequestContext(request, env, ctx, () =>
+        handleQueueMessage(request, message, env, ctx),
+      );
+    });
+
+    await Promise.all(promises);
+  },
+} satisfies ExportedHandler<CloudflareEnv>;
+```
+
+This approach:
+
+- Reuses the same Cloudflare-aware Next.js context as the `fetch` handler
+- Lets queue handlers share logging, configuration, and service code with HTTP routes
+- Avoids calling back into the worker over HTTP just to process a queued job, since the work already runs inside the same worker invocation
+
+In `wrangler.jsonc`, declare your queue binding and associate it with this worker as described in the [Cloudflare Queues](https://developers.cloudflare.com/queues/) documentation.
+
 ### Update the entry point in your wrangler configuration
 
 ```diff
