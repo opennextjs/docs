@@ -474,7 +474,7 @@ You will also need to add some binding to your `wrangler.jsonc` file.
 
 You can customize the behaviors of the queue with environment variables:
 
-- The max number of revalidations that can be processed by an instance of durable object at the same time (`NEXT_CACHE_DO_QUEUE_MAX_RETRIES`)
+- The max number of revalidations that can be processed by an instance of durable object at the same time (`NEXT_CACHE_DO_QUEUE_MAX_REVALIDATION`)
 - The max time in milliseconds that a revalidation can take before being considered as failed (`NEXT_CACHE_DO_QUEUE_REVALIDATION_TIMEOUT_MS`)
 - The amount of time after which a revalidation will be attempted again if it failed. If it fails again it will exponentially back off until it reaches the max retry interval (`NEXT_CACHE_DO_QUEUE_RETRY_INTERVAL_MS`)
 - The maximum number of attempts that can be made to revalidate a path (`NEXT_CACHE_DO_QUEUE_MAX_RETRIES`)
