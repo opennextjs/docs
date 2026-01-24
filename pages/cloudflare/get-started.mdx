@@ -12,6 +12,16 @@ npm create cloudflare@latest -- my-next-app --framework=next --platform=workers
 
 #### Existing Next.js apps
 
+The easiest way to convert an existing Next.js app is to use the `migrate` command:
+
+```sh
+npx @opennextjs/cloudflare migrate
+```
+
+This command automates all the setup steps below. See the [CLI documentation](/cloudflare/cli#migrate-command) for more details.
+
+Alternatively, you can follow the manual steps below.
+
 ##### 1. Install @opennextjs/cloudflare
 
 First, install [@opennextjs/cloudflare](https://www.npmjs.com/package/@opennextjs/cloudflare):

@@ -8,7 +8,7 @@ The Cloudflare adapter provides a `opennextjs-cloudflare` CLI to develop, build,
 
 `opennextjs-cloudflare` support multiple commands, invoked via `opennextjs-cloudflare <command>`.
 
-The currently supported commands are `build`, `populateCache`, `preview`, `deploy`, and `upload`.
+The currently supported commands are `build`, `populateCache`, `preview`, `deploy`, `upload`, and `migrate`.
 
 You can list the commands by invoking `pnpm opennextjs-cloudflare` and get help with a given command by invoking `pnpm opennextjs-cloudflare <command> --help`.
 
@@ -47,3 +47,22 @@ It starts by populating the remote cache and then deploys your application to Cl
 ### `upload` command
 
 It starts by populating the remote cache and then uploads a version of your application to Cloudflare (via `wrangler upload`). Note that the application will not automatically be served on uploads. See [Gradual deployments](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/gradual-deployments/) to learn more about how to serve an uploaded version.
+
+### `migrate` command
+
+Converts a standard Next.js project into an OpenNext-compatible one. This command automates the setup steps described in the [Get Started guide](/cloudflare/get-started#existing-nextjs-apps), including:
+
+- Installing required dependencies (`@opennextjs/cloudflare` and `wrangler`)
+- Creating a `wrangler.jsonc` configuration file
+- Creating an `open-next.config.ts` file
+- Adding a `.dev.vars` file
+- Updating the `package.json` scripts
+- Adding static asset caching headers (`public/_headers`)
+- Adding `.open-next` to `.gitignore`
+- Setting up local development with `initOpenNextCloudflareForDev()` in your Next.js config
+
+Run the command in your existing Next.js project:
+
+```sh
+npx @opennextjs/cloudflare migrate
+```
