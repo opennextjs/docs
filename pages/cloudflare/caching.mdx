@@ -472,6 +472,8 @@ You will also need to add some binding to your `wrangler.jsonc` file.
   ],
 ```
 
+If you need to process queue messages in a custom worker while keeping access to the Next.js request context, see the [Custom Worker how-to](/cloudflare/howtos/custom-worker).
+
 You can customize the behaviors of the queue with environment variables:
 
 - The max number of revalidations that can be processed by an instance of durable object at the same time (`NEXT_CACHE_DO_QUEUE_MAX_REVALIDATION`)
