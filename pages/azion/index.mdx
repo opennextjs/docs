@@ -1,0 +1,53 @@
+import { Callout } from "nextra/components";
+import WindowsSupport from "../../shared/WindowsSupport.mdx";
+
+## Azion
+
+The [`@aziontech/opennextjs-azion`](https://www.npmjs.com/package/@aziontech/opennextjs-azion) adapter lets you deploy Next.js apps to [Azion Edge Functions](https://www.azion.com/en/products/edge-functions/) using the [Node.js "runtime" from Next.js](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes).
+
+### Get Started
+
+##### New apps
+
+To create a new Next.js app, pre-configured to run on Azion using `@aziontech/opennextjs-azion`, run:
+
+```
+npx create-next-app@14.2.4 my-next-app --use-npm && cd my-next-app && npm install @aziontech/opennextjs-azion@latest
+```
+
+##### Existing Next.js apps
+
+Follow the guide [here](/azion/get-started) to use [@aziontech/opennextjs-azion](https://www.npmjs.com/package/@aziontech/opennextjs-azion) with an existing Next.js app.
+
+### Supported Next.js versions
+
+All minor and patch versions of Next.js 15 and the latest minor of Next.js 14 are supported.
+
+To help improve compatibility, we encourage you to [report bugs](https://github.com/aziontech/opennextjs-azion/issues) and contribute code!
+
+### Supported Next.js features
+
+- [x] [App Router](https://nextjs.org/docs/app)
+- [x] [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)
+- [x] [Dynamic routes](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes)
+- [x] [Static Site Generation (SSG)](https://nextjs.org/docs/app/building-your-application/rendering/server-components#static-rendering-default)
+- [x] [Server-Side Rendering (SSR)](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
+- [x] [Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
+- [x] [Node Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware#runtime) introduced in 15.2 are not yet supported
+- [ ] [Image optimization](https://nextjs.org/docs/app/building-your-application/optimizing/images)
+- [x] [Partial Prerendering (PPR)](https://nextjs.org/docs/app/building-your-application/rendering/partial-prerendering)
+- [x] [Pages Router](https://nextjs.org/docs/pages)
+- [x] [Incremental Static Regeneration (ISR)](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration)
+- [x] [Support for after](https://nextjs.org/blog/next-15-rc#executing-code-after-a-response-with-nextafter-experimental)
+- [ ] [Composable Caching](https://nextjs.org/blog/composable-caching) (`'use cache'`)
+
+We welcome both contributions and feedback!
+
+### Windows support
+
+<WindowsSupport />
+
+### Note on Edge Function Size Limits
+
+Azion Edge Functions have a maximum size limit of 50 MiB per function. After building your project, pay attention to the compressed (gzipped) size of your deployment package—only the compressed size counts toward this limit.
+For more details, see the [official Azion documentation on Edge Function size limits](https://www.azion.com/en/documentation/products/build/edge-application/edge-functions/#limits).

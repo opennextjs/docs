@@ -1,0 +1,27 @@
+### Known issues
+
+#### TS Config
+- Your `tsconfig.json` must include the following setting:
+  
+  ```json
+  "moduleResolution": "bundler"
+  ```
+  
+  If this is not set, you may encounter issues during the build or runtime process.
+
+- There is a known issue with ESM and the `open-next.config.ts` file. If you have an older project or one that depends on a specific TypeScript version or custom configuration, you may need to:
+  - Reconfigure your project (for example, by setting `moduleResolution: bundler` as above), **or**
+  - Add the following to your `tsconfig.json`:
+    
+    ```json
+    "exclude": ["node_modules", "open-next.config.ts"]
+    ```
+  
+  Whether this works depends on your project setup. In some cases, excluding `open-next.config.ts` allows the build to proceed, but you may still encounter errors, especially if your project uses features like `_app.mdx` or other advanced configurations. This is particularly relevant for projects that haven't been tested with these setups, and issues may also occur in other environments (such as the Cloudflare package).
+
+#### Local Development
+
+- Some applications may use Node.js or Web Standard APIs that are not fully supported by Azion's local development environment. However, these features might be available in the actual Azion runtime.
+
+  If your application does not work as expected during local development, try deploying it to Azion before troubleshooting further, as it may work correctly in the deployed environment.
+
