@@ -101,8 +101,7 @@ If you see an error similar to:
       at .open-next/server-functions/default/.next/server/app/page.js
 ```
 
-You are proably using a turbopack enabled build (`next build --turbo`) which is not currently supported by OpenNext.
-Change your build command to `next build` to fix the issue.
+You are likely using an older version of the OpenNext adapter with Turbopack builds. Please upgrade `@opennextjs/cloudflare` to the latest version for Turbopack support, or use Webpack builds.
 
 ### `X [ERROR] Could not resolve "<package>"`
 
