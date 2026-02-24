@@ -61,6 +61,14 @@ Converts a standard Next.js project into an OpenNext-compatible one. This comman
 - Adding `.open-next` to `.gitignore`
 - Setting up local development with `initOpenNextCloudflareForDev()` in your Next.js config
 
+Additionally, the command creates an R2 bucket and configures it for caching.
+
+<Callout type="info">
+  The R2 bucket for caching is only created if R2 is enabled on your Cloudflare account. If R2 is not enabled,
+  no caching setup is performed by the migrate command. See the [Caching docs](/cloudflare/caching) for
+  information on manually configuring caching.
+</Callout>
+
 Run the command in your existing Next.js project:
 
 ```sh
