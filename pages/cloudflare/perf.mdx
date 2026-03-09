@@ -22,7 +22,7 @@ The Incremental cache is the store containing all the cached data (i.e. pages, `
 
 You should use the Workers Static Assets based cache if your site is SSG. It is the fastest available option. Note that as Workers Static Assets are read-only, this option can not be used with revalidation.
 
-When your app uses re-validation, use the R2 based store instead. We recommend the following settings to get the best perfomance:
+When your app uses re-validation, use the R2 based store instead. We recommend the following settings to get the best performance:
 
 - use regional cache by wrapping the handler into `withRegionalCache(...)`
   - use the `long-lived` mode

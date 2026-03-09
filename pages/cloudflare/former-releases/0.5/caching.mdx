@@ -4,7 +4,7 @@ import { Callout } from "nextra/components";
 
 `@opennextjs/cloudflare` supports [caching](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#caching-data).
 
-Next.js primes the cache at build time. The build time values are serverd by the [Workers Assets](https://developers.cloudflare.com/workers/static-assets/).
+Next.js primes the cache at build time. The build time values are served by the [Workers Assets](https://developers.cloudflare.com/workers/static-assets/).
 
 <Callout>
   Workers KV is eventually consistent, which means that it can take up to 60 seconds for updates to be
@@ -143,9 +143,9 @@ export default defineCloudflareConfig({
 });
 ```
 
-##### 4. Initialise the cache during deployments
+##### 4. Initialize the cache during deployments
 
-In order for the cache to be properly initialised with the build-time revalidation data, you need to setup a command that runs as part of your deploy step.
+In order for the cache to be properly initialized with the build-time revalidation data, you need to setup a command that runs as part of your deploy step.
 
 OpenNext will generate an SQL file during the build that can be used to setup your D1 database.
 
