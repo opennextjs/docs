@@ -26,7 +26,7 @@ export default {
       // Maximum number of previous versions to use.
       // Optional, default to 20.
       maxNumberOfVersions: 20,
-      // Age of the oldest version to use (from the last deplyment date)
+      // Age of the oldest version to use (from the last deployment date)
       // Optional, default to 7 days.
       maxVersionAgeDays: 7,
     },
@@ -68,7 +68,7 @@ and the process' environment variables. If a variable is set in both places, the
 
 **Next config**
 
-You must set a different `deploymentId` in your next config each time your app is deployed. You will get an error if the `deployementId` has already been used by a previous deployment.
+You must set a different `deploymentId` in your next config each time your app is deployed. You will get an error if the `deploymentId` has already been used by a previous deployment.
 
 The cloudflare adapter exports a `getDeploymentId()` function that can be used to generate a unique deployment id.
 
