@@ -4,9 +4,9 @@
 // let assetPrefix = undefined;
 
 ///** Deploys as a directory through GitHub Actions **/
-//const isGithubActions = process.env.GITHUB_ACTIONS || false
+//const isGitHubActions = process.env.GITHUB_ACTIONS || false
 //
-//if (isGithubActions) {
+//if (isGitHubActions) {
 //  // trim off `<owner>/`
 //  const repo = process.env.GITHUB_REPOSITORY.replace(/.*?\//, '')
 //
