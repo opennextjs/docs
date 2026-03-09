@@ -585,9 +585,9 @@ export default defineCloudflareConfig({
 });
 ```
 
-##### 4. Initialise the cache during deployments
+##### 4. Initialize the cache during deployments
 
-In order for the cache to be properly initialised with the build-time revalidation data, you need to run a command as part of your deploy step. This should be run as part of each deployment to ensure that the cache is being populated with each build's data.
+In order for the cache to be properly initialized with the build-time revalidation data, you need to run a command as part of your deploy step. This should be run as part of each deployment to ensure that the cache is being populated with each build's data.
 
 To populate remote bindings and create a new [version](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/#versions) of your application at the same time, you can use either the [`deploy`](/cloudflare/cli#deploy-command) command or the [`upload`](/cloudflare/cli#upload-command) command. Similarly, the [`preview`](/cloudflare/cli#preview-command) command will populate your local bindings and start a Wrangler dev server.
 
