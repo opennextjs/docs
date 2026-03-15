@@ -103,6 +103,11 @@ If you see an error similar to:
 
 You are likely using an older version of the OpenNext adapter with Turbopack builds. Please upgrade `@opennextjs/cloudflare` to the latest version for Turbopack support, or use Webpack builds.
 
+<Callout type="important">
+  On Next.js 16, you have to explictly opt-out of Turbo using the  `next build --webpack` flag
+</Callout>
+
+
 ### `X [ERROR] Could not resolve "<package>"`
 
 When you see the following error during the build:
