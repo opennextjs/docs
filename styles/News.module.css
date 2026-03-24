@@ -1,0 +1,25 @@
+.date {
+  display: block;
+  color: var(--shiki-token-comment, #6b7280);
+  font-size: 0.875rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.figure {
+  margin: 2rem 0;
+}
+
+.figure img {
+  display: block;
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.figure figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--shiki-token-comment, #6b7280);
+  text-align: center;
+}
