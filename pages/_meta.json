@@ -2,5 +2,14 @@
   "index": "Overview",
   "aws": "AWS",
   "cloudflare": "Cloudflare",
-  "netlify": "Netlify"
+  "netlify": "Netlify",
+  "---": {
+    "type": "separator"
+  },
+  "news": {
+    "title": "News",
+    "theme": {
+      "collapsed": false
+    }
+  }
 }
