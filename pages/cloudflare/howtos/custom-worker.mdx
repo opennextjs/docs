@@ -32,6 +32,66 @@ export { DOQueueHandler, DOShardedTagCache } from "./.open-next/worker.js";
 
 See [an example in the adapter repository](https://github.com/opennextjs/opennextjs-cloudflare/blob/main/examples/playground14/worker.ts).
 
+You can also use [PartyServer](https://github.com/cloudflare/partykit/blob/main/packages/partyserver/README.md) to work with websockets easily.
+
+> **_Note:_** PartyServer only handles requests matching its PartyKit-style routing. All other requests will fall through to the OpenNext handler below.
+
+```ts
+// custom-worker.ts
+
+// @ts-ignore `.open-next/worker.ts` is generated at build time
+import { default as handler } from "./.open-next/worker.js";
+import { routePartykitRequest, Server } from "partyserver";
+
+export class MyServer extends Server {
+  onConnect(connection) {
+    console.log("Connected", connection.id, "to server", this.name);
+  }
+
+  onMessage(connection, message) {
+    console.log("Message from", connection.id, ":", message);
+    // Send the message to every other connection
+    this.broadcast(message, [connection.id]);
+  }
+}
+
+export default {
+  async fetch(request: Request, env: CloudflareEnv, ctx: ExecutionContext) {
+    // Route PartyServer websocket/room traffic to the Durable Object.
+    const partyResponse = await routePartykitRequest(request);
+    if (partyResponse) return partyResponse;
+
+    // Everything else goes to the OpenNext handler.
+    return handler.fetch(request, env, ctx);
+  },
+} satisfies ExportedHandler<CloudflareEnv>;
+
+// The re-export is only required if your app uses the DO Queue and DO Tag Cache
+// See https://opennext.js.org/cloudflare/caching for details
+// @ts-ignore `.open-next/worker.ts` is generated at build time
+export { DOQueueHandler, DOShardedTagCache } from "./.open-next/worker.js";
+```
+
+Since `Server` from PartyServer is a Durable Object, you need to configure your wrangler.jsonc:
+
+```jsonc
+// wrangler.jsonc
+"durable_objects": {
+  "bindings": [
+    {
+      "name": "MY_SERVER",
+      "class_name": "MyServer"
+    }
+  ]
+},
+"migrations": [
+  {
+    "tag": "v1",
+    "new_classes": ["MyServer"]
+  }
+]
+```
+
 ### Update the entry point in your wrangler configuration
 
 ```diff
