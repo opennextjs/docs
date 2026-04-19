@@ -1,8 +1,29 @@
 import { SITE } from "./config";
 import { useConfig } from "nextra-theme-docs";
+import { useRouter } from "next/router";
 
 import Footer from "./components/Footer";
 import Logo from "./components/Logo.svg";
+import CopyPageButton from "./components/CopyPageButton";
+
+function MainWrapper({ children }) {
+  const config = useConfig();
+  const { pathname } = useRouter();
+  // pass both candidates; CopyPageButton tries primary then fallback
+  const filePath = "pages" + pathname + ".mdx";
+  const filePathFallback = "pages" + pathname + "/index.mdx";
+  // https://github.com/org/repo/tree/branch → https://raw.githubusercontent.com/org/repo/branch
+  const rawBase = (config?.docsRepositoryBase ?? "")
+    .replace("https://github.com/", "https://raw.githubusercontent.com/")
+    .replace("/tree/", "/");
+
+  return (
+    <>
+      <CopyPageButton filePath={filePath} filePathFallback={filePathFallback} repoBase={rawBase} />
+      {children}
+    </>
+  );
+}
 
 /** @type {import('nextra-theme-docs').DocsThemeConfig} */
 export default {
@@ -27,6 +48,7 @@ export default {
   feedback: {
     useLink: () => SITE.github,
   },
+  main: MainWrapper,
   head: null,
   useNextSeoProps() {
     const { frontMatter } = useConfig();
