@@ -44,7 +44,7 @@ By default, it uses the `pattern-env` resolver which uses an `OPEN_NEXT_ORIGIN` 
 You can of course override this behavior by providing your own `originResolver` function in your `open-next.config.ts` file.
 This is the type of the `originResolver` function:
 
-```ts filename="open-next.config.ts"
+```ts
 type OriginResolver = BaseOverride & {
   resolve: (path: string) => Promise<Origin | false>;
 };
