@@ -39,7 +39,7 @@ For example, Sentry does not remove server side sourcemaps, only client ones, ev
 
 You could exclude sourcemaps similarly:
 
-```js
+```js filename="next.config.js"
 outputFileTracingExcludes: {
   "*": [
     './**/*.js.map',
