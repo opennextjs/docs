@@ -10,7 +10,7 @@ You will need to update your projects based on the 0.2 release as described in t
 
 The entry point is now `.open-next/worker.js`, update `wrangler.toml` accordingly:
 
-```toml
+```toml filename="wrangler.toml"
 # CHANGED: new entry point location
 main = ".open-next/worker.js"
 name = "my-app"
@@ -27,7 +27,7 @@ assets = { directory = ".open-next/assets", binding = "ASSETS" }
 
 Add a [`open-next.config.ts`](https://opennext.js.org/aws/config) file to the root directory of your Next.js app:
 
-```ts
+```ts filename="open-next.config.ts"
 import type { OpenNextConfig } from "@opennextjs/aws/types/open-next.js";
 import cache from "@opennextjs/cloudflare/kvCache";
 
@@ -62,7 +62,7 @@ You can either install the `@opennextjs/aws` NPM package to get the types or `op
 
 Add a [`.dev.vars`](https://developers.cloudflare.com/workers/testing/local-development/#local-only-environment-variables) file to the root directory of your Next.js app:
 
-```text
+```plain filename=".dev.vars"
 NEXTJS_ENV=development
 ```
 
@@ -72,8 +72,10 @@ The `NEXTJS_ENV` variable defines the environment to use when loading Next.js `.
 
 The name of the CLI was changed to `opennextjs-cloudflare`:
 
-```json
-"build:worker": "opennextjs-cloudflare",
+```json filename="package.json"
+{
+  "build:worker": "opennextjs-cloudflare"
+}
 ```
 
 ##### 5 Add `.open-next` to `.gitignore`

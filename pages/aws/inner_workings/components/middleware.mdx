@@ -10,7 +10,7 @@ Since V3, you can decide to move the middleware outside of the server into it's 
 
 By default, the middleware is inside the server, but you can move it outside by setting `middleware.external` to `true` in your `open-next.config.ts` file.
 
-```ts
+```ts filename="open-next.config.ts"
 {
   middleware: {
     external: true;
@@ -29,7 +29,7 @@ Since your app could be split into different origins, you need to be able to ret
 
 By default, it uses the `pattern-env` resolver which uses an `OPEN_NEXT_ORIGIN` environment variable to resolve the origin as well as the pattern defined in your `open-next.config.ts`. This env var should be a stringified version of an object of this shape:
 
-```ts
+```ts filename="open-next.config.ts"
 {
   // Key should be the same as the one used in `open-next.config.ts` for the functions
   [origin: string]: {
@@ -44,7 +44,7 @@ By default, it uses the `pattern-env` resolver which uses an `OPEN_NEXT_ORIGIN` 
 You can of course override this behavior by providing your own `originResolver` function in your `open-next.config.ts` file.
 This is the type of the `originResolver` function:
 
-```ts
+```ts filename="open-next.config.ts"
 type OriginResolver = BaseOverride & {
   resolve: (path: string) => Promise<Origin | false>;
 };

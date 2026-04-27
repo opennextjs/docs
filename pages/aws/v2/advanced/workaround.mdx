@@ -2,7 +2,7 @@
 
 As mentioned in the [Asset files](./architecture#asset-files) section, files in your app's `public/` folder are static and are uploaded to the S3 bucket. And requests for these files are handled by the S3 bucket, like so:
 
-```
+```plain
 https://my-nextjs-app.com/favicon.ico
 https://my-nextjs-app.com/my-images/avatar.png
 ```
@@ -11,7 +11,7 @@ Ideally, we would create a single cache behavior that routes all requests for `p
 
 To work around this limitation, we create a separate cache behavior for each top-level file and folder in `public/`. For example, if your folder structure is:
 
-```
+```plain
 public/
   favicon.ico
   my-images/
@@ -25,7 +25,7 @@ You would create three cache behaviors: `/favicon.ico`, `/my-images/*`, and `/fo
 
 One thing to be aware of is that CloudFront has a [default limit of 25 behaviors per distribution](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html#limits-web-distributions). If you have a lot of top-level files and folders, you may reach this limit. To avoid this, consider moving some or all files and folders into a subdirectory:
 
-```
+```plain
 public/
   files/
     favicon.ico
@@ -115,7 +115,7 @@ As mentioned in the [Server function](./architecture#server-lambda-function) sec
 
 To work around the issue, the server function checks if the request is for a fully static HTML page from page router (i.e. without `getStaticProps`), and sets the `Cache Control` header to:
 
-```
+```plain
 public, max-age=0, s-maxage=31536000, must-revalidate
 ```
 
@@ -126,7 +126,7 @@ You can also just add an empty `getStaticProps` function to your page, which wil
 
 `NextServer` does not seem to set an appropriate value for the `stale-while-revalidate` cache header. For example, the header might look like this:
 
-```
+```plain
 s-maxage=600 stale-while-revalidate
 ```
 
@@ -134,7 +134,7 @@ This prevents CloudFront from caching the stale data.
 
 To work around the issue, the server function checks if the response includes the `stale-while-revalidate` header. If found, it sets the value to 30 days:
 
-```
+```plain
 s-maxage=600 stale-while-revalidate=2592000
 ```
 
@@ -142,7 +142,7 @@ s-maxage=600 stale-while-revalidate=2592000
 
 Next.js recommends using `process.cwd()` instead of `__dirname` to get the app directory. For example, consider a `posts` folder in your app with markdown files:
 
-```
+```plain
 pages/
 posts/
   my-post.md
@@ -159,7 +159,7 @@ path.join(process.cwd(), "posts", "my-post.md");
 
 As mentioned in the [Server function](./architecture#server-lambda-function) section, in a non-monorepo setup, the `server-function` bundle looks like:
 
-```
+```plain
 .next/
 node_modules/
 posts/
@@ -171,7 +171,7 @@ In this case, `path.join(process.cwd(), "posts", "my-post.md")` resolves to the 
 
 However, when the user's app is inside a monorepo (ie. at `/packages/web`), the `server-function` bundle looks like:
 
-```
+```plain
 packages/
   web/
     .next/

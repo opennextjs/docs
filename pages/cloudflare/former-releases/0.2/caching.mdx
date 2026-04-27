@@ -21,7 +21,7 @@ To enable caching, you must:
 
 #### 1. Create a KV namespace
 
-```
+```sh
 npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
 ```
 
@@ -29,7 +29,7 @@ npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
 
 The binding name used in your app's worker will be `NEXT_CACHE_WORKERS_KV` by default. This is configurable and can be changed by setting the `__OPENNEXT_KV_BINDING_NAME` build-time environment variable.
 
-```
+```toml filename="wrangler.toml"
 [[kv_namespaces]]
 binding = "NEXT_CACHE_WORKERS_KV"
 id = "<YOUR_NAMESPACE_ID>"

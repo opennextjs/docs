@@ -20,7 +20,7 @@ There are two types of files in the `.open-next/assets` folder:
 
 These are files with a hash component in the file name. Hashed files are be found in the `.open-next/assets/_next` folder, such as `.open-next/assets/_next/static/css/0275f6d90e7ad339.css`. The hash values in the filenames are guaranteed to change when the content of the files is modified. Therefore, hashed files should be cached both at the CDN level and at the browser level. When uploading the hashed files to S3, the recommended cache control setting is
 
-```
+```plain
 public,max-age=31536000,immutable
 ```
 
@@ -28,7 +28,7 @@ public,max-age=31536000,immutable
 
 Other files inside the `.open-next/assets` folder are copied from your app's `public/` folder, such as `.open-next/assets/favicon.ico`. The filename for un-hashed files may remain unchanged when the content is modified. Un-hashed files should be cached at the CDN level, but not at the browser level. When the content of un-hashed files is modified, the CDN cache should be invalidated on deploy. When uploading the un-hashed files to S3, the recommended cache control setting is
 
-```
+```plain
 public,max-age=0,s-maxage=31536000,must-revalidate
 ```
 
@@ -79,7 +79,7 @@ Create a Lambda function using the code in the `.open-next/server-function` fold
 
 This function handles all other types of requests from the Next.js app, including Server-side Rendering (SSR) requests and API requests. OpenNext builds the Next.js app in **standalone** mode. The standalone mode generates a `.next` folder containing the **NextServer** class that handles requests and a `node_modules` folder with **all the dependencies** needed to run the `NextServer`. The structure looks like this:
 
-```
+```plain
   .next/                -> NextServer
   node_modules/         -> dependencies
 ```
@@ -97,7 +97,7 @@ The server function adapter wraps around `NextServer` and exports a handler func
 
 In the case of a monorepo, the build output looks slightly different. For example, if the app is located in `packages/web`, the build output looks like this:
 
-```
+```plain
   packages/
     web/
       .next/            -> NextServer

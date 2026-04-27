@@ -2,13 +2,11 @@
 
 OpenNext runs the `build` script in your `package.json` by default. However, you can specify a custom build command if required.
 
-```bash
-# CLI
+```sh
 open-next build --build-command "pnpm custom:build"
 ```
 
-```ts
-// JS
+```js
 import { build } from "open-next/build.js";
 
 await build({
@@ -20,13 +18,11 @@ await build({
 
 OpenNext runs the `build` script from your current command folder by default. When running OpenNext from a monorepo with decentralised application and build output paths, you can specify a custom `appPath` and/or `buildOutputPath`. This will allow you to execute your command from the root of the monorepo.
 
-```bash
-# CLI
+```sh
 open-next build --build-command "pnpm custom:build" --app-path "./apps/example-app" --build-output-path "./dist/apps/example-app"
 ```
 
-```ts
-// JS
+```js
 import { build } from "open-next/build.js";
 
 await build({
@@ -40,13 +36,11 @@ await build({
 
 Enabling this option will minimize all `.js` and `.json` files in the server function bundle using the [node-minify](https://github.com/srod/node-minify) library. This can reduce the size of the server function bundle by about 40%, depending on the size of your app.
 
-```bash
-# CLI
+```sh
 open-next build --minify
 ```
 
-```ts
-// JS
+```js
 import { build } from "open-next/build.js";
 
 await build({
@@ -62,7 +56,7 @@ Enabling this option will enable streaming support for the server function. This
 
 **Do not use this in production**. See [this](/v2/inner_workings/streaming) for more information.
 
-```bash
+```sh
 open-next build --streaming
 ```
 
@@ -70,7 +64,7 @@ open-next build --streaming
 
 Enabling this option will disable the dynamodb cache. This is experimental and needs to be opted into. This means that `next/cache` revalidation will not work.
 
-```bash
+```sh
 open-next build --dangerously-disable-dynamodb-cache
 ```
 
@@ -78,7 +72,7 @@ open-next build --dangerously-disable-dynamodb-cache
 
 Disabling incremental cache will cause the entire page to be revalidated on each request. This will cause ISR and SSG pages to be in an inconsistent state. Specify this option if you are using SSR pages only. This will also disable the dynamodb cache.
 
-```bash
+```sh
 open-next build --dangerously-disable-incremental-cache
 ```
 
@@ -102,13 +96,11 @@ Similarly, if you decide to upload cache files to a subfolder (ie. "cache"), be 
 
 OpenNext can be executed in debug mode for bug tracking purposes.
 
-```bash
-# CLI
+```sh
 OPEN_NEXT_DEBUG=true npx open-next@latest build
 ```
 
-```ts
-// JS
+```js
 import { build } from "open-next/build.js";
 
 await build({

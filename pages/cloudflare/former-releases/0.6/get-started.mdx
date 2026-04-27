@@ -44,7 +44,7 @@ application to be previewed and deployed, it is also where you configure your Wo
 
 You can create one yourself in the root directory of your Next.js app with the name `wrangler.jsonc` and the following content:
 
-```jsonc
+```jsonc filename="wrangler.jsonc"
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
@@ -92,7 +92,7 @@ You can create one yourself in the root directory of your Next.js app with the n
 
 Add a [`open-next.config.ts`](https://opennext.js.org/aws/config) file to the root directory of your Next.js app:
 
-```ts
+```ts filename="open-next.config.ts"
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
 import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache";
 
@@ -110,7 +110,7 @@ export default defineCloudflareConfig({
 
 Then, add a [`.dev.vars`](https://developers.cloudflare.com/workers/testing/local-development/#local-only-environment-variables) file to the root directory of your Next.js app:
 
-```text
+```plain filename=".dev.vars"
 NEXTJS_ENV=development
 ```
 
@@ -120,7 +120,7 @@ The `NEXTJS_ENV` variable defines the environment to use when loading Next.js `.
 
 Add the following to the scripts field of your `package.json` file:
 
-```json
+```json filename="package.json"
 "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
 "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
 "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
@@ -167,8 +167,7 @@ from the `@opennextjs/cloudflare` package. This makes sure that the Next.js dev 
 
 This is an example of a Next.js configuration file calling the utility:
 
-```ts
-// next.config.ts
+```ts filename="next.config.ts"
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
