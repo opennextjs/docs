@@ -455,15 +455,15 @@ You will also need to add some binding to your `wrangler.jsonc` file.
     "bindings": [
       {
         "name": "NEXT_CACHE_DO_QUEUE",
-        "class_name": "DOQueueHandler"
-      }
-    ]
+        "class_name": "DOQueueHandler",
+      },
+    ],
   },
   "migrations": [
     {
       "tag": "v1",
-      "new_sqlite_classes": ["DOQueueHandler"]
-    }
+      "new_sqlite_classes": ["DOQueueHandler"],
+    },
   ],
 }
 ```

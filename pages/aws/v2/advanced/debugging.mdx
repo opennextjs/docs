@@ -9,7 +9,7 @@ If the server function is **deployed to Lambda@Edge**, the logs will appear in t
 The logs from the warmer function provide insights into the results of the warming process.
 
 ```json
-{ event: 'warmer result', sent: 2, success: 2, uniqueServersWarmed: 2 }
+{ "event": "warmer result", "sent": 2, "success": 2, "uniqueServersWarmed": 2 }
 ```
 
 - `sent` — The number of times the warmer invoked the server function using the Lambda SDK. This value should correspond to the `CONCURRENCY` set in the warmer function.

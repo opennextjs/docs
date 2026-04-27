@@ -40,14 +40,14 @@ module.exports = composePlugins(...plugins)(nextConfig);
 3. Create `open-next.config.ts` inside your apps root directory, it should look a little something like this:
 
 ```ts filename="open-next.config.ts"
-import type { OpenNextConfig } from '@opennextjs/aws/types/open-next';
+import type { OpenNextConfig } from "@opennextjs/aws/types/open-next";
 
 const config = {
   default: {},
-  buildCommand: 'exit 0', // in my example we set up Nx task distribution to handle the order of building.
-  buildOutputPath: '.',
-  appPath: '.',
-  packageJsonPath: '../../', // again, path to the root of your repo (where the package.json is)
+  buildCommand: "exit 0", // in my example we set up Nx task distribution to handle the order of building.
+  buildOutputPath: ".",
+  appPath: ".",
+  packageJsonPath: "../../", // again, path to the root of your repo (where the package.json is)
 } satisfies OpenNextConfig;
 
 export default config;
