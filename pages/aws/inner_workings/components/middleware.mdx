@@ -29,7 +29,7 @@ Since your app could be split into different origins, you need to be able to ret
 
 By default, it uses the `pattern-env` resolver which uses an `OPEN_NEXT_ORIGIN` environment variable to resolve the origin as well as the pattern defined in your `open-next.config.ts`. This env var should be a stringified version of an object of this shape:
 
-```ts filename="open-next.config.ts"
+```ts
 {
   // Key should be the same as the one used in `open-next.config.ts` for the functions
   [origin: string]: {
