@@ -41,7 +41,9 @@ The CLI was previsouly invoked as `opennextjs-cloudflare` and now takes a mandat
 
 You will need to update the `scripts` in your `package.json`:
 
-```json
-"preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-"deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+```json filename="package.json"
+{
+  "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+  "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+}
 ```

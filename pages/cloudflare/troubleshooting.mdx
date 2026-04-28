@@ -23,7 +23,7 @@ Refer to the [Node.js Workers docs](https://developers.cloudflare.com/workers/ru
 
 Some NPM packages define multiple exports. For example:
 
-```
+```json filename="package.json"
 "exports": {
     "other": "./src/other.js",
     "node": "./src/node.js",
@@ -36,7 +36,7 @@ When you use `@opennextjs/cloudflare`, [Wrangler](https://developers.cloudflare.
 
 You may want to modify how Wrangler resolves multiple exports, such that when you import packages, the `node` export, if present, is used. You can do do by defining the following variables in a `.env` file within the root directory of your Next.js app:
 
-```
+```plain filename=".env"
 WRANGLER_BUILD_CONDITIONS=""
 WRANGLER_BUILD_PLATFORM="node"
 ```
@@ -56,15 +56,15 @@ To solve this, you should create the DB client inside a request context and not 
 
 A global client would not work:
 
-```ts
-// src/lib/db.ts
+```ts filename="src/lib/db.ts"
 import postgres from "postgres";
 
 // `client` is global.
 // As the connection would be shared across requests, it fails on worker
 export const client = postgres(process.env.DATABASE_URL, { max: 5 });
+```
 
-// src/app/api/route.ts
+```ts filename="src/app/api/route.ts"
 import { client } from "@/db/db";
 
 export const dynamic = "force-dynamic";
@@ -76,8 +76,7 @@ export async function GET() {
 
 It can fixed by creating the client for each incoming request:
 
-```ts
-// src/app/api/route.ts
+```ts filename="src/app/api/route.ts"
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -129,9 +128,9 @@ This error occurs because the `FinalizationRegistry` API is not available in old
 
 To fix this issue, update your `compatibility_date` in `wrangler.toml` or `wrangler.jsonc` to `2025-05-05` or later:
 
-```json
+```jsonc filename="wrangler.jsonc"
 {
-  "compatibility_date": "2025-05-05"
+  "compatibility_date": "2025-05-05",
 }
 ```
 

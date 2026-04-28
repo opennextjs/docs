@@ -6,7 +6,7 @@ import { Callout } from "nextra/components";
 
 To create a new Next.js app, pre-configured to run on Cloudflare using @opennextjs/cloudflare, run:
 
-```
+```sh
 npm create cloudflare@latest -- my-next-app --framework=next --experimental
 ```
 
@@ -24,7 +24,7 @@ npm install --save-dev @opennextjs/cloudflare
 
 Install the [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/) as a devDependency:
 
-```npm
+```sh
 npm install -D wrangler@latest
 ```
 
@@ -34,7 +34,7 @@ npm install -D wrangler@latest
 
 Then, add a [`wrangler.toml`](https://developers.cloudflare.com/workers/wrangler/configuration/) file to the root directory of your Next.js app:
 
-```toml
+```toml filename="wrangler.toml"
 main = ".worker-next/index.mjs"
 name = "my-app"
 compatibility_date = "2024-09-23"
@@ -55,7 +55,7 @@ assets = { directory = ".worker-next/assets", binding = "ASSETS" }
 
 Add the following to the scripts field of your `package.json` file:
 
-```json
+```json filename="package.json"
 "build:worker": "cloudflare",
 "dev:worker": "wrangler dev --port 8771",
 "preview:worker": "npm run build:worker && npm run dev:worker",
@@ -89,7 +89,7 @@ You should uninstall `@cloudflare/next-on-pages` and remove any references to it
 
 In `package.json`:
 
-```diff
+```diff filename="package.json"
 "scripts": {
 -    "pages:build": "npx @cloudflare/next-on-pages",
 -    "preview": "npm run pages:build && wrangler pages dev",
@@ -103,7 +103,7 @@ In `package.json`:
 
 You no longer need to call `setupDevPlatform()` in your `next.config.mjs` file:
 
-```diff title="next.config.mjs"
+```diff filename="next.config.mjs"
 - import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev';
 
 /** @type {import('next').NextConfig} */

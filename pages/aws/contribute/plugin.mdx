@@ -6,7 +6,7 @@ This plugin is used to replace some code in the source code with some other code
 
 Here is a very simple example of how to use it:
 
-```typescript
+```ts
 openNextPlugin({
     // The target file to replace code in
     target: /plugins\/default\.js/g,
@@ -42,7 +42,7 @@ This plugin is used to avoid having to bundle the whole library in the final bun
 
 Here is a very simple example of how to use it:
 
-```typescript
+```ts
 openNextResolvePlugin({
   overrides: {
     wrapper: "node",
@@ -57,7 +57,7 @@ This plugin is used to properly compile routes or middleware built for the `edge
 
 Here is a very simple example of how to use it:
 
-```typescript
+```ts
 openNextEdgePlugin({
   // The path to the .next directory
   nextDir: "next",

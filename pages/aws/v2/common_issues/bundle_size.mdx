@@ -13,7 +13,7 @@ Serverless environments are sensitive to bundle size, since it has to download a
 
 To identify the module that's taking up too much space (and isn't serverless friendly):
 
-```bash
+```sh
 du -hs .open-next/server-function/node_modules/* | sort -rh
 ```
 

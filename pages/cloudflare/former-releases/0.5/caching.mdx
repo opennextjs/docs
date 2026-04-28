@@ -21,7 +21,7 @@ The ISR adapter for Cloudflare uses [Workers KV](https://developers.cloudflare.c
 
 ##### 1. Create a KV namespace
 
-```
+```sh
 npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
 ```
 
@@ -29,8 +29,7 @@ npx wrangler@latest kv namespace create <YOUR_NAMESPACE_NAME>
 
 The binding name used in your app's worker is `NEXT_CACHE_WORKERS_KV`. The service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
 
-```jsonc
-// wrangler.jsonc
+```jsonc filename="wrangler.jsonc"
 {
   // ...
   "kv_namespaces": [
@@ -59,8 +58,7 @@ The memory queue will send revalidation requests to a page when needed, and offe
   can use it at your own risk!
 </Callout>
 
-```ts
-// open-next.config.ts
+```ts filename="open-next.config.ts"
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
 import kvIncrementalCache from "@opennextjs/cloudflare/kv-cache";
 import memoryQueue from "@opennextjs/cloudflare/memory-queue";
@@ -90,8 +88,7 @@ To use on-demand revalidation, you should also follow the [ISR setup steps](#inc
 
 The binding name used in your app's worker is `NEXT_CACHE_D1`. The service binding should be a self reference to your worker where `<WORKER_NAME>` is the name in your wrangler configuration file.
 
-```jsonc
-// wrangler.jsonc
+```jsonc filename="wrangler.jsonc"
 {
   // ...
   "d1_databases": [
@@ -129,8 +126,7 @@ wrangler d1 execute NEXT_CACHE_D1 --command "CREATE TABLE IF NOT EXISTS revalida
 
 In your project's OpenNext config, enable the KV cache and set up a queue. The queue will send a revalidation request to a page when needed, but it will not dedupe requests.
 
-```ts
-// open-next.config.ts
+```ts filename="open-next.config.ts"
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
 import kvIncrementalCache from "@opennextjs/cloudflare/kv-cache";
 import d1TagCache from "@opennextjs/cloudflare/d1-tag-cache";

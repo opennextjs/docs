@@ -62,9 +62,7 @@ You can profile the code to troubleshoot performance issues.
 
 Code profiles are much easier to read when the code is not minified, you can use the following settings to generate unminified code
 
-**next.config.ts**
-
-```ts
+```ts filename="next.config.ts"
 const nextConfig = {
   // ...
   experimental: {
@@ -81,7 +79,7 @@ const nextConfig = {
 
 Use the `--noMinify` option when building the app:
 
-```bash
+```sh
 opennextjs-cloudflare build --noMinify
 ```
 
@@ -89,7 +87,7 @@ opennextjs-cloudflare build --noMinify
 
 You should first launch a local version of your application by running
 
-```bash
+```sh
 opennextjs-cloudflare preview
 ```
 

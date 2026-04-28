@@ -2,7 +2,7 @@ When making some changes to OpenNext, it can be a bit cumbersome to need to depl
 
 To run `OpenNext` locally:
 
-```bash
+```sh
 # This is to build (the config-path is needed if you use a different name than the default one)
 node /path/to/opennextjs-aws/packages/open-next/dist/index.js build --config-path open-next.local.config.ts
 # Then to run the server
@@ -11,8 +11,7 @@ node .open-next/server-functions/default/index.mjs
 
 ### open-next.local.config.ts
 
-```typescript
-// open-next.local.config.ts -
+```ts filename="open-next.local.config.ts"
 // A good practice would be to use a different name so that it doesn't conflict
 // with your existing open-next.config.ts i.e. open-next.local.config.ts
 // You could also customize it by using custom overrides if you need to.
