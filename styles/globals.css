@@ -1,0 +1,5 @@
+.nextra-breadcrumb {
+  overflow: visible !important;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
