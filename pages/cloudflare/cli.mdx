@@ -36,6 +36,43 @@ The `populateCache` command supports R2 batching to speed up the upload of large
 
 </Callout>
 
+#### Populating remote bindings when Workers are protected by Cloudflare Access
+
+`populateCache remote` (also called implicitly by `deploy` and `upload`) temporarily deploys a helper Worker named `open-next-cache-populate` at `open-next-cache-populate.<account>.workers.dev` and uses it to write to your remote R2 bucket.
+
+If your account's `workers.dev` subdomain — or a parent route on a custom domain — is protected by [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/applications/), the helper Worker is protected by the same policy and the upload fails with either:
+
+```text
+Failed to send request to R2 worker: The operation was aborted due to timeout.
+```
+
+or a `403 Forbidden` returned by the Access edge.
+
+To let the adapter authenticate:
+
+1. Open the **existing** Cloudflare Access application that already covers `open-next-cache-populate.<account>.workers.dev` — typically the wildcard application for `*.<account>.workers.dev` — and attach the policy described below to that application.
+
+   <Callout type="warning">
+     Creating a separate Access application scoped specifically to the `open-next-cache-populate` hostname has
+     been observed to block the upload, even when kept alongside the existing wildcard application (see
+     [#1171](https://github.com/opennextjs/opennextjs-cloudflare/issues/1171)). Prefer attaching the policy to
+     the existing application that already protects the hostname.
+   </Callout>
+
+2. Add a **Service Auth** policy to that application:
+
+   - Set the policy **Action** to "Service Auth".
+   - Add an **Include** rule for "Any Access Service Token", or for a specific service token.
+
+3. Create the service token under Zero Trust → Access → Service Auth → Service Tokens, then expose its credentials to the environment that runs `opennextjs-cloudflare`:
+
+   ```sh
+   export CLOUDFLARE_ACCESS_CLIENT_ID=<id>
+   export CLOUDFLARE_ACCESS_CLIENT_SECRET=<secret>
+   ```
+
+   Then run `opennextjs-cloudflare populateCache remote` (or `deploy` / `upload`). In CI, set the two values as secrets and expose them to the deploy step.
+
 ### `preview` command
 
 It starts by populating the local cache and then launches a local development server (via `wrangler dev`) so that you can preview the application locally.
