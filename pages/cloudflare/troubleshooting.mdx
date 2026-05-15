@@ -135,3 +135,9 @@ To fix this issue, update your `compatibility_date` in `wrangler.toml` or `wrang
 ```
 
 Refer to the [Cloudflare Workers compatibility flags documentation](https://developers.cloudflare.com/workers/configuration/compatibility-flags/#enable-finalizationregistry-and-weakref) for more details.
+
+### `Failed to send request to R2 worker` or `Could not determine Cloudflare auth credentials after login`
+
+These errors come from `populateCache remote` (called implicitly by `deploy` and `upload`) when the temporary `open-next-cache-populate.<account>.workers.dev` helper Worker is fronted by a Cloudflare Access application.
+
+See [Populating remote bindings when Workers are protected by Cloudflare Access](/cloudflare/cli#populating-remote-bindings-when-workers-are-protected-by-cloudflare-access) for setup steps.
