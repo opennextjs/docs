@@ -19,6 +19,8 @@ They use this header by default `s-maxage=YOUR_REVALIDATION_TIME, stale-while-re
 
 **All of these issues are automatically fixed for you in OpenNext**
 
+Next.js can also set a cacheable `Cache-Control` header on some error responses (i.e. `notFound()` on an ISR route). To prevent the CDN from caching a transient error for the whole revalidation period, OpenNext overrides the `Cache-Control` header of 404 and 500 responses with `private, no-cache, no-store, max-age=0, must-revalidate`. You can opt out by setting the `OPEN_NEXT_DANGEROUSLY_SET_ERROR_HEADERS` environment variable to `true`.
+
 ### Cloudfront cache invalidation
 
 When you manually revalidate the Next.js cache for a specific page, the ISR cache files stored on S3 will be updated. However, it is still necessary to invalidate the CloudFront cache.
