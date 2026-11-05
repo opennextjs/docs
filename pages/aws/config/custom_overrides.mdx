@@ -418,7 +418,7 @@ import type { OpenNextConfig } from "@opennextjs/aws/types/open-next.js";
 const config = {
   default: {},
   middleware: {
-    assetResolver: import("./customAssetResolver").then((mod) => mod.default),
+    assetResolver: () => import("./customAssetResolver").then((mod) => mod.default),
   },
 } satisfies OpenNextConfig;
 
