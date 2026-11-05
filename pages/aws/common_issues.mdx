@@ -8,6 +8,11 @@ This will output **A LOT** of additional logs to the console.This also disable m
 OPEN_NEXT_DEBUG=true npx open-next@latest build
 ```
 
+A few other environment variables can help debugging at runtime:
+
+- `OPEN_NEXT_REQUEST_ID_HEADER` - When set, the `x-opennext-requestid` header is added to the responses (it is always added in debug mode). Available since `@opennextjs/aws` 3.7.0.
+- `OPEN_NEXT_ERROR_LOG_LEVEL` - The minimum level of the internal OpenNext errors that are logged: `0` (or `debug`), `1` (or `warn`, the default) or `2` (or `error`).
+
 #### Cannot find module next
 
 You might stumble upon this error inside cloudwatch logs: `Cannot find module 'next'`. It is likely that you are in a monorepo and you have several lock files. **Just make sure that you have a single lock file in the root of your project.**
