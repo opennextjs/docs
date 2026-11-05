@@ -126,6 +126,18 @@ Each server config will be under it's own key in the config object. Here are all
 
       This option is deprecated and doesn't work for Next 14.2+.
 
+      ### `routePreloadingBehavior`
+
+      Next.js loads the code of a route the first time it is requested. This option allows to preload all the routes of the server ahead of time to reduce the latency of the first requests.
+      You should do your own testing to choose the one that suits you best. Route preloading requires Next.js 15+.
+
+      Possible values are:
+
+      - `none` - No preloading of the routes. This is the default.
+      - `withWaitUntil` - Preload the routes in the background of the first request using the `waitUntil` provided by the wrapper. It falls back to `none` when the wrapper doesn't provide a `waitUntil` (i.e. the `aws-lambda-streaming`, `aws-apigw-streaming` and Cloudflare wrappers provide one).
+      - `onWarmerEvent` - Preload the routes on the warmer event. It must be implemented by the wrapper, it is only supported by the `aws-lambda-streaming` and `aws-apigw-streaming` wrappers.
+      - `onStart` - Preload the routes before the handler is created. This is a blocking operation that may increase the cold start time a lot. It is useful for long running servers or in serverless with careful testing.
+
       ### `override`
 
       For both default and splitted server, in addition to `override` in the common options, you can also use the following options:
