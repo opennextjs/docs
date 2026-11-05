@@ -63,9 +63,16 @@ The `handler` is the original handler that is being wrapped. The `converter` is 
 Here is a list of the provided wrappers:
 
 - `aws-lambda` - The default AWS Lambda wrapper - It is the default wrapper
-- `aws-lambda-streaming` - The AWS Lambda wrapper with streaming support
+- `aws-lambda-compressed` - The AWS Lambda wrapper with compression support
+- `aws-lambda-streaming` - The AWS Lambda wrapper with streaming support (Lambda Function URL)
+- `aws-apigw-streaming` - The AWS Lambda wrapper with streaming support behind an API Gateway
 - `node` - The Node wrapper - Create a node server, not suitable for serverless
-- `cloudflare` - The Cloudflare wrapper - For Cloudflare Worker
+- `cloudflare-edge` - The Cloudflare wrapper for the edge runtime - For Cloudflare Workers
+- `cloudflare-node` - The Cloudflare wrapper for the node runtime - Used by `@opennextjs/cloudflare`
+- `express-dev` - The Express wrapper - For development only
+- `dummy` - The Dummy wrapper - Forwards the event to the handler
+
+See the [wrapper override](/aws/config/overrides/wrapper) page for more details.
 
 ##### Aws Lambda streaming
 
