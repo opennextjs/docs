@@ -61,17 +61,22 @@ Each server config will be under it's own key in the config object. Here are all
 
       ##### `arch`
 
-      This is the architecture of the server. It is a string and by default, it is set to `x64`.
+      This is the architecture of the server. It is passed to npm as `--cpu` to select the platform specific optional dependencies (i.e. sharp's `@img/*` packages).
+      It is not set by default. Note that when `install` is not set for the image optimization server, sharp is installed for `arm64`, `linux` and `glibc`.
 
       Possible values are: `x64`, `arm64`
 
-      ##### `nodeVersion`
+      ##### `os`
 
-      This option will be passed to the postinstall script of sharp. It is used by `node-gyp`.
+      The operating system of the server. It is passed to npm as `--os`. By default, it is set to `linux`.
+
+      ##### `nodeVersion` - Deprecated
+
+      This option is ignored since `@opennextjs/aws` 4.1.14 because npm no longer supports the `--target` flag.
 
       ##### `libc`
 
-      Override libc of native modules to install.
+      Override libc of native modules to install. It is passed to npm as `--libc`.
 
       Possible values are: `glibc`, `musl`
 
