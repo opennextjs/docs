@@ -17,6 +17,8 @@ Couple of things to note :
 The SQS Queue will send a message to an SQS queue for each route that needs to be revalidated. It is used by default if you don't provide any Queue in your configuration.
 It uses the `@aws-sdk/client-sqs` to interact with SQS.
 
+Since `@opennextjs/aws` 4.1.6, the message is sent in the background when the wrapper provides a `waitUntil` (i.e. `aws-lambda-streaming` or `aws-apigw-streaming`) so that it does not delay the response. Otherwise, the response is sent once the message has been sent. The same applies to `sqs-lite`.
+
 #### Requirements
 
 - You need to provide the `REVALIDATION_QUEUE_URL` environment variable to your server.
