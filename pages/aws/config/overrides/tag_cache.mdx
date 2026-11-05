@@ -1,3 +1,5 @@
+import { Callout } from "nextra/components";
+
 This override is used by the [`cache` adapter](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/adapters/cache.ts) that is provided by OpenNext to the NextServer. It is also used by OpenNext if `enableCacheInterception` is set to `true` in the configuration and by the `initializationFunction` for prepopulating the cache.
 
 It is used for the cache tags (i.e. `revalidateTag` and `revalidatePath`). It does not handle anything related to the ISR/SSG cache or the fetch cache used by Next.js.
@@ -7,9 +9,33 @@ The current implementation differs from the way Next.js standalone handle cache 
 We choose to go another way. We store tags for every path that exists in the cache. This way, we can easily know if a path is stale by just checking the path instead of every tags used. This approach is more write heavy but it's a tradeoff we are willing to make.
 This also has the drawback of needing to prepopulate the cache with all the tags that are used in the application. This is done by the `initializationFunction`.
 
-We might allow to choose how cache tags are handled in the future depending on the `TagCache` implementation. If you need this feature, feel free to open an issue on the [GitHub repository](https://github.com/opennextjs/opennextjs-aws).
+## Modes
 
-If you want to better understand how to implement your own TagCache, the easiest way would be to take a look at the existing [included TagCache](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/tagCache).
+A `TagCache` can work in one of two modes, set with its `mode` property:
+
+- `original` (default) - The approach described above. Tags are stored for every path, so a single lookup per path is needed on read. It needs to be prepopulated at build time and is write heavy. It allows the [automatic CDN invalidation](/aws/config/overrides/automatic_cdn_invalidation) to resolve the paths of a tag.
+- `nextMode` - Similar to the way Next.js handles tags. Only the time at which a tag has been revalidated is stored, and every tag of an entry is checked on read. It doesn't need to be prepopulated and writes very little, but reads more. Path resolution for the automatic CDN invalidation is only available when the implementation provides the optional `getPathsByTags` method.
+
+## Custom implementations
+
+If you want to better understand how to implement your own TagCache, the easiest way would be to take a look at the existing [included TagCache](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/tagCache) and at the [types](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/types/overrides.ts).
+
+### Stale-while-revalidate
+
+Since `@opennextjs/aws` 3.10.0, `revalidateTag(tag, profile)` (Next.js 16+) can mark the entries as stale instead of expiring them right away. Stale entries are still served while they are revalidated in the background.
+
+To support it, a `TagCache` must store the optional `stale` and `expire` timestamps (in milliseconds since epoch) passed to `writeTags` and implement the optional `isStale` method:
+
+- `original` mode: `isStale(path: string, lastModified?: number): Promise<boolean>`
+- `nextMode`: `isStale(tags: string[], lastModified?: number): Promise<boolean>`
+
+Without `isStale`, stale entries are not detected, only expired ones are.
+
+<Callout type="warning">
+  The signature of `writeTags` changed in `@opennextjs/aws` 3.10.0. It now receives `OriginalTagCacheWriteInput[]`
+  (`{ tag, path, revalidatedAt?, stale?, expire? }`) in the `original` mode and `NextModeTagCacheWriteInput[]`
+  (`string | { tag, stale?, expire? }`) in `nextMode`. Custom implementations must be updated.
+</Callout>
 
 ## Included TagCache
 
@@ -35,7 +61,13 @@ This implementation is a lighter version of the `dynamodb` TagCache as it uses `
 
 ### dynamodb-nextMode
 
-TBA
+The DynamoDBNextMode TagCache will store the time at which each tag has been revalidated in a DynamoDB table. It works in `nextMode` and uses `aws4fetch` to interact with DynamoDB.
+It doesn't need to be prepopulated by the `initializationFunction`, and it doesn't support resolving the paths of a tag for the automatic CDN invalidation.
+
+##### Requirements
+
+- You need to provide the `CACHE_DYNAMO_TABLE`, `CACHE_BUCKET_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN` environment variables to your server.
+- DynamoDB table should have a primary key `path` of type `String` and a sort key `tag` of type `String`. (It can reuse the same table as the one used by the default `tagCache`)
 
 ### dummy
 
@@ -44,3 +76,7 @@ The Dummy TagCache is a dummy implementation that will throw an exception. It sh
 ### fs-dev
 
 The FsDev TagCache is a simple implementation that stores the cache tags in a file in the `.open-next/cache` folder and interact with it using the filesystem. It is useful for development purposes only.
+
+### fs-dev-nextMode
+
+The FsDevNextMode TagCache is a simple implementation that works in `nextMode` and stores the cache tags in memory. It is useful for development purposes only.
