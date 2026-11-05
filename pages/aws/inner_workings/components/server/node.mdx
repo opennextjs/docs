@@ -52,6 +52,8 @@ File in S3 should follow the following structure:
 - `Key_Prefix/BUILD_ID/path/to/page.cache` - For the cache of a page
 - `Key_Prefix/__fetch/BUILD_ID/fetch-cache-key` - For the fetch cache
 
+`BUILD_ID` is the OpenNext build id (`process.env.OPEN_NEXT_BUILD_ID`): the Next.js `deploymentId` when set and the Next.js build id otherwise.
+
 The default S3 Incremental Cache can be configured using the following environment variables:
 
 ###### Environment Variables

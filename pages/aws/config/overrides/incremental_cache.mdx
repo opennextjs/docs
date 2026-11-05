@@ -8,6 +8,7 @@ If you want to better understand how to implement your own IncrementalCache, the
 
 One thing to note is that it is not used at build time, only at runtime. This means that you'll have to upload the cache yourself if you want to use the prebuilt routes/pages (And this is mandatory for ISR/SSG routes with `fallback:false`).
 All the cache files are present in the `.open-next/cache` folder. The one under `BUILD_ID` are for the ISR/SSG cache and the one under `__fetch/BUILD_ID` are for the fetch cache.
+`BUILD_ID` is the OpenNext build id (`process.env.OPEN_NEXT_BUILD_ID` at runtime): the Next.js [`deploymentId`](https://nextjs.org/docs/app/api-reference/config/next-config-js/deploymentId) when set and the Next.js build id otherwise.
 
 ## Included IncrementalCache
 

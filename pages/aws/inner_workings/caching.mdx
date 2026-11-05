@@ -21,7 +21,9 @@ They use this header by default `s-maxage=YOUR_REVALIDATION_TIME, stale-while-re
 
 ### Cloudfront cache invalidation
 
-When you manually revalidate the Next.js cache for a specific page, the ISR cache files stored on S3 will be updated. However, it is still necessary to invalidate the CloudFront cache:
+When you manually revalidate the Next.js cache for a specific page, the ISR cache files stored on S3 will be updated. However, it is still necessary to invalidate the CloudFront cache.
+
+This can be done automatically by the [Automatic CDN Invalidation](/aws/config/overrides/automatic_cdn_invalidation) override (i.e. `cdnInvalidation: "cloudfront"`). Otherwise you can invalidate the CloudFront cache manually:
 
 ```js filename="pages/api/revalidate.js"
 export default async function handler(req, res) {
@@ -31,7 +33,7 @@ export default async function handler(req, res) {
 }
 ```
 
-If the pages router is in use, you must also invalidate the `_next/data/BUILD_ID/foo.json` path. The value for `BUILD_ID` can be found in the `.next/BUILD_ID` build output and can be accessed at runtime via the `process.env.NEXT_BUILD_ID` environment variable.
+If the pages router is in use, you must also invalidate the `_next/data/BUILD_ID/foo.json` path. The value for `BUILD_ID` is the Next.js build id. It can be found in the `.next/BUILD_ID` build output and can be accessed at runtime via the `process.env.NEXT_BUILD_ID` environment variable.
 
 ```ts
 await invalidateCloudFrontPaths(["/foo", `/_next/data/${process.env.NEXT_BUILD_ID}/foo.json`]);
@@ -75,7 +77,9 @@ await invalidateCloudFrontPaths(["/page/a", "/page/b", "/page/c"]);
 await invalidateCloudFrontPaths(["/page/*"]);
 ```
 
-For on-demand revalidation via the [`next/cache` module](https://nextjs.org/docs/app/building-your-application/data-fetching/revalidating#using-on-demand-revalidation), if you want to retrieve the associated paths for a given tag, you can use this function:
+For on-demand revalidation via the [`next/cache` module](https://nextjs.org/docs/app/building-your-application/data-fetching/revalidating#using-on-demand-revalidation), if you want to retrieve the associated paths for a given tag, you can use this function.
+
+Note that the tags are prefixed with the OpenNext build id (`process.env.OPEN_NEXT_BUILD_ID`), which is the Next.js [`deploymentId`](https://nextjs.org/docs/app/api-reference/config/next-config-js/deploymentId) when set and the Next.js build id otherwise.
 
 ```ts
 import { DynamoDBClient, QueryCommand } from "@aws-sdk/client-dynamodb";
@@ -92,11 +96,11 @@ async function getPaths(tag: string) {
           "#tag": "tag",
         },
         ExpressionAttributeValues: {
-          ":tag": { S: `${process.env.NEXT_BUILD_ID}/${tag}` },
+          ":tag": { S: `${process.env.OPEN_NEXT_BUILD_ID}/${tag}` },
         },
       })
     );
-    return Items?.map((item) => item.path?.S?.replace(`${process.env.NEXT_BUILD_ID}/`, "") ?? "") ?? [];
+    return Items?.map((item) => item.path?.S?.replace(`${process.env.OPEN_NEXT_BUILD_ID}/`, "") ?? "") ?? [];
   } catch (e) {
     console.error("Failed to get by tag", e);
     return [];
