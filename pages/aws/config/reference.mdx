@@ -337,5 +337,13 @@ headersAndCookiesPriority: (event) => {
 },
 ```
 
+#### `middlewareHeadersOverrideNextConfigHeaders`
+
+Available since `@opennextjs/aws` 3.8.0
+
+When set to `true`, the response headers set by the middleware take precedence over the headers set via the [`headers` option](https://nextjs.org/docs/app/api-reference/config/next-config-js/headers) of the Next config, in line with the [Next.js execution order](https://nextjs.org/docs/app/api-reference/file-conventions/middleware#execution-order).
+
+It's a boolean and by default, it is set to `false` (the headers from the Next config take precedence).
+
 </Tabs.Tab>
 </Tabs>
