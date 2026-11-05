@@ -32,6 +32,9 @@ You should also not add sharp as a dependency unless absolutely necessary, the i
 - `next/dist/compiled/babel-packages`
 - `next/dist/compiled/amphtml-validator`
 
+Since `@opennextjs/aws` 3.10.0, OpenNext also excludes the platform specific native binaries for non-Linux platforms (i.e. `@swc/core-darwin-arm64`) that are traced when building on macOS or Windows.
+You can set the `OPEN_NEXT_SKIP_PLATFORM_FILTER` environment variable to `true` at build time to disable this filter.
+
 ##### Remove sourcemaps
 
 Source maps could add a lot to the bundle, excluding them from standalone output could be worth it.
