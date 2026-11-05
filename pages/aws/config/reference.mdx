@@ -170,7 +170,7 @@ Each server config will be under it's own key in the config object. Here are all
 
       Add possibility to override the CDN invalidation override. Used for on-demand invalidation with `revalidatePath()`, `revalidateTag()` and `res.revalidate()`.
 
-      Possible values are: `cloudfront`, `dummy` or a `LazyLoadedOverride` that will return the invalidatePaths. This override is disabled by default.
+      Possible values are: `cloudfront`, `dummy` or a `LazyLoadedOverride` that will return the CDN invalidation handler. This override is disabled by default (`dummy`).
 
   </Tabs.Tab>
 
