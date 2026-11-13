@@ -35,7 +35,7 @@ export default {
 
 **Wrangler configuration**
 
-The Worker needs to serve the correct version of the app assets. For that it need be be executed before incoming requests are matched against the assets. Set [`run_worker_first`](https://developers.cloudflare.com/workers/static-assets/binding/#run_worker_first) to `true` in your wrangler configuration to enable this behavior:
+The Worker needs to serve the correct version of the app assets. For that it need be be executed before incoming requests are matched against the assets. Set [`run_worker_first`](https://developers.cloudflare.com/workers/static-assets/binding/#run_worker_first) to `true` in your wrangler configuration to enable this behavior. `html_handling` and `not_found_handling` must then be set as below (see [Workers Static Assets](/cloudflare/howtos/assets#run_worker_firsttrue)):
 
 ```jsonc filename="wrangler.jsonc"
 {
@@ -45,6 +45,10 @@ The Worker needs to serve the correct version of the app assets. For that it nee
     "directory": ".open-next/assets",
     "binding": "ASSETS",
     "run_worker_first": true,
+    // Serve public files at their exact path only, like Next.js
+    "html_handling": "none",
+    // "404-page" is also allowed
+    "not_found_handling": "none",
   },
   // ...
 }
