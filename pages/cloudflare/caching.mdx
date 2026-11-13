@@ -692,7 +692,12 @@ You can only enable cache purge functionality on a zone (e.g., when using a cust
 
 The cache purge component automatically clears the cache when a page is revalidated. It is only necessary if you use On-Demand revalidation along with one of the cache components that leverage the Cache API.
 
-This component can either call the Cache API's purge function directly or route the purge request through an intermediate durable object. Using a durable object helps buffer requests and avoid reaching [API rate limits](https://developers.cloudflare.com/cache/how-to/purge-cache/#hostname-tag-prefix-url-and-purge-everything-limits).
+This component can either call the Cache API's purge function directly (`purgeCache({ type: "direct" })`, the default) or route the purge request through an intermediate durable object (`purgeCache({ type: "durableObject" })`). Using a durable object helps buffer requests and avoid reaching [API rate limits](https://developers.cloudflare.com/cache/how-to/purge-cache/#hostname-tag-prefix-url-and-purge-everything-limits).
+
+Since `@opennextjs/cloudflare` 1.20.15, the `type` is honored for every purge:
+
+- With `durableObject`, the `NEXT_CACHE_DO_PURGE` binding is required. When it is missing, an error is logged and the cache is not purged. The adapter no longer falls back to direct purges, which are not buffered and count against the account-wide rate limit.
+- When `CACHE_PURGE_API_TOKEN` or `CACHE_PURGE_ZONE_ID` is missing, the tag cache is still updated but the purge is reported as failed (`Cloudflare cache purge failed: missing-credentials`). Set both variables, or remove `cachePurge` from your config if you don't need to purge the cache.
 
 Cache purge are only called when you call `revalidateTag`, `revalidatePath` or `res.revalidate` in the pages router. It is not called for ISR revalidation.
 
@@ -745,6 +750,8 @@ If you want to use the durable object option, you will need to add the following
 ```
 
 You can customize the duration of the cache purge buffering with the `NEXT_CACHE_DO_PURGE_BUFFER_TIME_IN_SECONDS` environment variable. The default is 5 seconds. It works by buffering the purge requests for a given amount of time and then sending them all at once. This is useful to avoid hitting the API rate limits.
+
+If you need a different behavior (i.e. a different storage schema or purging several zones), you can implement your own durable object by extending `BucketCachePurgeBase` from `@opennextjs/cloudflare/durable-objects/bucket-cache-purge` (available since 1.20.15). It keeps the alarm scheduling and the queue draining and lets you override the storage, batching, execution and settlement hooks. See the [`BucketCachePurge` implementation](https://github.com/opennextjs/opennextjs-cloudflare/blob/main/packages/cloudflare/src/api/durable-objects/bucket-cache-purge.ts) for an example.
 
 ### Debugging
 
