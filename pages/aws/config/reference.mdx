@@ -40,7 +40,7 @@ Each server config will be under it's own key in the config object. Here are all
       This is the entrypoint of the server.
       Be aware that it might not be enough to change this to make it work on said platform. This is only the entrypoint, you might need to change other parts of the server to make it work on the platform.
 
-      Possible values are: `aws-lambda`, `aws-lambda-streaming`, `cloudflare-edge`, `cloudflare-node`, `node`, `express-dev`, `dummy` or a `LazyLoadedOverride` that will return the wrapper.
+      Possible values are: `aws-lambda`, `aws-lambda-compressed`, `aws-lambda-streaming`, `aws-apigw-streaming`, `cloudflare-edge`, `cloudflare-node`, `node`, `express-dev`, `dummy` or a `LazyLoadedOverride` that will return the wrapper.
 
       #### [`converter`](overrides/converter)
 
@@ -61,17 +61,22 @@ Each server config will be under it's own key in the config object. Here are all
 
       ##### `arch`
 
-      This is the architecture of the server. It is a string and by default, it is set to `x64`.
+      This is the architecture of the server. It is passed to npm as `--cpu` to select the platform specific optional dependencies (i.e. sharp's `@img/*` packages).
+      It is not set by default. Note that when `install` is not set for the image optimization server, sharp is installed for `arm64`, `linux` and `glibc`.
 
       Possible values are: `x64`, `arm64`
 
-      ##### `nodeVersion`
+      ##### `os`
 
-      This option will be passed to the postinstall script of sharp. It is used by `node-gyp`.
+      The operating system of the server. It is passed to npm as `--os`. By default, it is set to `linux`.
+
+      ##### `nodeVersion` - Deprecated
+
+      This option is ignored since `@opennextjs/aws` 4.1.14 because npm no longer supports the `--target` flag.
 
       ##### `libc`
 
-      Override libc of native modules to install.
+      Override libc of native modules to install. It is passed to npm as `--libc`.
 
       Possible values are: `glibc`, `musl`
 
@@ -121,6 +126,18 @@ Each server config will be under it's own key in the config object. Here are all
 
       This option is deprecated and doesn't work for Next 14.2+.
 
+      ### `routePreloadingBehavior`
+
+      Next.js loads the code of a route the first time it is requested. This option allows to preload all the routes of the server ahead of time to reduce the latency of the first requests.
+      You should do your own testing to choose the one that suits you best. Route preloading requires Next.js 15+.
+
+      Possible values are:
+
+      - `none` - No preloading of the routes. This is the default.
+      - `withWaitUntil` - Preload the routes in the background of the first request using the `waitUntil` provided by the wrapper. It falls back to `none` when the wrapper doesn't provide a `waitUntil` (i.e. the `aws-lambda-streaming`, `aws-apigw-streaming` and Cloudflare wrappers provide one).
+      - `onWarmerEvent` - Preload the routes on the warmer event. It must be implemented by the wrapper, it is only supported by the `aws-lambda-streaming` and `aws-apigw-streaming` wrappers.
+      - `onStart` - Preload the routes before the handler is created. This is a blocking operation that may increase the cold start time a lot. It is useful for long running servers or in serverless with careful testing.
+
       ### `override`
 
       For both default and splitted server, in addition to `override` in the common options, you can also use the following options:
@@ -135,13 +152,13 @@ Each server config will be under it's own key in the config object. Here are all
 
       Add possibility to override the default tag cache. Used for revalidateTags and revalidatePath.
 
-      Possible values are: `dynamodb`, `dynamodb-lite`, `fs-dev`, `dummy` or a `LazyLoadedOverride` that will return the tag cache.
+      Possible values are: `dynamodb`, `dynamodb-lite`, `dynamodb-nextMode`, `fs-dev`, `fs-dev-nextMode`, `dummy` or a `LazyLoadedOverride` that will return the tag cache.
 
       #### [`queue`](overrides/queue)
 
       Add possibility to override the default queue. Used for ISR revalidation requests.
 
-      Possible values are: `sqs`, `sqs-lite`, `dummy` or a `LazyLoadedOverride` that will return the queue.
+      Possible values are: `sqs`, `sqs-lite`, `direct`, `dummy` or a `LazyLoadedOverride` that will return the queue.
 
       #### [`proxyExternalRequest`](overrides/proxy_external_request)
 
@@ -153,7 +170,7 @@ Each server config will be under it's own key in the config object. Here are all
 
       Add possibility to override the CDN invalidation override. Used for on-demand invalidation with `revalidatePath()`, `revalidateTag()` and `res.revalidate()`.
 
-      Possible values are: `cloudfront`, `dummy` or a `LazyLoadedOverride` that will return the invalidatePaths. This override is disabled by default.
+      Possible values are: `cloudfront`, `dummy` or a `LazyLoadedOverride` that will return the CDN invalidation handler. This override is disabled by default (`dummy`).
 
   </Tabs.Tab>
 
@@ -239,6 +256,8 @@ Each server config will be under it's own key in the config object. Here are all
 
       Possible values are: `dynamodb`, `dynamodb-lite`, `fs-dev`, `dummy` or a `LazyLoadedOverride` that will return the tag cache.
 
+      Tag caches in `nextMode` (i.e. `dynamodb-nextMode`) do not need to be initialized.
+
   </Tabs.Tab>
 
 </Tabs>
@@ -317,6 +336,14 @@ headersAndCookiesPriority: (event) => {
   return 'handler';
 },
 ```
+
+#### `middlewareHeadersOverrideNextConfigHeaders`
+
+Available since `@opennextjs/aws` 3.8.0
+
+When set to `true`, the response headers set by the middleware take precedence over the headers set via the [`headers` option](https://nextjs.org/docs/app/api-reference/config/next-config-js/headers) of the Next config, in line with the [Next.js execution order](https://nextjs.org/docs/app/api-reference/file-conventions/middleware#execution-order).
+
+It's a boolean and by default, it is set to `false` (the headers from the Next config take precedence).
 
 </Tabs.Tab>
 </Tabs>

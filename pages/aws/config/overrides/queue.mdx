@@ -1,13 +1,17 @@
 import { Callout } from "nextra/components";
 
 This override is used by OpenNext to trigger the revalidation of stale routes.
-Before sending the response to the client, OpenNext will check if the route is stale and if it is, it will call the queue override to revalidate the route.
+When a stale route is served, OpenNext calls the `send` method of the queue override to revalidate the route:
+
+- When the route is rendered by the Next server, `send` is called once the response is sent (in `waitUntil` when the wrapper provides one).
+- With [cache interception](/aws/inner_workings/cache_interception), `send` is awaited before the stale response is returned. If it throws, the error is logged and the request falls back to the Next server.
 
 If you want to better understand how to implement your own Queue, the easiest way would be to take a look at the existing [included Queue](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/queue).
 
 Couple of things to note :
 
 - The default implementation use an SQS queue. This has the main advantage of being able to control the concurrency of the revalidations as well as avoiding trigerring the revalidation multiple times for the same route.
+- The promise returned by `send` should resolve once the message is accepted (or handed to `waitUntil`), not once the route is revalidated, so that the response is not delayed.
 - You don't have to use a queue at all. You could trigger the revalidation directly in the Queue override itself. You can see a very simple implementation of this [in the `direct` override](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/queue/direct.ts).
 
 ## Included Queue
@@ -16,6 +20,8 @@ Couple of things to note :
 
 The SQS Queue will send a message to an SQS queue for each route that needs to be revalidated. It is used by default if you don't provide any Queue in your configuration.
 It uses the `@aws-sdk/client-sqs` to interact with SQS.
+
+Since `@opennextjs/aws` 4.1.6, the message is sent in the background when the wrapper provides a `waitUntil` (i.e. `aws-lambda-streaming` or `aws-apigw-streaming`) so that it does not delay the response. Otherwise, the response is sent once the message has been sent. The same applies to `sqs-lite`.
 
 #### Requirements
 
@@ -35,7 +41,9 @@ This implementation is a lighter version of the `sqs` Queue as it uses `aws4fetc
 The Direct Queue will directly trigger the revalidation of the route in the Queue override itself. It is useful for development purposes and when you don't want to use a queue.
 
 <Callout type="warning">
-  Be careful with this implementation as it could lead to multiple revalidations of the same route.
+  Be careful with this implementation as it could lead to multiple revalidations of the same route. As `send`
+  resolves once the route is revalidated, it also delays the stale response when cache interception is
+  enabled.
 </Callout>
 
 ### dummy

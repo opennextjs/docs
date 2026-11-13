@@ -9,7 +9,7 @@ This is also mostly for advanced use cases (Overriding some default, provide sup
 
 ## General
 
-- For the node runtime, you need at least Node 18.
+- For the node runtime, you need a Node.js version supported by your version of Next.js (Node.js 20.9+ for Next.js 16, Node.js 18.18+ for Next.js 15).
 - For the edge runtime, you can use both Node 18+ or cloudflare workers with `node_compat` flag enabled (Cloudflare workers support is experimental)
 - Open-next doesn't work well on Windows. We recommend using WSL2 or a Linux VM.
 
@@ -63,9 +63,16 @@ The `handler` is the original handler that is being wrapped. The `converter` is 
 Here is a list of the provided wrappers:
 
 - `aws-lambda` - The default AWS Lambda wrapper - It is the default wrapper
-- `aws-lambda-streaming` - The AWS Lambda wrapper with streaming support
+- `aws-lambda-compressed` - The AWS Lambda wrapper with compression support
+- `aws-lambda-streaming` - The AWS Lambda wrapper with streaming support (Lambda Function URL)
+- `aws-apigw-streaming` - The AWS Lambda wrapper with streaming support behind an API Gateway
 - `node` - The Node wrapper - Create a node server, not suitable for serverless
-- `cloudflare` - The Cloudflare wrapper - For Cloudflare Worker
+- `cloudflare-edge` - The Cloudflare wrapper for the edge runtime - For Cloudflare Workers
+- `cloudflare-node` - The Cloudflare wrapper for the node runtime - Used by `@opennextjs/cloudflare`
+- `express-dev` - The Express wrapper - For development only
+- `dummy` - The Dummy wrapper - Forwards the event to the handler
+
+See the [wrapper override](/aws/config/overrides/wrapper) page for more details.
 
 ##### Aws Lambda streaming
 

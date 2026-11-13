@@ -7,6 +7,34 @@ It will be called for `revalidatePath`, `revalidateTag` and `res.revalidate()`.
 
 If you want to better understand how to implement your own Automatic CDN Invalidation, the easiest way would be to take a look at the existing [included Automatic CDN Invalidation](https://github.com/opennextjs/opennextjs-aws/tree/main/packages/open-next/src/overrides/cdnInvalidation)
 
+## Custom implementations
+
+An Automatic CDN Invalidation override must implement `invalidatePaths` and can optionally implement `invalidateTags`:
+
+```ts
+type CDNInvalidationHandler = {
+  name: string;
+  invalidatePaths: (paths: CDNPath[]) => Promise<void>;
+  invalidateTags?: (tags: string[]) => Promise<void>;
+};
+```
+
+### `invalidatePaths`
+
+Invalidates the CDN entries of the given paths. Each path includes the path before (`initialPath`) and after (`rawPath`) routing as well as the routes that matched while resolving the request (`resolvedRoutes`).
+
+For `revalidateTag` and `revalidatePath`, the paths are resolved from the tags by the [Tag Cache](/aws/config/overrides/tag_cache). Tag caches in `nextMode` can only resolve paths when they implement the optional `getPathsByTags` method.
+
+### `invalidateTags`
+
+Available since `@opennextjs/aws` 4.1.14
+
+If your CDN supports invalidating its cache by tags, you can implement `invalidateTags` to invalidate the original cache tags directly instead of resolving them to paths.
+
+- It is called once per `revalidateTag` or `revalidatePath` call, after the tag cache has been updated, with the tags as passed to Next.js: hard tags from `revalidateTag()` and soft tags (prefixed with `_N_T_/`) from `revalidatePath()`. Tags are not expanded, i.e. the hard tags of the paths matching a soft tag are not added.
+- When it is provided, `invalidatePaths` is no longer called for `revalidateTag` and `revalidatePath`. It is still called for `res.revalidate()` in the Pages Router.
+- The CDN integration must associate cached entries with the same tags, both hard and soft, for the invalidation to have an effect.
+
 ## Included Automatic CDN Invalidation
 
 ### dummy

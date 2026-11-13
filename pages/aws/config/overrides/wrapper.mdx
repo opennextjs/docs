@@ -7,7 +7,7 @@ Couple of things to note :
 - If you want to use streaming (for the `node` runtime of next), you'll need to create a `StreamCreator` and pass it to the `handler`. You can find some example in the [node](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/wrappers/node.ts) or [aws-lambda-streaming](https://github.com/opennextjs/opennextjs-aws/blob/main/packages/open-next/src/overrides/wrappers/aws-lambda-streaming.ts) wrapper.
 - If you don't use streaming (like in the default `aws-lambda` wrapper), you may still need to provide a fake `StreamCreator` to the `handler` to avoid a weird issue with Node itself (see [here](https://github.com/opennextjs/opennextjs-aws/blob/f685ddea8f8a5c82591dc02713aff7138f2d9896/packages/open-next/src/overrides/wrappers/aws-lambda.ts#L49-L65) for an example and a more thorough explanation).
 - If you use the `edge` runtime of Next (either for the external middleware or for an `edge` route or page), you don't need the `StreamCreator` at all.
-- If you are in a serverless environment and it supports `waitUntil`, you should pass it to the handler as it is done in the [cloudflare-edge wrapper](https://github.com/opennextjs/opennextjs-aws/blob/87b59e59a8a0bf1e83d2d1df9efa0ad3bfc912f5/packages/open-next/src/overrides/wrappers/cloudflare-edge.ts#L65-L67). This might not be necessary depending on where you run it (for example the `aws-lambda-streaming` or the `node` wrapper doesn't need it.)
+- If you are in a serverless environment and it supports `waitUntil`, you should pass it to the handler as it is done in the [cloudflare-edge wrapper](https://github.com/opennextjs/opennextjs-aws/blob/87b59e59a8a0bf1e83d2d1df9efa0ad3bfc912f5/packages/open-next/src/overrides/wrappers/cloudflare-edge.ts#L65-L67). The `aws-lambda-streaming` and `aws-apigw-streaming` wrappers provide their own `waitUntil` (pending promises are awaited before the response stream is closed). This might not be necessary depending on where you run it (for example the `node` wrapper doesn't need it as it is a long running server.)
 
 ## Included Wrappers
 
@@ -22,12 +22,48 @@ The `aws-lambda` Wrapper is the default wrapper for AWS Lambda. It is used by de
 
 ### aws-lambda-streaming
 
-The `aws-lambda-streaming` Wrapper is a wrapper that allows you to use streaming in AWS Lambda. Streaming must be enabled for this lambda.
+The `aws-lambda-streaming` Wrapper is a wrapper that allows you to use streaming in AWS Lambda. Streaming must be enabled for this lambda and it must be invoked through a Lambda Function URL.
+
+The response is compressed (`br`, `gzip` or `deflate`) according to the `Accept-Encoding` header of the request.
+
+#### Features
+
+- [x] Streaming
+- [x] Proper support for `waitUntil` (available since `@opennextjs/aws` 4.1.6)
+- [x] Compression
+
+### aws-apigw-streaming
+
+Available since `@opennextjs/aws` 4.1.0
+
+The `aws-apigw-streaming` Wrapper allows you to use streaming when the server function is behind an [API Gateway REST API with response streaming](https://aws.amazon.com/about-aws/whats-new/2025/11/api-gateway-response-streaming-rest-apis/) (`ResponseTransferMode: STREAM`) instead of a Lambda Function URL.
+
+It should be used with the `aws-apigw-v1` (REST API) or `aws-apigw-v2` (HTTP API) converter.
+
+Unlike `aws-lambda-streaming`, it never compresses the response because API Gateway streaming does not support content encoding. Compression should be handled by the CDN in front of API Gateway (e.g. CloudFront).
 
 #### Features
 
 - [x] Streaming
 - [x] Proper support for `waitUntil`
+- [ ] Compression
+
+### aws-lambda-compressed
+
+Available since `@opennextjs/aws` 3.5.6
+
+The `aws-lambda-compressed` Wrapper is the same as the `aws-lambda` Wrapper but it also compresses the response (`br`, `gzip` or `deflate`) according to the `Accept-Encoding` header of the request.
+It can be useful to reduce the size of the response as AWS Lambda has a limit of 6MB for the response payload.
+
+#### Features
+
+- [ ] Streaming
+- [ ] Proper support for `waitUntil`
+- [x] Compression
+
+### Compression
+
+The Brotli compression quality used by the `aws-lambda-streaming` and `aws-lambda-compressed` wrappers can be set with the `BROTLI_QUALITY` environment variable (from `0` to `11`). It defaults to `6`.
 
 ### cloudflare-edge
 

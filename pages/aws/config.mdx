@@ -1,9 +1,10 @@
 ### Build Arguments
 
-There is two build arguments that you can pass to the `open-next build` command:
+These are the build arguments that you can pass to the `open-next build` command:
 
 - `--config-path` - This is the path to the configuration file that you want to use. By default, it will look for `open-next.config.ts` in the current working directory. This needs to be relative to the current working directory.
 - `--node-externals` - You can configure externals for the esbuild compilation of the `open-next.config.ts` file (i.e `--node-externals @aws-sdk/*,open-next/dist/queue/*`)
+- `--dangerously-use-unsupported-next-version` - Since `@opennextjs/aws` 3.9.13, the build fails when the Next.js version is no longer supported by the Next.js team (see the [Next.js support policy](https://nextjs.org/support-policy)) as it may contain unpatched security vulnerabilities. This flag allows building anyway.
 
 ### Configuration File
 
