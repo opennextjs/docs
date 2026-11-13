@@ -112,6 +112,9 @@ interface QueueMessage {
   MessageBody: {
     host: string;
     url: string;
+    // Time of the cache entry (ms since epoch)
+    lastModified: number;
+    eTag: string;
   };
   MessageGroupId: string;
 }
@@ -122,7 +125,9 @@ export interface Queue {
 }
 ```
 
-The send function will be called when a page is marked as `STALE`. You don't have to use a queue here, you can use any other mechanism to send the message to the revalidation worker or even do the revalidation in the same process.
+The send function will be called when a page is marked as `STALE`.
+
+`MessageBody.lastModified` is the time of the cache entry, so a queue can skip the messages for entries that were revalidated since. Before `@opennextjs/aws` 4.1.16, it was `1` for pages made stale by `revalidateTag`. `MessageDeduplicationId` is derived from the path, the `ETag` and the time of the entry (`1` for every entry made stale by a tag, so that they are deduplicated). You don't have to use a queue here, you can use any other mechanism to send the message to the revalidation worker or even do the revalidation in the same process.
 
 #### Shared Environment Variables
 
