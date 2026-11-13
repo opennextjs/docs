@@ -20,9 +20,10 @@ there are still minor differences. Some packages publish code for different runt
 With such exports, Node.js applications use either `src/index.js` or `cjs/src/index.js` depending if the app use ESM or CJS.
 
 However we want to use the `workerd` specific entrypoint when using the Cloudflare adapter.
-For that, you need to instruct Next.js not to bundle packages as it would use the node conditions by default.
 
-To do that, add those packages in the `serverExternalPackages` key of your `next.config.ts`:
+The adapter uses the `workerd` build of the packages that Next.js does not bundle. Since `@opennextjs/cloudflare` 1.20.15, this applies to all of them (and to their dependencies): the packages listed in `serverExternalPackages` and the packages that Next.js [keeps external by default](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverExternalPackages) (i.e. `pg` or `@prisma/client`). Before 1.20.15, only the packages listed in `serverExternalPackages` were using their `workerd` build.
+
+Next.js bundles the other packages with the Node.js conditions. For those, you need to instruct Next.js not to bundle them by adding them to the `serverExternalPackages` key of your `next.config.ts`:
 
 ```ts filename="next.config.ts"
 import type { NextConfig } from "next";
