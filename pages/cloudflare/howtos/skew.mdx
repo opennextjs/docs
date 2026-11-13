@@ -35,7 +35,7 @@ export default {
 
 **Wrangler configuration**
 
-The Worker needs to serve the correct version of the app assets. For that it need be be executed before incoming requests are matched against the assets. Set [`run_worker_first`](https://developers.cloudflare.com/workers/static-assets/binding/#run_worker_first) to `true` in your wrangler configuration to enable this behavior:
+The Worker needs to serve the correct version of the app assets. For that it need be be executed before incoming requests are matched against the assets. Set [`run_worker_first`](https://developers.cloudflare.com/workers/static-assets/binding/#run_worker_first) to `true` in your wrangler configuration to enable this behavior. `html_handling` and `not_found_handling` must then be set as below (see [Workers Static Assets](/cloudflare/howtos/assets#run_worker_firsttrue)):
 
 ```jsonc filename="wrangler.jsonc"
 {
@@ -45,6 +45,10 @@ The Worker needs to serve the correct version of the app assets. For that it nee
     "directory": ".open-next/assets",
     "binding": "ASSETS",
     "run_worker_first": true,
+    // Serve public files at their exact path only, like Next.js
+    "html_handling": "none",
+    // "404-page" is also allowed
+    "not_found_handling": "none",
   },
   // ...
 }
@@ -79,6 +83,99 @@ const nextConfig: NextConfig = {
   deploymentId: getDeploymentId(),
 };
 ```
+
+### Using Durable Objects with skew protection
+
+Cloudflare does not allow a worker with `preview_urls: true` to export Durable Object classes. The solution is to move all DO classes into a separate DO worker and reference them from the main worker using `script_name` bindings. The main worker continues to use `opennextjs-cloudflare deploy` and skew protection as normal.
+
+**DO worker**
+
+Create a separate entry point that re-exports the DO classes from the OpenNext build output:
+
+```js filename="do-worker.js"
+export { DOQueueHandler } from "./.open-next/.build/durable-objects/queue.js";
+export { DOShardedTagCache } from "./.open-next/.build/durable-objects/sharded-tag-cache.js";
+export { BucketCachePurge } from "./.open-next/.build/durable-objects/bucket-cache-purge.js";
+
+export default {
+  async fetch() {
+    return new Response(null, { status: 404 });
+  },
+};
+```
+
+**Wrangler configurations**
+
+The main worker references the DO classes via `script_name`. The DO worker holds the implementations and calls back to the main worker via `WORKER_SELF_REFERENCE` for ISR revalidation:
+
+```jsonc filename="wrangler.jsonc"
+{
+  "name": "my-app",
+  "preview_urls": true,
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "my-app" }],
+  "durable_objects": {
+    "bindings": [
+      { "name": "NEXT_TAG_CACHE_DO_SHARDED", "class_name": "DOShardedTagCache", "script_name": "my-app-do" },
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler", "script_name": "my-app-do" },
+      { "name": "NEXT_CACHE_DO_PURGE", "class_name": "BucketCachePurge", "script_name": "my-app-do" },
+    ],
+  },
+  // ...
+}
+```
+
+```jsonc filename="wrangler.do.jsonc"
+{
+  "main": "do-worker.js",
+  "name": "my-app-do",
+  // The DO worker is only accessed through bindings
+  "workers_dev": false,
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "my-app" }],
+  "durable_objects": {
+    "bindings": [
+      { "name": "NEXT_TAG_CACHE_DO_SHARDED", "class_name": "DOShardedTagCache" },
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" },
+      { "name": "NEXT_CACHE_DO_PURGE", "class_name": "BucketCachePurge" },
+    ],
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache", "BucketCachePurge"] },
+  ],
+}
+```
+
+**First deployment: circular dependency**
+
+On a new environment neither worker exists yet. Cloudflare validates `script_name` references and service bindings at deploy time, so deploying either worker first will fail. A bootstrap config for the DO worker without `WORKER_SELF_REFERENCE` breaks the deadlock:
+
+```jsonc filename="wrangler.do.bootstrap.jsonc"
+{
+  "main": "do-worker.js",
+  "name": "my-app-do",
+  // The DO worker is only accessed through bindings
+  "workers_dev": false,
+  // no services section
+  "durable_objects": {
+    "bindings": [
+      { "name": "NEXT_TAG_CACHE_DO_SHARDED", "class_name": "DOShardedTagCache" },
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" },
+      { "name": "NEXT_CACHE_DO_PURGE", "class_name": "BucketCachePurge" },
+    ],
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache", "BucketCachePurge"] },
+  ],
+}
+```
+
+Deploy sequence for a new environment:
+
+1. `opennextjs-cloudflare build` - builds the app, including the DO classes imported by `do-worker.js`
+2. `wrangler deploy --config wrangler.do.bootstrap.jsonc` - deploys the DO worker without `WORKER_SELF_REFERENCE`
+3. `opennextjs-cloudflare deploy` - deploys the main worker (DO worker now exists, `script_name` resolves)
+4. `wrangler deploy --config wrangler.do.jsonc` - redeploys the DO worker with `WORKER_SELF_REFERENCE`
+
+`DOQueueHandler` handles a missing `WORKER_SELF_REFERENCE` gracefully, so ISR revalidation is only briefly unavailable between steps 3 and 4. Subsequent deployments to an existing environment can skip step 2. The DO worker should be deployed after each build so that it uses the DO classes of the same version of the adapter.
 
 ### What you should know
 

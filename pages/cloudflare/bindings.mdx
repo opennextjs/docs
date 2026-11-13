@@ -35,6 +35,26 @@ export async function GET(request) {
 
 </Callout>
 
+<Callout type='warning'>
+  Calling `getCloudflareContext()` in sync mode in a route that Next.js statically prerenders (i.e. a page or layout that does not use any Next.js Dynamic API) makes `next build` fail. In async mode, the build succeeds but the route is generated with the values available at build time, not the ones of the incoming request.
+
+If the route needs the context of the incoming request, make it render dynamically, i.e. by awaiting one of the Next.js Dynamic APIs such as [`headers()`](https://nextjs.org/docs/app/api-reference/functions/headers) before calling `getCloudflareContext()`:
+
+```js filename="app/page.js"
+import { headers } from "next/headers";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+
+export default async function Page() {
+  await headers(); // forces dynamic rendering
+  const myKv = getCloudflareContext().env.MY_KV_NAMESPACE;
+  // ...
+}
+```
+
+Alternatively, add [`export const dynamic = "force-dynamic";`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) to the page or layout.
+
+</Callout>
+
 #### How to add bindings to your Worker
 
 Add bindings to your Worker by adding them to your [wrangler configuration file](https://developers.cloudflare.com/workers/wrangler/configuration/).

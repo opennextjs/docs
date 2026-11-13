@@ -42,12 +42,18 @@ When `run_worker_first` is set to `true`, all the requests will reach the Worker
     "directory": ".open-next/assets",
     "binding": "ASSETS",
     "run_worker_first": true,
+    // Serve public files at their exact path only, like Next.js
+    "html_handling": "none",
+    // "404-page" is also allowed
+    "not_found_handling": "none",
   },
   // ...
 }
 ```
 
 The Open Next asset resolver will be used to retrieve the assets from the Worker.
+
+Since `@opennextjs/cloudflare` 1.20.16, public files are only served at their exact path when the Worker runs first, like Next.js. The build fails when `run_worker_first` is enabled (`true` or a list with at least one non-negated pattern) unless `html_handling` is set to `"none"` and `not_found_handling` is set to `"none"` or `"404-page"`. Other values would serve the files at other paths (i.e. `/about` for `public/about.html`), which a middleware matching the exact path of the file would not cover.
 
 When `run_worker_first=true`, assets are served behind the middleware and Next rewrites and headers from [the Next config](https://nextjs.org/docs/app/api-reference/config/next-config-js). The [headers](https://developers.cloudflare.com/workers/static-assets/headers/) and [redirects](https://developers.cloudflare.com/workers/static-assets/redirects/) configured for the Worker Static Assets do not apply in this case.
 

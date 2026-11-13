@@ -27,8 +27,11 @@ This is an important difference from `@cloudflare/next-on-pages`, which only sup
 
 ### Supported Next.js versions
 
-All minor and patch versions of Next.js 16 and the latest minors of Next.js 14 and 15 are supported.
-Next.js 14 support will be dropped Q1 2026. It is [no more supported](https://nextjs.org/support-policy#supported-versions) by the Next.js team.
+All minor and patch versions of Next.js 16 and the latest minor of Next.js 15 are supported.
+
+The minimum versions are raised when Next.js releases security fixes. Check the `next` peer dependency of `@opennextjs/cloudflare` for the exact range supported by your version of the adapter.
+
+Next.js 14 is no longer supported, it has reached its [end of life](https://nextjs.org/support-policy#supported-versions).
 
 To help improve compatibility, we encourage you to [report bugs](https://github.com/opennextjs/opennextjs-cloudflare/issues) and contribute code!
 
@@ -40,7 +43,7 @@ To help improve compatibility, we encourage you to [report bugs](https://github.
 - [x] [Static Site Generation (SSG)](https://nextjs.org/docs/app/building-your-application/rendering/server-components#static-rendering-default)
 - [x] [Server-Side Rendering (SSR)](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
 - [x] [Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
-- [ ] [Node Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware#runtime) introduced in 15.2 are not yet supported
+  - [x] [Node Middleware](https://nextjs.org/docs/app/api-reference/file-conventions/proxy) (i.e. `proxy.ts` in Next.js 16) - experimental support since `@opennextjs/cloudflare` 1.20.3
 - [x] [Image optimization](https://nextjs.org/docs/app/building-your-application/optimizing/images) (See [this guide](/cloudflare/howtos/image) to configure [Cloudflare Images](https://developers.cloudflare.com/images/))
 - [x] [Partial Prerendering (PPR)](https://nextjs.org/docs/app/building-your-application/rendering/partial-prerendering)
 - [x] [Pages Router](https://nextjs.org/docs/pages)
