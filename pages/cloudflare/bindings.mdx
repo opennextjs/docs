@@ -36,21 +36,23 @@ export async function GET(request) {
 </Callout>
 
 <Callout type='warning'>
-	In a page or layout (as opposed to a route handler), `getCloudflareContext()` can only be used if the route renders dynamically. If Next.js is able to statically prerender the route, `next build` will try to do so and fail (or the context will reflect build time rather than the incoming request).
+  Calling `getCloudflareContext()` in sync mode in a route that Next.js statically prerenders (i.e. a page or layout that does not use any Next.js Dynamic API) makes `next build` fail. In async mode, the build succeeds but the route is generated with the values available at build time, not the ones of the incoming request.
 
-	Force the route to render dynamically by awaiting one of Next.js's [Dynamic APIs](https://nextjs.org/docs/app/api-reference/functions/headers) before calling `getCloudflareContext()`:
-	```js
-	import { headers } from "next/headers";
-	import { getCloudflareContext } from "@opennextjs/cloudflare";
+If the route needs the context of the incoming request, make it render dynamically, i.e. by awaiting one of the Next.js Dynamic APIs such as [`headers()`](https://nextjs.org/docs/app/api-reference/functions/headers) before calling `getCloudflareContext()`:
 
-	export default async function Page() {
-	  await headers(); // forces dynamic rendering
-	  const myKv = getCloudflareContext().env.MY_KV_NAMESPACE;
-	  // ...
-	}
-	```
+```js filename="app/page.js"
+import { headers } from "next/headers";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-	Alternatively, export `export const dynamic = "force-dynamic";` from the page or layout.
+export default async function Page() {
+  await headers(); // forces dynamic rendering
+  const myKv = getCloudflareContext().env.MY_KV_NAMESPACE;
+  // ...
+}
+```
+
+Alternatively, add [`export const dynamic = "force-dynamic";`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) to the page or layout.
+
 </Callout>
 
 #### How to add bindings to your Worker
