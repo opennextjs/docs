@@ -128,6 +128,8 @@ The main worker references the DO classes via `script_name`. The DO worker holds
 {
   "main": "do-worker.js",
   "name": "my-app-do",
+  // The DO worker is only accessed through bindings
+  "workers_dev": false,
   "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "my-app" }],
   "durable_objects": {
     "bindings": [
@@ -150,6 +152,8 @@ On a new environment neither worker exists yet. Cloudflare validates `script_nam
 {
   "main": "do-worker.js",
   "name": "my-app-do",
+  // The DO worker is only accessed through bindings
+  "workers_dev": false,
   // no services section
   "durable_objects": {
     "bindings": [
